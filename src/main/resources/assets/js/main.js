@@ -94,6 +94,3 @@ require('./pages/default.js');
  });
  });
  */
-
-// Parts
-require('./parts/software-show.js');
