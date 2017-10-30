@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <div data-th-replace="/site/pages/fragments/fragments::head-meta-fragment"></div>
+    <div data-th-replace="/site/pages/fragments/fragments::head-assets-fragment"></div>
+    <title data-th-text="${pageTitle}">Enonic Market</title>
+</head>
+
+<body role="document">
+
+
+
+<header class="page-error__header">
+    <div class="page-error__header-container">
+        <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='page-error')"></div>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <h1>404 - page not found</h1>
+        <p>Yea.. we kinda lost the page you were looking for, or maybe it was moved and we don't know where to, or it has never existed.</p>
+        <p>Anyways, go to the <a href="https://market.enonic.com">front page</a> to look for it there.</p>
+    </div>
+</main>
+
+
+<footer class="page-error__footer" role="contentinfo">
+
+    <nav class="page-error__footer-nav">
+        <ul class="page-error__footer-nav-list">
+            <li data-th-each="menuItem : ${menuItems}" class="page-error__footer-nav-item">
+                <a class="page-error__footer-nav-link" href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
+                   data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"
+                   data-th-classappend="${menuItem.path == currentPath ? 'page-error__footer-nav-link&#45;&#45;active' : ''}">Page title</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="page-error__footer-copyright">
+        <div  class="page-error__footer-copyright-text">
+            Copyright &#169; <a href="https://enonic.com">Enonic AS</a>. All Rights Reserved. We use cookies.
+        </div>
+    </div>
+</footer>
+
+
+</body>
+</html>

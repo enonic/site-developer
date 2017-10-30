@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+
+<div data-th-fragment="product-listing-fragment" data-th-if="${products}" data-th-remove="tag">
+    <div class="product-listing">
+        <ol data-th-class="${'product-listing__list'} + ' ' + ${pagination ? 'pagination' : ''}" data-th-attr="data-pagination-url=${pagination ? pagination.url : ''}, data-pagination-start=${pagination ? pagination.start : ''}, data-pagination-count=${pagination ? pagination.count : ''}, data-pagination-total=${pagination ? pagination.total : ''}">
+            <li data-th-each="product : ${products}" data-th-remove="tag">
+                <div data-th-replace="/lib/enonic/market/fragments::product-listing-item-fragment(product=${product})" data-th-if="${product}" data-th-remove="tag"/>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div data-th-fragment="product-listing-item-fragment" data-th-if="${product}" data-th-with="classPrefix=(${classPrefix} ?: 'product-listing')" data-th-remove="tag">
+    <li data-th-class="${classPrefix + '__item'}">
+        <article data-th-class="${classPrefix + '__product'}">
+            <a data-th-class="${classPrefix + '__product-link'}" data-th-href="${portal.pageUrl({'_id=' + product._id})}">
+
+                <img data-th-class="${classPrefix + '__product-icon'}" data-th-if="${product.softwareIcon}" data-th-src="${product.softwareIcon}" alt=""/>
+
+                <h2 data-th-class="${classPrefix + '__product-heading'}" data-th-text="${product.displayName}">Product name</h2>
+            </a>
+            <div data-th-class="${classPrefix + '__product-subtitle'}" data-th-if="${product.data.shortDescription}" data-th-text="${product.data.shortDescription}">Subtitle</div>
+        </article>
+    </li>
+</div>
+
+<svg data-th-fragment="icon-fragment" data-th-if="${icon}" data-th-class="${class}" role="presentation">
+    <use data-th-attr="'xlink:href'=${portal.assetUrl({'_path=img/icons/icons.svg'}) + '#' + icon}"></use>
+</svg>
+
+
+</body>
+</html>

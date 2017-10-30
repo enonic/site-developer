@@ -1,0 +1,22 @@
+.promotion-banner {
+  margin-bottom: 70px;
+
+  @include breakpoint(max-width medium) {
+    margin-bottom: 35px;
+  }
+
+  &__img {
+    &--normal {
+      @include breakpoint(max-width medium) {
+        display: none;
+      }
+    }
+
+    &--mobile {
+      @include breakpoint(medium) {
+        display: none;
+      }
+    }
+  }
+
+}

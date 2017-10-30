@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <div data-th-replace="/site/pages/fragments/fragments::head-meta-fragment"></div>
+    <div data-th-replace="/site/pages/fragments/fragments::head-assets-fragment"></div>
+    <title data-th-text="${pageTitle}">Enonic Market</title>
+</head>
+
+<body role="document">
+
+
+<header class="page-default__header">
+    <div class="page-default__header-container">
+
+        <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='page-default')"></div>
+
+
+        <form class="page-default__header-search-form live-search__form" method="get" action="#"
+              data-th-if="${showHeaderSearch}"
+              data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
+            <div class="page-default__header-search-box live-search__search-box" role="search">
+                <!--<span class="page-default__header-search-icon" aria-hidden="true"></span>-->
+
+                <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=page-default__header-search-icon)"></svg>
+                <input class="page-default__header-search-input live-search__input" type="text" name="q"
+                       placeholder="search"
+                       autocomplete="off"/>
+            </div>
+            <ul class="page-default__header-search-result live-search__result"></ul>
+            <div class="live-search__no-results">No results</div>
+        </form>
+
+        <button class="page-default__main-menu-trigger" id="page-default__main-menu-trigger" aria-haspopup="true"
+                aria-owns="page-default__main-menu" aria-controls="page-default__main-menu"
+                aria-expanded="false">
+            <span class="page-default__main-menu-trigger-label">Menu</span>
+            <span class="page-default__main-menu-trigger-icon"></span>
+        </button>
+
+
+        <div class="page-default__main-menu" id="page-default__main-menu" aria-expanded="false" aria-labelledby="page-default__main-menu-trigger">
+            <nav class="page-default__main-menu-nav">
+                <ul class="page-default__main-menu-nav-list">
+                    <li class="page-default__main-menu-nav-item" data-th-each="menuItem : ${menuItems}">
+                        <a class="page-default__main-menu-nav-link"
+                           data-th-classappend="${menuItem.path == currentPath ? 'page-default__nav-link--active' : ''}"
+                           data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
+                           data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}">Page title</a>
+                        <ul class="page-default__main-menu-nav-list page-default__main-menu-nav-list--level-2"
+                            data-th-if="${menuItem.hasChildren}">
+                            <li class="page-default__main-menu-nav-item" data-th-each="submenuItem : ${menuItem.children}">
+                                <a class="page-default__main-menu-nav-link"
+                                   data-th-classappend="${submenuItem.path == currentPath ? 'page-default__nav-link--active' : ''}"
+                                   data-th-href="${portal.pageUrl({'_path=' + submenuItem.path})}"
+                                   data-th-text="${submenuItem.menuName} ?: ${submenuItem.displayName}">Page title</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <div class="page-default__enonic-sites">
+                <ul class="page-default__enonic-sites-list">
+                    <li class="page-default__enonic-sites-item">
+                        <a class="page-default__enonic-sites-link" href="https://enonic.com">
+                            <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-fragment"></div>
+                        </a>
+                    </li>
+                    <li class="page-default__enonic-sites-item">
+                        <a class="page-default__enonic-sites-link" href="https://discuss.enonic.com">
+                            <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-discuss-fragment"></div>
+                        </a>
+                    </li>
+                    <li class="page-default__enonic-sites-item">
+                        <a class="page-default__enonic-sites-link" href="http://support.enonic.com">
+                            <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-support-fragment"></div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+
+    </div>
+</header>
+
+<main data-th-attr="data-portal-region=${mainRegion.name}">
+    <div data-th-each="component : ${mainRegion.components}" data-th-remove="tag">
+        <div data-portal-component="${component.path}" data-th-remove="tag"></div>
+    </div>
+</main>
+
+<footer class="page-default__footer" role="contentinfo">
+
+    <nav class="page-default__footer-nav">
+        <ul class="page-default__footer-nav-list">
+            <li data-th-each="menuItem : ${menuItems}" class="page-default__footer-nav-item">
+                <a class="page-default__footer-nav-link" href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
+                   data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"
+                   data-th-classappend="${menuItem.path == currentPath ? 'page-default__footer-nav-link&#45;&#45;active' : ''}">Page title</a>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="page-default__footer-social">
+        <h3 class="page-default__footer-social-heading">Follow us</h3>
+        <ul class="page-default__footer-social-list">
+            <li class="page-default__footer-social-item" data-th-each="socialLink : ${socialLinks}">
+                <a class="page-default__footer-social-link" data-th-href="${socialLink.url}" data-th-classappend="${'page-default__footer-social-link&#45;&#45;' + socialLink.name}" data-th-text="${socialLink.name}">Twitter</a>
+            </li>
+        </ul>
+    </section>
+
+    <!--<h2>Footer navigation</h2>
+
+
+
+    -->
+
+    <!--<section class="offices">
+        <h3>Locations</h3>
+
+        <div class="map">
+            <a href="contact-us.html" data-th-href="${contactPageUrl}">
+                <img src="../../assets/img/footer-map.png"
+                     data-th-src="${portal.assetUrl({'_path=img/footer-map.png'})}"
+                     alt="World map with Enonic offices"/>
+                &lt;!&ndash; http://maps.googleapis.com/maps/api/staticmap?center=36.929541,-4.242653&zoom=0&scale=false&size=200x200&maptype=roadmap&sensor=false&format=png&visual_refresh=true&markers=size:mid%7Ccolor:red|San%20Francisco|Oslo,Norway|Bogota,Colombia| &ndash;&gt;
+            </a>
+        </div>
+    </section>-->
+
+    <div class="page-default__footer-copyright">
+        <div  class="page-default__footer-copyright-text">
+            Copyright &#169; <a href="https://enonic.com">Enonic AS</a>. All Rights Reserved. We use cookies.
+        </div>
+    </div>
+</footer>
+
+
+
+<script data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
+
+</body>
+</html>

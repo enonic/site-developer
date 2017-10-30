@@ -1,0 +1,430 @@
+.software-show {
+
+  &__header {
+    @include container;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+
+  &__metadata {
+    &-bar {
+      background-color: $color-aqua-haze;
+      padding: 7px 0;
+      margin-bottom: 20px;
+      @include font-size(16);
+
+      @include breakpoint(small large) {
+        @include font-size(12);
+      }
+    }
+
+    &-list {
+      @include list-unstyled;
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+
+      &-container {
+        @include container;
+      }
+    }
+
+    &-item {
+      display: table-cell;
+      text-align: center;
+      width: 20%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+
+      @include breakpoint(small large) {
+        width: 25%;
+      }
+
+
+      &:first-child {
+        text-align: left;
+      }
+
+      &:last-child {
+        text-align: right;
+      }
+
+      &--version {
+        @include breakpoint(small large) {
+          @include visually-hidden;
+        }
+      }
+    }
+
+    &-icon {
+      width: 1em;
+      height: 1em;
+      display: inline;
+      vertical-align: top;
+    }
+
+    &-label {
+      @include visually-hidden;
+    }
+
+    &-text {
+      vertical-align: middle;
+
+      &--normal {
+        @include breakpoint(small large) {
+          display: none;
+        }
+        @include breakpoint(large) {
+          display: inline;
+        }
+      }
+
+      &--short {
+        @include breakpoint(large) {
+          display: none;
+        }
+        @include breakpoint(small large) {
+          display: inline;
+        }
+      }
+    }
+
+  }
+
+  &__body {
+    @include container;
+  }
+
+  &__introduction {
+    margin-bottom: 20px;
+  }
+
+  &__heading {
+    margin: 0 0 10px 0;
+    @include font-size(50);
+
+    @include breakpoint(small medium) {
+      @include font-size(30);
+    }
+  }
+
+  &__subtitle {
+    @include font-size(20);
+
+    @include breakpoint(small medium) {
+      @include font-size(16);
+    }
+  }
+
+  &__software-icon {
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+
+    @include breakpoint(small medium) {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  &__description {
+    margin-bottom: 20px;
+    @include font-size(16);
+    line-height: 1.4;
+  }
+
+  &__screenshots {
+    border: 1px solid $color-gallery;
+    clear: both;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+
+  &__screenshot {
+
+    &-list {
+      // "Fake" default height to prevent skipping on image load
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-top: (400/730)*100%;
+    }
+
+    &-item {
+      &--video {
+        filter: grayscale(100%);
+
+        &:after {
+          position: absolute;
+          display: block;
+          z-index: 2;
+          content: '';
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background: rgba(0,0,0,0.4);
+        }
+      }
+    }
+    &-link {
+      display: block;
+    }
+  }
+
+  &__download-button {
+    float: right;
+    text-transform: none;
+
+    &--application {
+      @include button($color-limeade, $color-white);
+      @include font-size(16);
+      margin-bottom: 30px;
+    }
+
+    &--library {
+      @include button($color-limeade, $color-white);
+      //@include icon(download, inherit);
+      @include font-size(16);
+      margin-bottom: 30px;
+    }
+
+    &--starter {
+      @include button($color-pelorous, $color-white);
+      //@include icon(clone, inherit);
+      @include font-size(16);
+      margin-bottom: 30px;
+    }
+
+    &-icon {
+      width: 1em;
+      height: 1em;
+      fill: $color-white;
+      vertical-align: top;
+      display: inline-block;
+    }
+  }
+
+  &__changelog {
+    clear: both;
+    margin-bottom: 50px;
+
+    &-version-list {
+      @include list-unstyled;
+    }
+
+    &-version-item {
+      padding-bottom: 1em;
+    }
+
+    &-version-header {
+
+    }
+
+    &-version-heading {
+      display: inline;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      margin-right: 0.5em;
+    }
+
+    &-version-date {
+      display: inline;
+      @extend .h4;
+    }
+
+    &-entry-list {
+      margin-top: 1em;
+    }
+  }
+
+  &__compatibility {
+    list-style: none;
+    margin-top: 0.5em;
+    font-size: 0.85em;
+
+    &-heading {
+      margin: 0;
+      display: inline;
+      font-weight: normal;
+      font-size: 1em;
+      margin-right: 0.5em;
+      @include tooltip;
+    }
+
+    &-list {
+      @include list-unstyled;
+      display: inline;
+    }
+
+    &-item {
+      display: inline;
+    }
+
+    &-item + &-item:before {
+      content: ', ';
+    }
+  }
+
+  &__download-instructions {
+
+    &-header {
+      overflow: hidden;
+    }
+
+    &-heading {
+      float: left;
+      margin-top: 0;
+    }
+
+    &-download-btn {
+      @include button($color-limeade, $color-white);
+      //@include icon(download, inherit);
+      @include font-size(16);
+    }
+
+    &-app-notice {
+      font-style: italic;
+      margin-top: 20px;
+    }
+
+    &-body {
+      clear: both;
+    }
+  }
+
+  &__toolbox-code {
+    display: table;
+    border: 1px solid #eee;
+    width: 100%;
+    margin-bottom: 20px;
+
+    &-heading,
+    &-command,
+    &-clipboard-btn-container {
+      display: table-cell;
+      padding: 5px;
+      border: none;
+      white-space: nowrap;
+    }
+
+    &-heading {
+      padding-right: 20px;
+      background: #eee;
+      width: 1%;
+    }
+
+    &-command {
+      //padding: 0 5px;
+      width: 100%;
+
+      &-input {
+        width: 100%;
+        border: none;
+      }
+    }
+
+    &-clipboard-btn {
+      border: none;
+      background: none;
+
+      &-container {
+        background: #eee;
+        width: 1%;
+
+        &:hover {
+          background: #ccc;
+        }
+      }
+
+      svg {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  &__cloud-trial {
+    &-form {
+      &-submit {
+        @include button($color-limeade, $color-white);
+        text-transform: uppercase;
+      }
+
+      &-input {
+        width: 100%;
+      }
+    }
+  }
+
+  &__comments {
+    clear: both;
+    padding-bottom: 20px;
+  }
+
+  &__install-app {
+    &-section {
+      padding: 20px;
+
+      &--xp, &--jar {
+        background-color: $color-aqua-haze;
+      }
+    }
+
+    &-heading {
+      margin-top: 0;
+    }
+  }
+
+  &__version-select {
+    float: right;
+  }
+
+  &__video-modal {
+    iframe {
+      height: 400px;
+      max-height: 100%;
+    }
+  }
+
+  &__play-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    transform: translateY(-50%) translateX(-50%);
+
+    background: no-repeat;
+    background-size: contain;
+    width: 58px;
+    height: 40px;
+    max-width: 50%;
+    max-height: 50%;
+    border: 0;
+    box-shadow: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20viewBox%3D%220%200%2058%2040%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Crect%20fill%3D%22%23000%22%20width%3D%2258%22%20height%3D%2240%22%20rx%3D%228%22/%3E%3Cpath%20d%3D%22m22%2029v-18l18%209-18%209%22%20fill%3D%22%23fff%22/%3E%3C/g%3E%3C/svg%3E');
+
+    &:hover {
+      background-color: transparent;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20viewBox%3D%220%200%2058%2040%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Crect%20fill%3D%22%23000%22%20width%3D%2258%22%20height%3D%2240%22%20rx%3D%228%22/%3E%3Cpath%20d%3D%22m21%2032v-24l24%2012-24%2012%22%20fill%3D%22%23fff%22/%3E%3C/g%3E%3C/svg%3E');
+    }
+  }
+
+  &__screenshot-modal {
+    img {
+      max-width: 100%;
+    }
+
+    .modal__container {
+      max-width: 1024px;
+    }
+  }
+}

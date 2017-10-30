@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+  <config>
+    <field-set name="pages">
+      <label>Pages</label>
+      <items>
+        <input type="ContentSelector" name="searchResultPage">
+          <label>Search result page</label>
+          <occurrences minimum="1" maximum="1"/>
+          <config>
+            <relationship-type>system:reference</relationship-type>
+            <allow-content-type>landing-page</allow-content-type>
+          </config>
+        </input>
+      </items>
+    </field-set>
+  </config>
+  <x-data mixin="menu-item"/>
+  <filters>
+    <response-filter name="applications" order="1"/>
+  </filters>
+  <mappings>
+    <mapping controller="/site/parts/software-show/shield.js" order="10">
+      <pattern>.*\/vendors?\/.*shield.svg</pattern>
+    </mapping>
+  </mappings>
+</site>

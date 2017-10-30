@@ -1,0 +1,35 @@
+.form {
+  &__label {
+     display: block;
+     position: relative;
+     margin-bottom: 20px;
+
+     &-text {
+       text-align: left;
+       display: block;
+       padding-bottom: 5px;
+       @include font-size(14);
+
+       &--required {
+         &::after {
+           content: '*';
+           color: #FC5D4B;
+         }
+       }
+     }
+   }
+
+  &__input:not([type='checkbox']), &__textarea, &__select {
+    display: block;
+    background-color: #fff;
+    border: 1px solid #bfbfbf;
+    width: 100%;
+    padding: 6px 6px;
+    font-weight: 300;
+
+    &:focus {
+      border-color: #39a5c8;
+    }
+  }
+
+}

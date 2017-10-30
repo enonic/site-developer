@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'com.enonic.defaults' version '1.0.2'
+    id 'com.enonic.xp.app' version '1.0.11'
+    id 'com.enonic.xp.run' version '1.0.11'
+    id "com.moowork.gulp" version "0.13"
+    id "com.moowork.node" version "0.13"
+}
+
+repositories {
+    jcenter()
+    xp.enonicRepo()
+}
+
+app {
+    name = project.appName
+    displayName = "Enonic Site Developer"
+    vendorName = 'Enonic AS'
+    vendorUrl = 'http://enonic.com'
+}
+
+dependencies {
+    compile "com.enonic.xp:core-api:${xpVersion}"
+    include "com.enonic.xp:lib-content:${xpVersion}"
+    include "com.enonic.xp:lib-content:${xpVersion}"
+    include "com.enonic.xp:lib-portal:${xpVersion}"
+    include "com.enonic.xp:lib-thymeleaf:${xpVersion}"
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.mockito:mockito-core:1.+'
+    include "com.enonic.lib:util:1.1.0"
+    include "com.enonic.lib:menu:1.0.0"
+    include "com.enonic.lib:lib-markdown:0.5.0"
+}
+
+// makes sure on each build that gulp is installed
+gulp_build.dependsOn 'installGulp'
+
+// processes your package.json before running gulp build
+gulp_build.dependsOn 'npmInstall'
+
+// runs "gulp build" as part of your gradle build
+jar.dependsOn gulp_build

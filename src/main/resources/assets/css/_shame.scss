@@ -1,0 +1,23 @@
+form {
+
+  .form-submitted-message {
+    display: none;
+  }
+
+  &.form-submitted {
+    .form-submitted-message {
+      display: block;
+      text-align: center;
+
+      .message {
+        font-weight: bold;
+      }
+    }
+  }
+
+  &.success, &.failed {
+    .form {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+$color-black: #000;
+$color-white: #fff;
+$color-pelorous: #39A5C8;
+$color-limeade: #78A300;
+$color-silver: #cccccc;
+$color-gallery: #eee;
+$color-cornflower-blue: #66afe9;
+$color-dove-gray: #666666;
+$color-mine-shaft: #272727;
+$color-cod-gray: #1c1c1c;
+$color-silver-chalice: #aaa;
+$color-aqua-haze: #F4F7F9;
+
+$color-anchor: $color-pelorous;
+$color-headings: inherit;
+$color-form-input-border: $color-silver;
+$color-form-input-border-focus: $color-cornflower-blue;
+
+
+/********** Breakpoints *********/
+
+$breakpoints: (
+  'small':  1px,
+  'medium': 600px,
+  'large':  960px,
+  'xlarge': 1280px
+);
+
+
+/*// Small screen / tablet
+$screen-sm-min:              0px !default;
+
+// Medium screen / desktop
+$screen-md-min:              768px !default;
+
+// Large screen / wide desktop
+$screen-lg-min:              1024px !default;*/
+
+/*
+$device-retina: "(min-width: 1920px)";
+$device-desktop: "(min-width: 1025px)";
+$device-tablet: "(min-width: 768px) and (max-width: 1024px)";
+$device-mobile: "(max-width: 767px)";*/
+
+$headings-font-family:    'gt_pressura', sans-serif;
+$headings-font-weight:    500;
+$headings-line-height:    1.1;
+
+
+$font-family-text: 'akkurat', Arial, sans-serif;
+
+
+
+
+
+
+
+//== Grid system
+//
+//## Define your custom responsive grid.
+
+//** Number of columns in the grid.
+$grid-columns:              12 !default;
+//** Padding between columns. Gets divided in half for the left and right.
+$grid-gutter-width:         30px !default;

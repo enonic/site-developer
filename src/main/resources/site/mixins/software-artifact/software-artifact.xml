@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mixin>
+    <display-name>Software artifact</display-name>
+    <items>
+        <field-set name="artifact">
+            <label>Artifact</label>
+            <items>
+                <input type="TextLine" name="groupId">
+                    <label>Group ID</label>
+                    <occurrences minimum="1" maximum="1"/>
+                </input>
+                <input type="TextLine" name="artifactId">
+                    <label>Artifact ID</label>
+                    <occurrences minimum="1" maximum="1"/>
+                </input>
+                <input type="TextLine" name="repository">
+                    <label>Repository</label>
+                    <occurrences minimum="0" maximum="1"/>
+                </input>
+            </items>
+        </field-set>
+
+    </items>
+</mixin>

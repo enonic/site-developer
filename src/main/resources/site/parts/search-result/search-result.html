@@ -1,0 +1,35 @@
+<div data-th-unless="${itemsOnly}" class="search-result">
+    <header class="search-result__header">
+        <h1 class="search-result__heading">Search</h1>
+
+        <form class="search-result__search-form live-search__form" method="get" action="#" data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
+            <div class="search-result__search-box live-search__search-box">
+                <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=search-result__search-icon)"></svg>
+                <input class="search-result__search-input live-search__input" type="text" name="q"  placeholder="search by tag or keyword" autocomplete="off" data-th-attr="value=${searchTerm}"/>
+            </div>
+            <ul class="search-result__search-result live-search__result"></ul>
+            <div class="live-search__no-results">No results</div>
+        </form>
+    </header>
+
+    <section class="search-result__aggregation-item" data-th-each="aggregation : ${aggregations}">
+        <header class="search-result__aggregation-header">
+            <h2 class="search-result__aggregation-heading">
+                <span class="search-result__aggregation-name" data-th-text="${aggregation.name}">Aggregation name</span>
+            <span class="search-result__aggregation-count">
+                <span data-th-text="${aggregation.docCount}">0</span>
+                <span class="visually-hidden"> hits</span>
+            </span>
+            </h2>
+        </header>
+
+
+        <div data-th-replace="/lib/enonic/market/fragments::product-listing-fragment(products=${aggregation.hits},pagination=${aggregation.pagination})"></div>
+    </section>
+</div>
+
+<div data-th-if="${itemsOnly}" data-th-remove="tag">
+    <div data-th-each="product : ${products}" data-th-remove="tag">
+        <div data-th-replace="/lib/enonic/market/fragments::product-listing-item-fragment(product=${product})"/>
+    </div>
+</div>

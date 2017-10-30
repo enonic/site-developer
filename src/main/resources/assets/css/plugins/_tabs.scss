@@ -1,0 +1,108 @@
+.js-tabs {
+  position: relative;
+
+  &__list {
+    @include list-unstyled;
+    margin: 0;
+    position: relative;
+    border-bottom: 1px solid $color-gallery;
+  }
+
+  &__list--vertical {
+    display: block;
+    overflow: hidden;
+    border: 1px solid $color-pelorous;
+
+    &::after {
+      content: "☰"; /* "Three Line Menu Navicon" shows up */
+      position: absolute;
+      color: $color-white;
+      top: 8px;
+      right: 15px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .js-tabs__item {
+      display: block;
+      text-align: center;
+    }
+
+    .js-tabs__link {
+      position: absolute; /* Stack links on top of each other */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 10px 20px;
+
+
+      &[aria-selected=true] {
+        position: relative;
+        border: 0;
+        z-index: 1; /* Active tab is on top */
+        background: $color-pelorous;
+        color: $color-white;
+      }
+    }
+
+    &.js-tabs__list--open {
+      .js-tabs__link {
+        position: relative;
+      }
+    }
+  }
+
+  &__item {
+    display: inline-block;
+  }
+
+
+
+
+
+  &__link {
+    //display: inline-block;
+    display: block;
+    padding: 20px 30px;
+    color: $color-dove-gray;
+    text-transform: uppercase;
+    cursor: pointer;
+    //text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    &:focus,
+    &:hover,
+    &:active,
+    &[aria-selected="true"] {
+      color: $color-pelorous;
+    }
+  }
+
+  &__panels {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__panel {
+    width: 100%;
+    padding: 20px 0;
+    position: absolute;
+    visibility: hidden;
+
+
+    &[aria-hidden=false] {
+      visibility: inherit;
+    }
+  }
+
+  &__indicator {
+    background: $color-pelorous;
+    position: absolute;
+    bottom: -4px;
+    height: 4px;
+    will-change: left, width;
+    transition: left 0.3s ease-out, width 0.3s ease-out;
+  }
+}

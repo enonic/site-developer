@@ -1,0 +1,117 @@
+.fp-intro {
+  position: relative;
+  background: $color-white;
+  padding-bottom: 30px;
+  margin-top: -10px;
+
+  &__header {
+    color: #333;
+    text-align: center;
+    padding: 0 0 30px 0;
+  }
+
+  &__heading {
+
+    /*&--main {
+      @include font-size(63);
+      margin: 0 0 20px 0;
+      display: block;
+
+      @include breakpoint(max-width medium) {
+        display: none;
+      }
+    }*/
+
+    &--main {
+      @include font-size(50);
+      //font-weight: 200;
+
+      @include breakpoint(max-width medium) {
+        @include font-size(30);
+      }
+
+      &-xp {
+
+        &-text {
+          @include font-size(50);
+
+          @include breakpoint(max-width medium) {
+            @include font-size(30);
+          }
+        }
+
+
+
+        @include breakpoint(medium) {
+          &-text {
+            display: none;
+          }
+
+          &:after {
+            content: '';
+            display: inline-block;
+            background: url('../img/xp-shield.svg') left center no-repeat;
+            background-size: contain;
+            width: 35px;
+            height: 45px;
+            vertical-align: bottom;
+          }
+        }
+
+      }
+    }
+
+  }
+
+
+
+
+
+  .container {
+    position: relative;
+  }
+
+  &-search {
+    &__search-box {
+      position: relative;
+    }
+
+    &__input {
+      display: block;
+      width: 100%;
+      color: #333;
+      height: 46px;
+      padding: 10px 40px;
+      @include font-size(16);
+      line-height: 1.333;
+
+      @extend .form-control;
+    }
+
+    &__icon {
+      position: absolute;
+      pointer-events: none;
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      top: 11px;
+      left: 12px;
+    }
+  }
+
+
+
+
+  &__xp-link {
+    text-align: center;
+    display: block;
+    margin: 1em 0;
+    color: $color-black;
+  }
+
+
+}
+
+
+
+

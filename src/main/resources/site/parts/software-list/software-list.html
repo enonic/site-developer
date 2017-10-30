@@ -1,0 +1,13 @@
+<div data-th-unless="${itemsOnly}" class="software-list">
+    <header class="software-list__header">
+        <h1 class="software-list__heading" data-th-text="${heading}">Libs</h1>
+        <div class="software-list__preface" data-th-if="${preface}" data-th-utext="${preface}">Preface</div>
+    </header>
+    <div data-th-replace="/lib/enonic/market/fragments::product-listing-fragment(products=${software},pagination=${pagination})"></div>
+</div>
+
+<div data-th-if="${itemsOnly}" data-th-remove="tag">
+    <div data-th-each="product : ${software}" data-th-remove="tag">
+        <div data-th-replace="/lib/enonic/market/fragments::product-listing-item-fragment(product=${product})"/>
+    </div>
+</div>

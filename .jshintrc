@@ -1,0 +1,5 @@
+{
+        "browser"       : true,   // Standard browser globals e.g. `window`, `document`.
+        "node": true,
+        "jquery": true
+}
