@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+  <display-name>Category</display-name>
+  <super-type>base:structured</super-type>
+  <is-abstract>false</is-abstract>
+  <form>
+    <input name="description" type="TextLine">
+      <label>Description</label>
+      <occurrences minimum="1" maximum="1"/>
+    </input>
+    <input name="key" type="TextLine">
+      <label>Key</label>
+      <occurrences minimum="0" maximum="1"/>>
+    </input>
+    <input name="url" type="TextLine">
+      <label>Url</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </form>
+</content-type>
