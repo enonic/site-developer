@@ -124,6 +124,7 @@
   &-copyright {
     background-color: $color-mine-shaft;
     padding: 20px 0;
+    @include font-size(8.75);
 
     &-text {
       @extend .container;

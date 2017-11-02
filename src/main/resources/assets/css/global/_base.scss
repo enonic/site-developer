@@ -5,12 +5,11 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 62.5%;
+  font-size: 100%;
 }
 
 body {
   font-family: $font-family-text;
-  @include font-size(14);
   min-height: 100vh;
   position: relative;
 }
@@ -42,9 +41,8 @@ h2, .h2 {
 }
 
 h3, .h3 {
-  @include font-size(16);
+  @include font-size(10);
   font-weight: 400;
-  text-transform: uppercase;
 }
 
 h4, .h4 {
