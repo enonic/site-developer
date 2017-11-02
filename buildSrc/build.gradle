@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.jsoup:jsoup:1.10.2'
+    compile 'org.yaml:snakeyaml:1.18'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.google.code.gson:gson:2.8.1'
+}

@@ -8,6 +8,17 @@ plugins {
     id "com.moowork.node" version "0.13"
 }
 
+// Imports.
+import com.enonic.tools.SyncPlugin
+
+// Plugins.
+apply plugin: SyncPlugin
+
+syncOpts {
+    docsEndpoint = 'http://localhost:8080/portal/master/sitedeveloper/_/service/com.enonic.app.sitedeveloper/rpc'
+    docsAuthKey = '12345'
+}
+
 repositories {
     jcenter()
     xp.enonicRepo()
@@ -23,7 +34,7 @@ app {
 dependencies {
     compile "com.enonic.xp:core-api:${xpVersion}"
     include "com.enonic.xp:lib-content:${xpVersion}"
-    include "com.enonic.xp:lib-content:${xpVersion}"
+    include "com.enonic.xp:lib-context:${xpVersion}"
     include "com.enonic.xp:lib-portal:${xpVersion}"
     include "com.enonic.xp:lib-thymeleaf:${xpVersion}"
     testCompile 'junit:junit:4.10'
