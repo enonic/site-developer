@@ -1,0 +1,18 @@
+.toc {
+  padding: 10px 2.4375em 10px 2.4375em;
+  order: 1;
+
+  position: sticky;
+  top: 0;
+  height: 100%;
+  float: left;
+
+  > .toc-list {
+    margin-left: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    position: static;
+    height: auto;
+  }
+}

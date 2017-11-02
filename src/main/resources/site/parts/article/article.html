@@ -1,0 +1,24 @@
+<div class="doc-content">
+    <div id="js-toc" class="toc">
+    </div>
+
+    <div class="article">
+        <div id="title">
+            <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
+        </div>
+        <div data-th-remove="tag" data-th-utext="${content}">Content here...</div>
+    </div>
+</div>
+
+<script data-th-src="${portal.assetUrl({'_path=js/tocbot.min.js'})}"></script>
+<script type="text/javascript">
+    tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '#js-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.article',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h2, h3, h4'
+    });
+</script>
+

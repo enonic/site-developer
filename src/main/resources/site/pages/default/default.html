@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" data-th-href="${portal.assetUrl({'_path=css/coderay.css'})}">
+    <link rel="stylesheet" data-th-href="${portal.assetUrl({'_path=css/asciidoctor.css'})}">
     <div data-th-replace="/site/pages/fragments/fragments::head-meta-fragment"></div>
     <div data-th-replace="/site/pages/fragments/fragments::head-assets-fragment"></div>
     <title data-th-text="${pageTitle}">Enonic Market</title>
@@ -12,7 +14,9 @@
 <header class="page-default__header">
     <div class="page-default__header-container">
 
-        <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='page-default')"></div>
+        <a class="page-default__header-logo-link" data-th-href="${baseUrl}">
+            <img data-th-src="${portal.assetUrl({'_path=img/logo.svg'})}" data-th-title="${siteName}" class="page-default__header-logo-img">
+        </a>
 
 
         <form class="page-default__header-search-form live-search__form" method="get" action="#"
@@ -93,16 +97,6 @@
 </main>
 
 <footer class="page-default__footer" role="contentinfo">
-
-    <nav class="page-default__footer-nav">
-        <ul class="page-default__footer-nav-list">
-            <li data-th-each="menuItem : ${menuItems}" class="page-default__footer-nav-item">
-                <a class="page-default__footer-nav-link" href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
-                   data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"
-                   data-th-classappend="${menuItem.path == currentPath ? 'page-default__footer-nav-link&#45;&#45;active' : ''}">Page title</a>
-            </li>
-        </ul>
-    </nav>
 
     <section class="page-default__footer-social">
         <h3 class="page-default__footer-social-heading">Follow us</h3>

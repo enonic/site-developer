@@ -1,0 +1,26 @@
+.doc-content {
+  display: flex;
+  justify-content: center;
+
+  #content {
+    margin-top: 0;
+
+    h2 {
+      font-size: 2rem;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .doc-content {
+    display: block;
+
+    > div:first-child {
+      float: none !important;
+    }
+
+    #content, #title {
+      padding-right: 2.4375em;
+    }
+  }
+}
