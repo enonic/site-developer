@@ -2,7 +2,7 @@
 var syncLib = require('/lib/sync');
 
 // Variables.
-var authKey = app.config.rpcAuthKey;
+var authKey = app.config.rpcAuthKey || '12345';
 var allowedIps = app.config.rpcAllowedIps || '127.0.0.1';
 
 // Check auth key.

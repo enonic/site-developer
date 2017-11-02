@@ -85,32 +85,30 @@ exports.updateEntry = function (entry) {
             }
         });
     } else {
-        var category = getContent({
-            key: sitePath + '/' + entry.category,
+        var docsFolder = getContent({
+            key: sitePath + '/docs',
             branch: branch
         });
 
-        if (!category) {
-            category = createContent({
-                name: entry.category,
+        if (!docsFolder) {
+            docsFolder = createContent({
+                name: 'docs',
                 parentPath: sitePath,
-                displayName: capitalizeFirstLetter(entry.category),
-                contentType: app.name + ':category',
+                displayName: 'docs',
+                contentType: 'base:folder',
                 branch: branch,
-                data: {
-                    description: entry.category
-                }
+                data: {}
             });
         }
 
         var props = {
             name: entry.name,
-            parentPath: category._path,
+            parentPath: docsFolder._path,
             contentType: app.name + ':article',
             branch: branch,
             requireValid: false,
             data: {
-                category: category._id
+                category: docsFolder._id
             }
         };
 
