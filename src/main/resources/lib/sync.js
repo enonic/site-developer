@@ -70,7 +70,7 @@ function updateData(entry, c) {
 // Update entry.
 exports.updateEntry = function (entry) {
     var content = getContent({
-        key: sitePath + '/' + entry.category + '/' + entry.name,
+        key: sitePath + '/docs/' + entry.name,
         branch: branch
     });
 
