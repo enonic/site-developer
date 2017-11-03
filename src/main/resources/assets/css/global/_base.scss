@@ -55,11 +55,7 @@ a {
 }
 
 main {
-  padding-top: 120px;
-
-  @include breakpoint(small medium) {
-    padding-top: 90px;
-  }
+  padding-top: 60px;
 }
 
 
