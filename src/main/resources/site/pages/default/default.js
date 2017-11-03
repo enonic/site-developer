@@ -42,7 +42,7 @@ function handleGet(req) {
             'id': searchResultPage
         });
         model.serviceUrl = libs.portal.serviceUrl({
-            service: 'software-search'
+            service: 'search'
         });
 
         model.showHeaderSearch = showHeaderSearch();
