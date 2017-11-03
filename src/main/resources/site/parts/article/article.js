@@ -31,7 +31,8 @@ exports.get = function (req) {
     var book = findBook(req);
     if (!book) {
         return {
-            status: 404
+            body: '<div><h3>Your doc to be placed here</h3></div>',
+            contentType: 'text/html'
         };
     }
 
