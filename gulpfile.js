@@ -40,7 +40,7 @@ var path = require('path');
 var svgmin = require('gulp-svgmin');
 
 // Default task, runs all other tasks
-gulp.task('build', ['sass', 'jsHint', 'webpack', 'minifyImages', 'svgstore', 'minifyHTML']);
+gulp.task('build', ['sass', 'webpack', 'minifyImages', 'svgstore', 'minifyHTML']);
 
 // Compile Sass files
 // Create CSS sourcemaps
