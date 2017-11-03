@@ -36,7 +36,7 @@ function queryContent(params) {
 
 // Find all entry keys.
 exports.findAllEntries = function () {
-    var expr = "type ='" + app.name + ":article' AND _parentPath LIKE '/content/" + sitePath + "/*'";
+    var expr = "type ='" + app.name + ":doc' AND _parentPath LIKE '/content/" + sitePath + "/*'";
 
     var result = queryContent({
         query: expr,
@@ -104,7 +104,7 @@ exports.updateEntry = function (entry) {
         var props = {
             name: entry.name,
             parentPath: docsFolder._path,
-            contentType: app.name + ':article',
+            contentType: app.name + ':doc',
             branch: branch,
             requireValid: false,
             data: {

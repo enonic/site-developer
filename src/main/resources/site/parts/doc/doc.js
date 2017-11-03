@@ -44,7 +44,7 @@ exports.get = function (req) {
         baseUrl: util.getSiteUrl()
     };
 
-    var view = resolve('article.html');
+    var view = resolve('doc.html');
 
     return {
         body: thymeleafLib.render(view, model),

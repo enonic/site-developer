@@ -36,7 +36,7 @@ exports.findEntry = function (entry) {
 
 // Search entries.
 exports.search = function (query, start, count) {
-    var expr = "type ='" + app.name + ":article' " +
+    var expr = "type ='" + app.name + ":doc' " +
                "AND _parentPath LIKE '/content" + util.getSitePath() + "/*' " +
                "AND fulltext('data.raw', '" + (query || '') + "')";
 
