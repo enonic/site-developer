@@ -3,7 +3,7 @@ var contextLib = require('/lib/xp/context');
 var contentLib = require('/lib/xp/content');
 
 var branch = 'draft';
-var sitePath = '/sitedeveloper';
+var sitePath = '/developersite';
 
 function sudo(callback) {
     return contextLib.run({

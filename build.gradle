@@ -15,7 +15,7 @@ import com.enonic.tools.SyncPlugin
 apply plugin: SyncPlugin
 
 syncOpts {
-    docsEndpoint = 'http://localhost:8080/portal/master/sitedeveloper/_/service/com.enonic.app.sitedeveloper/rpc'
+    docsEndpoint = 'http://localhost:8080/portal/master/developersite/_/service/com.enonic.site.developer/rpc'
     docsAuthKey = '12345'
 }
 
@@ -26,7 +26,7 @@ repositories {
 
 app {
     name = project.appName
-    displayName = "Enonic Site Developer"
+    displayName = "Enonic Developer Site"
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
 }
