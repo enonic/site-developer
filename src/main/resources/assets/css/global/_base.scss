@@ -6,13 +6,11 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 100%;
-  padding: 0px !important;
 }
 
 body {
   font-family: $font-family-text;
   min-height: 100vh;
-  position: relative;
 }
 
 h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
@@ -59,36 +57,9 @@ main {
   padding-top: 60px;
 }
 
-
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 10px;
-  padding-right: 10px;
-  max-width: 100%;
-  @extend %clearfix;
-
-  @include breakpoint(small medium) {
-    width: 720px;
-  }
-
-  @include breakpoint(medium large) {
-    width: 940px;
-  }
-
-  @include breakpoint(large) {
-    width: 1024px;
-  }
-}
-
-
-
 .visually-hidden {
   @extend %visually-hidden;
 }
-
-
-
 
 .form-control {
   border: 1px solid $color-form-input-border;

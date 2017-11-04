@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mixin>
+    <display-name>Theme color picker</display-name>
+    <items>
+        <input name="themeColor" type="RadioButton">
+            <label>Theme color</label>
+            <occurrences minimum="0" maximum="1"/>
+            <config>
+              <option value="white">White</option>
+              <option value="grey">Grey</option>
+              <option value="blue">Blue</option>
+            </config>
+        </input>
+    </items>
+</mixin>
+

@@ -131,7 +131,7 @@ meta.foundation-mq-large { font-family: "only screen and (min-width:1440px)"; wi
 
 html, body { font-size: 100%; }
 
-body { background: white; color: #02303A; padding: 0; margin: 0; font-family: "Lato", Arial, sans-serif; font-weight: normal; font-style: normal; line-height: 1; position: relative; cursor: auto; }
+body { background: white; color: #02303A; padding: 0; margin: 0; font-family: "Lato", Arial, sans-serif; font-weight: normal; font-style: normal; line-height: 1; cursor: auto; }
 
 a:hover { cursor: pointer; }
 

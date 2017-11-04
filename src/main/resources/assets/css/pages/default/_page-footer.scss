@@ -4,7 +4,7 @@
   text-align: center;
 
   &-nav {
-    @extend .container;
+    @include container;
     border-bottom: 1px solid $color-mine-shaft;
     padding: 35px 0;
 
@@ -53,7 +53,7 @@
   }
 
   &-social {
-    @extend .container;
+    @include container;
     padding-top: 30px;
     padding-bottom: 30px;
 
@@ -127,7 +127,7 @@
     @include font-size(8.75);
 
     &-text {
-      @extend .container;
+      @include container;
       text-align: left;
     }
   }

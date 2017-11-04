@@ -1,20 +1,20 @@
-@mixin container() {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 20px;
-  padding-right: 20px;
-  max-width: 100%;
-  @extend %clearfix;
+@mixin container {
+  margin: 0 auto;
+  width: 100%;
+  padding-left: 120px;
+  padding-right: 120px;
 
-  @include breakpoint(small medium) {
-    width: 720px;
+  @include media('>=large') {
+    max-width: 1280px;
   }
 
-  @include breakpoint(medium large) {
-    width: 940px;
+  @include media('>=medium', '<large') {
+    padding-left: 60px;
+    padding-right: 60px;
   }
 
-  @include breakpoint(large) {
-    width: 1024px;
+  @include media('<medium') {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
