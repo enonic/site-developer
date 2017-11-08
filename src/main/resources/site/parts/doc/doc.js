@@ -40,7 +40,6 @@ exports.get = function (req) {
         siteName: util.getSiteDisplayName(),
         title: book.title,
         content: book.html,
-        socialLinks: util.getSocialLinks(),
         baseUrl: util.getSiteUrl()
     };
 

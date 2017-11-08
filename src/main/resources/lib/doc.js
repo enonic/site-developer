@@ -12,7 +12,7 @@ function toEntry(node, html) {
         key: node._name,
         vendor: node.data.vendor,
         name: node._name,
-        title: node.data.title,
+        title: node.displayName,
         tags: node.data.tags,
         baseUrl: node.data.baseUrl,
         url: util.getSiteUrl() + '/docs/' + node._name

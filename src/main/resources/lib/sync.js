@@ -59,7 +59,7 @@ exports.findAllEntries = function () {
 
 // Update data.
 function updateData(entry, c) {
-    c.data.title = entry.title
+    c.displayName = entry.title
     c.data.vendor = entry.vendor
     c.data.tags = entry.tags;
     c.data.baseUrl = entry.baseUrl;

@@ -8,10 +8,6 @@
       <label>Short description</label>
       <occurrences minimum="0" maximum="1"/>
     </input>
-    <input name="title" type="TextLine">
-      <label>Title</label>
-      <occurrences minimum="0" maximum="1"/>
-    </input>
     <input name="key" type="TextLine">
       <label>Key</label>
       <occurrences minimum="0" maximum="1"/>>
