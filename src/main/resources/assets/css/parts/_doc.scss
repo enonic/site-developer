@@ -16,14 +16,22 @@
   a {
     color: $color-anchor;
   }
+
+  .title {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .doc-content {
     display: block;
 
-    > div:first-child {
-      float: none !important;
+    #title {
+      display: none;
+    }
+
+    .title {
+      display: block;
     }
 
   }
