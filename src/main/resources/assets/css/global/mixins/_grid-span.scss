@@ -1,0 +1,12 @@
+@mixin grid-span($cols) {
+  width: 100% / $grid-columns * $cols;
+  float: left;
+  box-sizing: border-box;
+  padding: 0 10px;
+
+  @if $cols <= 9 {
+    @include media('<medium') {
+      width: 100%;
+    }
+  }
+}

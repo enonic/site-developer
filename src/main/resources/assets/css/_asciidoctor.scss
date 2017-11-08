@@ -196,7 +196,7 @@ h1 small, h2 small, h3 small, #toctitle small, .sidebarblock > .content > .title
 
 h1 { font-size: 2.125em; }
 
-h2 { font-size: 1.6875em; }
+h2 { font-size: 2.7rem; }
 
 h3, #toctitle, .sidebarblock > .content > .title { font-size: 1.375em; }
 
@@ -218,7 +218,7 @@ small { font-size: 60%; line-height: inherit; }
 code { font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; font-weight: normal; color: rgba(0, 0, 0, 0.9); }
 
 /* Lists */
-ul, ol, dl { font-size: 1em; line-height: 1.6; margin-bottom: 1.25em; list-style-position: outside; font-family: "Lato", Arial, sans-serif; }
+ul, ol, dl { font-size: 1.6rem; line-height: 1.6; margin-bottom: 2rem; list-style-position: outside; font-family: "Lato", Arial, sans-serif; }
 
 ul, ol { margin-left: 1.5em; }
 ul.no-bullet, ol.no-bullet { margin-left: 1.5em; }
@@ -262,7 +262,7 @@ blockquote, blockquote p { line-height: 1.6; color: rgba(0, 0, 0, 0.85); }
 @media only screen and (min-width: 768px) { h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 { line-height: 1.2; }
   h1 { font-size: 32px; }
   h2 { font-size: 32px; }
-  h3, #toctitle, .sidebarblock > .content > .title { font-size: 1.6875em; }
+  h3, #toctitle, .sidebarblock > .content > .title { font-size: 2.7rem; }
   h4 { font-size: 1.4375em; } }
 /* Tables */
 table { background: white; margin-bottom: 1.25em; border: solid 1px #dedede; }
@@ -308,7 +308,7 @@ b.button:after { content: "]"; padding: 0 2px 0 3px; }
 
 p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 
-#header, #title, #content, #footnotes, #footer { width: 100%; margin-left: auto; margin-right: auto; margin-top: 0; margin-bottom: 0; max-width: 62.5em; *zoom: 1; position: relative; /*padding-left: 0.9375em; padding-right: 0.9375em;*/ }
+#header, #title, #content, #footnotes, #footer { width: 100%; margin-left: auto; margin-right: auto; margin-top: 0; margin-bottom: 0; max-width: 100rem; *zoom: 1; position: relative; /*padding-left: 0.9375em; padding-right: 0.9375em;*/ }
 #header:before, #header:after, #title:before, #title:after, #content:before, #content:after, #footnotes:before, #footnotes:after, #footer:before, #footer:after { content: " "; display: table; }
 #header:after, #content:after, #footnotes:after, #footer:after { clear: both; }
 
@@ -333,7 +333,7 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 #header #revnumber { text-transform: capitalize; }
 #header #revnumber:after { content: "\00a0"; }
 
-#content > h1:not([class]) { color: #02303A; border-bottom: 1px solid #ddddd8; padding-bottom: 8px; margin-top: 0; padding-top: 1rem; margin-bottom: 1.25rem; }
+#content > h1:not([class]) { color: #02303A; border-bottom: 1px solid #ddddd8; padding-bottom: 8px; margin-top: 0; padding-top: 1.6rem; margin-bottom: 1.25rem; }
 
 #toc { border-bottom: 1px solid #efefed; padding-bottom: 0.5em; }
 #toc > ul { margin-left: 0.125em; }
@@ -382,7 +382,7 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 
 .audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
 
-.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; font-family: "Lato", Arial, sans-serif; font-size: 1rem; font-style: italic; }
+.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; font-family: "Lato", Arial, sans-serif; font-size: 1.6rem; font-style: italic; }
 
 table.tableblock > caption.title { white-space: nowrap; overflow: visible; max-width: 0; }
 
@@ -411,10 +411,10 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint { background: #f7f7f8; }
 .sidebarblock .literalblock pre, .sidebarblock .listingblock pre:not(.highlight), .sidebarblock .listingblock pre[class="highlight"], .sidebarblock .listingblock pre[class^="highlight "], .sidebarblock .listingblock pre.CodeRay, .sidebarblock .listingblock pre.prettyprint { background: #f2f1f1; }
 
-.literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { -webkit-border-radius: 4px; border-radius: 4px; word-wrap: break-word; padding: 1em; font-size: 0.8125em; }
+.literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { -webkit-border-radius: 4px; border-radius: 4px; word-wrap: break-word; padding: 1.6rem; font-size: 1.3rem; }
 .literalblock pre.nowrap, .literalblock pre[class].nowrap, .listingblock pre.nowrap, .listingblock pre[class].nowrap { overflow-x: auto; white-space: pre; word-wrap: normal; }
-@media only screen and (min-width: 768px) { .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { font-size: 0.90625em; } }
-@media only screen and (min-width: 1280px) { .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { font-size: 1em; } }
+@media only screen and (min-width: 768px) { .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { font-size:  1.45rem; } }
+@media only screen and (min-width: 1280px) { .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { font-size: 1.6rem; } }
 
 .literalblock.output pre { color: #f7f7f8; background-color: rgba(0, 0, 0, 0.9); }
 
@@ -702,7 +702,7 @@ h1, h2, p, td.content, span.alt { letter-spacing: -0.01em; }
 
 p strong, td.content strong, div.footnote strong { letter-spacing: -0.005em; }
 
-p, blockquote, dt, td.content, span.alt { font-size: 1.0625rem; }
+p, blockquote, dt, td.content, span.alt { font-size: 1.7rem; }
 
 p { margin-bottom: 1.25rem; }
 

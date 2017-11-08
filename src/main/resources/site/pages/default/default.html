@@ -96,40 +96,73 @@
     </div>
 </main>
 
-<footer class="page-default__footer" role="contentinfo">
+<footer class="page-default__footer">
 
-    <section class="page-default__footer-social">
-        <h3 class="page-default__footer-social-heading">Follow us</h3>
-        <ul class="page-default__footer-social-list">
-            <li class="page-default__footer-social-item" data-th-each="socialLink : ${socialLinks}">
-                <a class="page-default__footer-social-link" data-th-href="${socialLink.url}" data-th-classappend="${'page-default__footer-social-link&#45;&#45;' + socialLink.name}" data-th-text="${socialLink.name}">Twitter</a>
-            </li>
-        </ul>
+    <!--<h2>Footer navigation</h2>-->
+
+    <!--<nav id="footer-nav">-->
+        <!--<ul>-->
+            <!--<li data-th-each="menuItem : ${menuItems}">-->
+                <!--<a href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"-->
+                   <!--data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"-->
+                   <!--data-th-class="${menuItem.path == currentPath ? 'active' : ''}">Page title</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</nav>-->
+
+    <section class="social">
+        <div class="container">
+            <h3>Follow us</h3>
+            <ul>
+                <li>
+                    <a href="https://twitter.com/EnonicHQ" class="twitter">Twitter</a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/enonic.no" class="facebook">Facebook</a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/company/enonic" class="linkedin">LinkedIn</a>
+                </li>
+                <li>
+                    <a href="https://plus.google.com/+EnonicCommunity/" class="gplus">Google+</a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/user/EnonicCommunity" class="youtube">Youtube</a>
+                </li>
+                <li>
+                    <a href="http://webagility.com" class="webagility">Webagility.com</a>
+                </li>
+            </ul>
+        </div>
     </section>
 
-    <!--<h2>Footer navigation</h2>
+    <!--<section class="offices">-->
+        <!--<h3>Locations</h3>-->
 
+        <!--<div class="map">-->
+            <!--<a href="contact-us.html" data-th-href="${contactPageUrl}">-->
+                <!--<img src="../../assets/img/footer-map.png"-->
+                     <!--data-th-src="${portal.assetUrl({'_path=img/footer-map.png'})}"-->
+                     <!--alt="World map with Enonic offices"/>-->
+                <!--&lt;!&ndash; http://maps.googleapis.com/maps/api/staticmap?center=36.929541,-4.242653&zoom=0&scale=false&size=200x200&maptype=roadmap&sensor=false&format=png&visual_refresh=true&markers=size:mid%7Ccolor:red|San%20Francisco|Oslo,Norway|Bogota,Colombia| &ndash;&gt;-->
+            <!--</a>-->
+        <!--</div>-->
+        <!--<div class="international">-->
+            <!--<ul>-->
+                <!--<li data-th-each="office : ${offices}">-->
+                    <!--<h4>-->
+                        <!--<a href="contact-us.html" data-th-href="${contactPageUrl}"-->
+                           <!--data-th-text="${office.displayName}">Oslo</a>-->
+                    <!--</h4>-->
+                    <!--<a href="tel:+4690909090" class="phone" data-th-if="${office.phone}"-->
+                       <!--data-th-text="${office.phone}" data-th-href="'tel:' + ${office.phoneNoSpace}">+46 909 09 090</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</section>-->
 
-
-    -->
-
-    <!--<section class="offices">
-        <h3>Locations</h3>
-
-        <div class="map">
-            <a href="contact-us.html" data-th-href="${contactPageUrl}">
-                <img src="../../assets/img/footer-map.png"
-                     data-th-src="${portal.assetUrl({'_path=img/footer-map.png'})}"
-                     alt="World map with Enonic offices"/>
-                &lt;!&ndash; http://maps.googleapis.com/maps/api/staticmap?center=36.929541,-4.242653&zoom=0&scale=false&size=200x200&maptype=roadmap&sensor=false&format=png&visual_refresh=true&markers=size:mid%7Ccolor:red|San%20Francisco|Oslo,Norway|Bogota,Colombia| &ndash;&gt;
-            </a>
-        </div>
-    </section>-->
-
-    <div class="page-default__footer-copyright">
-        <div  class="page-default__footer-copyright-text">
-            Copyright &#169; <a href="https://enonic.com">Enonic AS</a>. All Rights Reserved. We use cookies.
-        </div>
+    <div class="copyright">
+        <p>Copyright &#169; Enonic AS. All Rights Reserved. We use cookies.</p>
     </div>
 </footer>
 

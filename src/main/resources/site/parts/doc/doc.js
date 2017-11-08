@@ -31,7 +31,7 @@ exports.get = function (req) {
     var book = findBook(req);
     if (!book) {
         return {
-            body: '<div><h3>Your doc to be placed here</h3></div>',
+            body: '<div class="doc-content"><h3 style="text-align: center">Your doc to be placed here</h3></div>',
             contentType: 'text/html'
         };
     }

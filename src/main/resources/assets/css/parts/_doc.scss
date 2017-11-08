@@ -1,4 +1,7 @@
 .doc-content {
+  @import '_asciidoctor';
+  @import '_toc';
+
   display: flex;
   justify-content: center;
 
@@ -8,6 +11,10 @@
     h2 {
       font-size: 2rem;
     }
+  }
+
+  a {
+    color: $color-anchor;
   }
 }
 
@@ -19,8 +26,5 @@
       float: none !important;
     }
 
-    #content, #title {
-      padding-right: 2.4375em;
-    }
   }
 }

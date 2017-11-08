@@ -10,6 +10,7 @@ $color-mine-shaft: #272727;
 $color-cod-gray: #1c1c1c;
 $color-silver-chalice: #aaa;
 $color-aqua-haze: #F4F7F9;
+$color-text-light: rgb(255,255,255);
 
 $color-anchor: $color-pelorous;
 $color-headings: inherit;
@@ -20,9 +21,9 @@ $color-form-input-border-focus: $color-cornflower-blue;
 /********** Breakpoints *********/
 
 $breakpoints: (
-  'small':  1px,
-  'medium': 600px,
-  'large':  960px,
+  'small':  320px,
+  'medium': 768px,
+  'large':  1024px,
   'xlarge': 1280px
 );
 
