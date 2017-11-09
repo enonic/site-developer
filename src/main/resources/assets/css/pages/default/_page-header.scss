@@ -9,10 +9,6 @@
 
   &-logo {
 
-    &-link {
-      flex-grow: 1;
-    }
-
     &-img {
       .main-nav-toggled & {
         g {
@@ -37,6 +33,10 @@
         fill: $color-white;
       }
     }
+  }
+
+  &-spacebreaker {
+    flex-grow: 1;
   }
 
   .main-nav-toggled & {

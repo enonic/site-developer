@@ -12,6 +12,7 @@
             this.searchResultContainer = this.form.find('.live-search__result');
             this.noResults = this.form.find('.live-search__no-results');
             this.bindKeyUp();
+            this.bindKeyDown();
             this.bindBackdropClick();
         };
 
@@ -29,9 +30,27 @@
                         break;
                     case 27: // esc
                         that.hideMenu();
+                        that.hideNoResults();
+                        break;
+                    case 18: // alt
+                        that.hideNoResults();
                         break;
                     default:
                         that.processInput();
+                        break;
+                }
+            });
+        };
+
+        /**
+         * Bind key down events
+         * Currently only to handle 'tab' pressed
+         */
+        this.bindKeyDown = function () {
+            that.inputEl.on('keydown', function(e) {
+                switch (e.which) {
+                    case 9: // tab
+                        that.hideNoResults();
                         break;
                 }
             });
@@ -74,6 +93,21 @@
         this.emptyMenu = function () {
             that.searchResultContainer.empty();
         };
+
+        /**
+         * Show no-results block
+         */
+        this.showNoResults = function () {
+            this.setSearchNoResultWidth()
+            this.noResults.show();
+        }
+
+        /**
+         * Hide no-results block
+         */
+        this.hideNoResults = function () {
+            this.noResults.hide();
+        }
 
         /**
          * Selects the current active search result
@@ -142,7 +176,7 @@
         this.processHits = function (hits, searchTerm) {
             if (hits.length) {
                 that.hasResults = true;
-                that.noResults.hide();
+                that.hideNoResults();
                 that.emptyMenu();
                 that.showMenu();
                 $.each(hits, function(index, hit) {
@@ -163,7 +197,7 @@
                 that.hasResults = false;
                 that.emptyMenu();
                 that.hideMenu();
-                that.noResults.show();
+                that.showNoResults();
             }
         };
 
@@ -177,6 +211,7 @@
                 if (that.searchResultsIsVisible && !clickIsOnForm && !clickIsOnSearchResultContainer) {
                     this.hideMenu();
                 }
+                this.noResults.hide();
             }, this));
         };
 
@@ -187,6 +222,15 @@
         this.setSearchResultWidth = function () {
             var inputWidth = that.inputEl.outerWidth();
             that.searchResultContainer.outerWidth(inputWidth);
+        };
+
+        /**
+         * Set the width of the no results block
+         * Should be identical to search input width
+         */
+        this.setSearchNoResultWidth = function () {
+            var inputWidth = that.inputEl.outerWidth();
+            that.noResults.outerWidth(inputWidth);
         };
     }
 

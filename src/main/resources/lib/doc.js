@@ -3,26 +3,30 @@ var contentLib = require('/lib/xp/content');
 var util = require('/lib/util');
 
 // To entry.
-function toEntry(node, html) {
-    if (!node) {
+function toEntry(content, html) {
+    if (!content || !isDoc(content)) {
         return;
     }
 
     var result = {
-        key: node._name,
-        vendor: node.data.vendor,
-        name: node._name,
-        title: node.displayName,
-        tags: node.data.tags,
-        baseUrl: node.data.baseUrl,
-        url: util.getSiteUrl() + '/docs/' + node._name
+        key: content._name,
+        vendor: content.data.vendor,
+        name: content._name,
+        title: content.displayName,
+        tags: content.data.tags,
+        baseUrl: content.data.baseUrl,
+        url: util.getSiteUrl() + '/docs/' + content._name
     };
 
     if (html) {
-        result.html = node.data.html
+        result.html = content.data.html
     }
 
     return result;
+}
+
+function isDoc(content) {
+    return content.type === app.name + ':doc';
 }
 
 // Get entry.
