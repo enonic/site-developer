@@ -27,11 +27,21 @@ function toEntry(node, html) {
 
 // Get entry.
 exports.findEntry = function (entry) {
-    var node = contentLib.get({
-        key: util.getSitePath() + '/' + entry.category + '/' + entry.name,
+    var nodeByPath = contentLib.get({
+        key: util.getSitePath() + '/' + entry.category + '/' + entry.name
     });
 
-    return toEntry(node, true);
+    if (nodeByPath) {
+        return toEntry(nodeByPath, true);
+    }
+
+    var nodeById = contentLib.get({
+        key: entry.name
+    });
+
+    if (nodeById) {
+        return toEntry(nodeById, true);
+    }
 };
 
 // Search entries.
