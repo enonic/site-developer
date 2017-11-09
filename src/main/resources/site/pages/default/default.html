@@ -12,10 +12,7 @@
 <header class="page-default__header">
     <div class="page-default__header-container">
 
-        <a class="page-default__header-logo-link" data-th-href="${baseUrl}">
-            <img data-th-src="${portal.assetUrl({'_path=img/logo.svg'})}" data-th-title="${siteName}" class="page-default__header-logo-img">
-        </a>
-
+        <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='page-default')"></div>
 
         <form class="page-default__header-search-form live-search__form" method="get" action="#"
               data-th-if="${showHeaderSearch}"
