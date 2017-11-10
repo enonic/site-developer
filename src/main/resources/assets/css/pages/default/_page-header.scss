@@ -4,6 +4,9 @@
   &-container {
     @include container;
     position: relative;
+  }
+
+  &-toolbar {
     display: flex;
   }
 

@@ -14,9 +14,10 @@
   }
 
   &-trigger {
-    padding-right: 0px;
-    z-index: 100;
+    right: 20px;
+    z-index: 101;
     background: none;
+    padding: 3px;
 
     transition: .3s;
     cursor: pointer;
@@ -46,7 +47,7 @@
 
     &-label {
       padding-right: 10px;
-      font-size: 14px;
+      font-size: 1.4rem;
     }
 
     &-icon {
@@ -205,8 +206,8 @@
   &[aria-expanded="true"] {
     display: block;
     opacity: 1;
+    z-index: 100;
     height: 100%;
-    position: absolute;
 
 
     @include breakpoint(medium) {
