@@ -1,0 +1,48 @@
+.promo {
+  display: flex;
+  margin-bottom: 1.25rem;
+
+  &__box {
+    flex: 1 1;
+    margin: 0;
+    padding: 10px 15px;
+    position: relative;
+    font-weight: 300;
+    min-height: 275px;
+    background-size: cover;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.15);
+    transition: all .25s cubic-bezier(.33,1.6,.66,1);
+
+    &:nth-child(2) {
+      margin: 0 10px;
+    }
+
+    &--red {
+      background-color: $color-highlight;
+    }
+
+    &--green {
+      background-color: $color-limeade;
+    }
+
+    &--blue {
+      background-color: #C4EBFF;
+    }
+  }
+
+  @include media('<medium') {
+    display: block;
+
+    &__box {
+      display: block;
+      margin: 10px 0;
+
+      &:nth-child(2)  {
+        margin: 10px 0;
+      }
+    }
+
+  }
+
+}
