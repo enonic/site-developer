@@ -69,3 +69,10 @@ main {
   @include form-control-focus;
 }
 
+.layout-padding-top {
+  padding-top: 60px;
+
+  @include media('<medium') {
+    padding-top: 30px;
+  }
+}
