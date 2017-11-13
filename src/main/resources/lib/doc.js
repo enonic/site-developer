@@ -15,7 +15,7 @@ function toEntry(content, html) {
         title: content.displayName,
         tags: content.data.tags,
         baseUrl: content.data.baseUrl,
-        url: util.getSiteUrl() + '/docs/' + content._name
+        url: util.getSiteUrl() + 'docs/' + content._name
     };
 
     if (html) {

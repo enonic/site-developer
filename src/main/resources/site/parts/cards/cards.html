@@ -1,0 +1,13 @@
+<div class="cards">
+    <div data-th-if="${cards.size()} > 0" data-th-remove="tag">
+        <div data-th-each="card : ${cards}" data-th-remove="tag">
+            <article class="cards__card">
+                <h3 class="cards__title"><a data-th-href="${card.url}" data-th-text="${card.title}">Title</a></h3>
+                <p class="cards__text" data-th-text="${card.text}">Text</p>
+            </article>
+        </div>
+    </div>
+    <div data-th-unless="${cards.size()} > 0" data-th-remove="tag">
+        <div class=""><h3 style="text-align: center">Add some docs!</h3></div>
+    </div>
+</div>
