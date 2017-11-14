@@ -1,5 +1,5 @@
 .promo {
-  display: flex;
+  display: flex; // aligning promo boxes
 
   &__box {
     flex: 1 1;
@@ -12,6 +12,11 @@
     border-radius: 2px;
     box-shadow: 0 1px 2px rgba(0,0,0,.15);
     transition: all .25s cubic-bezier(.33,1.6,.66,1);
+    text-decoration: none;
+
+    display: flex; // centering text inside
+    justify-content: center;
+    align-items: center;
 
     &:nth-child(2) {
       margin: 0 10px;
@@ -26,15 +31,19 @@
     }
 
     &--blue {
-      background-color: #C4EBFF;
+      background-color: $color-pelorous;
+    }
+
+    &-text {
+      color: $color-white;
+      font-size: 3rem;
     }
   }
 
   @include media('<medium') {
-    display: block;
+    flex-direction: column;
 
     &__box {
-      display: block;
       margin: 10px 0;
 
       &:nth-child(2)  {
