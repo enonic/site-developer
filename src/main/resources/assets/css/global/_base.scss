@@ -80,9 +80,9 @@ main {
 [data-portal-component-type='part'],
 [data-portal-component-type='text'],
 [data-portal-component-type='image']{
-  padding-bottom: 60px;
+  margin-bottom: 60px;
 
   @include media('<medium') {
-    padding-bottom: 30px;
+    margin-bottom: 30px;
   }
 }
