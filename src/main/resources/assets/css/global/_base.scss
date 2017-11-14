@@ -10,6 +10,9 @@ html {
 
 body {
   font-family: $font-family-text;
+  font-weight: normal;
+  line-height: 1.4;
+  @include font-size(14);
   min-height: 100vh;
 }
 
@@ -21,8 +24,9 @@ h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
 
 h1, .h1 {
   @include font-size(48);
-  font-weight: 300;
+  font-weight: lighter;
   margin-bottom: 0.4em;
+  text-transform: none;
 
   @include breakpoint(medium large) {
     @include font-size(40);
@@ -34,19 +38,20 @@ h1, .h1 {
 }
 
 h2, .h2 {
-  @include font-size(30);
+  @include font-size(24);
   margin-bottom: 1em;
-  font-weight: 300;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 h3, .h3 {
-  @include font-size(10);
-  font-weight: 400;
+  @include font-size(16);
+  font-weight: normal;
+  text-transform: uppercase;
 }
 
 h4, .h4 {
-  @include font-size(14);
-  font-weight: 400;
+
 }
 
 a {

@@ -20,6 +20,10 @@
   .title {
     display: none;
   }
+
+  h2, h3 {
+    text-transform: none;
+  }
 }
 
 @media screen and (max-width: 768px) {
