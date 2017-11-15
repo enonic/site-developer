@@ -48,20 +48,44 @@
     &-label {
       padding-right: 10px;
       font-size: 1.4rem;
+
+      &--inverted {
+        color: $color-white !important;
+      }
+
+      .main-nav-toggled & {
+        display: none;
+      }
     }
 
     &-icon {
-      @extend %nav-trigger-icon-line;
+      display: inline-block;
+      width: 25px;
+      height: 3px;
+      background: $color-black;
+      transition: 0.3s;
       position: relative;
       top: -4px;
 
       &:before, &:after {
-        @extend %nav-trigger-icon-line;
+        display: inline-block;
+        width: 25px;
+        height: 3px;
+        background: $color-black;
+        transition: 0.3s;
         position: absolute;
         left: 0;
         content: '';
         -webkit-transform-origin: 15px/14 center;
         transform-origin: 15px/14 center;
+      }
+
+      &--inverted {
+        background: $color-white;
+
+        &:before, &:after {
+          background: $color-white;
+        }
       }
 
       &:before {
@@ -76,10 +100,11 @@
 
     &[aria-expanded="true"] {
 
-      *[class$="main-menu-trigger-icon"] {
+      *[class*="main-menu-trigger-icon"] {
         background-color: transparent;
 
         &:before, &:after {
+          background-color: #fff;
           -webkit-transform-origin: 50% 50%;
           transform-origin: 50% 50%;
           top: 0;
@@ -88,19 +113,17 @@
         }
 
         &:before {
-          background-color: #fff;
           -webkit-transform: rotate3d(0, 0, 1, 45deg);
           transform: rotate3d(0, 0, 1, 45deg);
         }
         &:after {
-          background-color: #fff;
           -webkit-transform: rotate3d(0, 0, 1, -45deg);
           transform: rotate3d(0, 0, 1, -45deg);
         }
       }
 
       &:hover {
-        *[class$="main-menu-trigger-icon"] {
+        *[class*="main-menu-trigger-icon"] {
           &:before {
             top: 0;
           }
@@ -221,17 +244,6 @@
       }
     }
 
-  }
-}
-
-
-@at-root {
-  %nav-trigger-icon-line {
-    display: inline-block;
-    width: 25px;
-    height: 3px;
-    background: #000;
-    transition: 0.3s;
   }
 }
 

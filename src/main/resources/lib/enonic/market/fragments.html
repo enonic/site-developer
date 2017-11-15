@@ -28,7 +28,7 @@
     </li>
 </div>
 
-<svg data-th-fragment="icon-fragment" data-th-if="${icon}" data-th-class="${class}" role="presentation">
+<svg data-th-fragment="icon-fragment" data-th-if="${icon}" data-th-class="${class}" data-th-classappend="${extraclass}" role="presentation">
     <use data-th-attr="'xlink:href'=${portal.assetUrl({'_path=img/icons/icons.svg'}) + '#' + icon}"></use>
 </svg>
 

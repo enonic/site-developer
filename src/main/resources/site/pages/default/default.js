@@ -45,6 +45,12 @@ function handleGet(req) {
             service: 'search'
         });
 
+        // Defines whether page header is layered or not
+        model.headerType = content.page.config['headerType'] ? content.page.config['headerType'] : 'default';
+
+        // Header logo and menu button color
+        model.headerColor = content.page.config['headerColor'] === 'white' ? 'dark' : null;
+
         model.showHeaderSearch = showHeaderSearch();
 
         model.socialLinks = getSocialLinks();

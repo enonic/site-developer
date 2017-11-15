@@ -13,6 +13,13 @@
   &-logo {
 
     &-img {
+
+      &--inverted {
+        g {
+          fill: $color-white;
+        }
+      }
+
       .main-nav-toggled & {
         g {
           fill: $color-white;
@@ -50,5 +57,21 @@
     top: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.94);
+  }
+
+  .header-layered & {
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+  }
+}
+
+&__header-wrapper {
+  .header-layered & {
+    position: relative;
+  }
+
+  .main-nav-toggled & {
+    position: static;
   }
 }

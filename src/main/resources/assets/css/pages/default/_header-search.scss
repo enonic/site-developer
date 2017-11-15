@@ -9,6 +9,12 @@
     .main-nav-toggled & {
       display: none;
     }
+
+    &.active {
+      svg {
+        fill: $color-black;
+      }
+    }
   }
 
   &-box {
@@ -24,10 +30,12 @@
     border-width: 0px;
     box-shadow: none;
     font-size: 1.6rem;
+    opacity: 0;
 
     &:focus {
       width: 200px;
       border-width: 1px;
+      opacity: 1;
     }
   }
 
@@ -39,5 +47,9 @@
     display: inline-block;
     top: 7px;
     left: 12px;
+
+    &.inverted {
+      fill: $color-white;
+    }
   }
 }

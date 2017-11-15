@@ -11,9 +11,23 @@
             this.searchBox = this.form.find('.live-search__search-box');
             this.searchResultContainer = this.form.find('.live-search__result');
             this.noResults = this.form.find('.live-search__no-results');
+            this.bindFocusBlur();
             this.bindKeyUp();
             this.bindKeyDown();
             this.bindBackdropClick();
+        };
+
+        /**
+         * Setting class
+         */
+        this.bindFocusBlur = function () {
+            this.inputEl.on('focus', function(e) {
+                this.form.classList.add('active');
+            });
+
+            this.inputEl.on('blur', function(e) {
+                this.form.classList.remove('active');
+            });
         };
 
         /**

@@ -31,9 +31,9 @@
 
 
 <div data-th-fragment="page-header-logo-fragment" data-th-if="${sitePath and baseClass}" data-th-remove="tag">
-    <a data-th-class="${baseClass} + '__header-logo-link'" title="Frontpage" data-th-href="${portal.pageUrl({'_path=' + sitePath})}">
+    <a data-th-class="${baseClass} + '__header-logo-link'" data-th-classappend="${inverted ? baseClass + '__header-logo-img--inverted' : ''}" title="Frontpage" data-th-href="${portal.pageUrl({'_path=' + sitePath})}">
 
-        <svg data-th-class="${baseClass} + '__header-logo-img'" width="1420px" height="432px" viewBox="0 0 1420 432" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <svg data-th-class="${baseClass} + '__header-logo-img'" data-th-classappend="${inverted ? baseClass + '__header-logo-img--inverted' : ''}" width="1420px" height="432px" viewBox="0 0 1420 432" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <title>Docs</title>
             <g fill="#000" fill-rule="evenodd" transform="translate(-1.000000, -121.000000)">
                 <path d="M1,240.44 C1,174.96 48.02,122 106.61,122 C162.502,122 206.88,170.15 211.31,231.77 L211.31,233.685 C211.31,239.933 206.434,244.267 200.675,244.267 L22.295,244.267 C24.501,295.787 61.793,334.787 106.605,334.787 C135.445,334.787 162.055,318.41 176.685,291.931 C179.797,286.161 186.461,285.204 190.896,288.076 C195.796,291.931 197.56,298.683 194.449,304.453 C175.803,336.703 143.409,357.893 106.609,357.893 C48.019,357.893 0.999,304.934 0.999,240.433 M23.616,221.663 L188.246,221.663 C181.14,177.343 146.519,145.093 106.606,145.093 C65.784,145.093 31.606,176.889 23.615,221.663" id="Shape" fill-rule="nonzero"></path>

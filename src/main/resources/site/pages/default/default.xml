@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page>
   <display-name>Default</display-name>
-  <config></config>
+  <config>
+    <input name="headerType" type="RadioButton">
+      <label>Header type</label>
+      <help-text>Layered will layer the header on top of (in front of) the first part</help-text>
+      <occurrences minimum="1" maximum="1"/>
+      <config>
+        <option value="default">Default</option>
+        <option value="layered">Layered</option>
+      </config>
+    </input>
+    <input name="headerColor" type="RadioButton">
+      <label>Header color</label>
+      <help-text>Sets the color of header logo and menu button</help-text>
+      <occurrences minimum="1" maximum="1"/>
+      <config>
+        <option value="black">Black</option>
+        <option value="white">White</option>
+      </config>
+    </input>
+  </config>
   <regions>
     <region name="main"/>
   </regions>
