@@ -58,6 +58,14 @@ a {
   color: $color-anchor;
 }
 
+main {
+  padding-top: 60px;
+
+  .header-layered & {
+    padding-top: 0px;
+  }
+}
+
 .visually-hidden {
   @extend %visually-hidden;
 }
