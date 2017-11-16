@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content-type>
-  <display-name>Doc</display-name>
+  <display-name>Guide</display-name>
   <super-type>base:structured</super-type>
   <is-abstract>false</is-abstract>
   <form>

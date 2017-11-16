@@ -31,7 +31,7 @@ exports.get = function (req) {
     var book = findBook(req);
     if (!book) {
         return {
-            body: '<div class="doc-content"><h3 style="text-align: center">Your doc to be placed here</h3></div>',
+            body: '<div class="guide-content"><h3 style="text-align: center">Your guide to be placed here</h3></div>',
             contentType: 'text/html'
         };
     }
@@ -43,7 +43,7 @@ exports.get = function (req) {
         baseUrl: util.getSiteUrl()
     };
 
-    var view = resolve('doc.html');
+    var view = resolve('guide.html');
 
     return {
         body: thymeleafLib.render(view, model),

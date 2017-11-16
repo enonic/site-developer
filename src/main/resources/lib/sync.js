@@ -36,7 +36,7 @@ function queryContent(params) {
 
 // Find all entry keys.
 exports.findAllEntries = function () {
-    var expr = "type ='" + app.name + ":doc' AND _parentPath LIKE '/content/" + sitePath + "/*'";
+    var expr = "type ='" + app.name + ":guide' AND _parentPath LIKE '/content/" + sitePath + "/*'";
 
     var result = queryContent({
         query: expr,
@@ -70,7 +70,7 @@ function updateData(entry, c) {
 // Update entry.
 exports.updateEntry = function (entry) {
     var content = getContent({
-        key: sitePath + '/docs/' + entry.name,
+        key: sitePath + '/guides/' + entry.name,
         branch: branch
     });
 
@@ -85,16 +85,16 @@ exports.updateEntry = function (entry) {
             }
         });
     } else {
-        var docsFolder = getContent({
-            key: sitePath + '/docs',
+        var guidesFolder = getContent({
+            key: sitePath + '/guides',
             branch: branch
         });
 
-        if (!docsFolder) {
-            docsFolder = createContent({
-                name: 'docs',
+        if (!guidesFolder) {
+            guidesFolder = createContent({
+                name: 'guides',
                 parentPath: sitePath,
-                displayName: 'docs',
+                displayName: 'Guides',
                 contentType: 'base:folder',
                 branch: branch,
                 data: {}
@@ -103,12 +103,12 @@ exports.updateEntry = function (entry) {
 
         var props = {
             name: entry.name,
-            parentPath: docsFolder._path,
-            contentType: app.name + ':doc',
+            parentPath: guidesFolder._path,
+            contentType: app.name + ':guide',
             branch: branch,
             requireValid: false,
             data: {
-                category: docsFolder._id
+                category: guidesFolder._id
             }
         };
 

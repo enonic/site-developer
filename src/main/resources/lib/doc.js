@@ -4,7 +4,7 @@ var util = require('/lib/util');
 
 // To entry.
 function toEntry(content, html) {
-    if (!content || !isDoc(content)) {
+    if (!content || !isGuide(content)) {
         return;
     }
 
@@ -15,7 +15,7 @@ function toEntry(content, html) {
         title: content.displayName,
         tags: content.data.tags,
         baseUrl: content.data.baseUrl,
-        url: util.getSiteUrl() + 'docs/' + content._name
+        url: util.getSiteUrl() + 'guides/' + content._name
     };
 
     if (html) {
@@ -25,8 +25,8 @@ function toEntry(content, html) {
     return result;
 }
 
-function isDoc(content) {
-    return content.type === app.name + ':doc';
+function isGuide(content) {
+    return content.type === app.name + ':guide';
 }
 
 // Get entry.
@@ -50,7 +50,7 @@ exports.findEntry = function (entry) {
 
 // Search entries.
 exports.search = function (query, start, count) {
-    var expr = "type ='" + app.name + ":doc' " +
+    var expr = "type ='" + app.name + ":guide' " +
                "AND _parentPath LIKE '/content" + util.getSitePath() + "/*' " +
                "AND fulltext('data.raw', '" + (query || '') + "')";
 
