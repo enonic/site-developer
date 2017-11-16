@@ -86,9 +86,13 @@ main {
   }
 }
 
+[data-portal-component-type='image'] {
+  margin: 0;
+}
+
 [data-portal-component-type='part'],
 [data-portal-component-type='text'],
-[data-portal-component-type='image']{
+[data-portal-component-type='image'] {
   margin-bottom: 60px;
 
   @include media('<medium') {
