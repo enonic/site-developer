@@ -7,8 +7,8 @@
     border-radius: 5px;
     background: #fff;
 
-    page-break-inside: avoid;
     break-inside: avoid-column;
+    page-break-inside: avoid;
     margin-bottom: 1rem
   }
   &__title {
