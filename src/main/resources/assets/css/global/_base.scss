@@ -88,6 +88,9 @@ main {
 
 [data-portal-component-type='image'] {
   margin: 0;
+  img {
+    display: block;
+  }
 }
 
 [data-portal-component-type='part'],
