@@ -4,6 +4,9 @@
             <article class="cards__card">
                 <h3 class="cards__title"><a data-th-href="${card.url}" data-th-text="${card.title}">Title</a></h3>
                 <p class="cards__text" data-th-text="${card.text}">Text</p>
+                <ul class="tags" data-th-if="${card.tags}">
+                    <li data-th-each="tag : ${card.tags}" data-th-text="${tag}"/>
+                </ul>
             </article>
         </div>
     </div>

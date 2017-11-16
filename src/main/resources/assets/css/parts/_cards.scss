@@ -19,4 +19,24 @@
       text-decoration: none;
     }
   }
+
+  &__text {
+    margin-bottom: 10px;
+  }
+
+  .tags {
+    @extend .list-unstyled;
+    margin: 0;
+    font-size: 0; // to fix issue with spacing between inline-block elements when a line break and a few tabs counts as a space
+
+    li {
+      display: inline-block;
+      background: #F6F6F6;
+      border-radius: 3px;
+      color: #B8B8B8;
+      @include font-size(12);
+      margin: 2px;
+      padding: 4px 6px;
+    }
+  }
 }

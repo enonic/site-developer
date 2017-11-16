@@ -37,6 +37,7 @@ function createCard(content) {
     return {
         title: content.displayName,
         text: content.data.shortdescription || content.data.raw.substr(0, 128) + '...',
-        url: libs.util.getSiteUrl() + 'docs/' + content._name
+        tags: content.data.tags || [],
+        url: libs.util.getSiteUrl() + 'guides/' + content._name
     }
 }
