@@ -1,7 +1,7 @@
 var libs = {
     portal: require('/lib/xp/portal'),
     thymeleaf: require('/lib/xp/thymeleaf'),
-    util: require('/lib/enonic/util')
+    util: require('/lib/util')
 };
 
 exports.get = handleGet;
@@ -13,17 +13,13 @@ function handleGet(req) {
     function createModel() {
         var model = {};
 
-        // var siteConfig = libs.portal.getSiteConfig();
-        // var searchResultPage = siteConfig.searchResultPage;
+        model.searchResultPageUrl = libs.util.getSiteUrl() + 'search';
 
-        var searchResultPage = 'search'; // not implemented yet
-
-        model.searchResultPageUrl = libs.portal.pageUrl({
-            'id': searchResultPage
-        });
         model.serviceUrl = libs.portal.serviceUrl({
             service: 'search'
         });
+
+        model.showHeaderSearch = true;
 
         return model;
     }

@@ -15,9 +15,8 @@
 
 @import 'vendor/*';
 
-@import 'plugins/tabs';
-
 // Pages
+@import 'pages/common/*';
 @import 'pages/*';
 
 // Layouts

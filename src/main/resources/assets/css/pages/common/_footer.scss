@@ -1,0 +1,230 @@
+@mixin page-footer {
+
+  &__footer {
+    background: #1C1C1C;
+    color: #aaa;
+
+    @include media('<medium') {
+      text-align: center;
+    }
+
+    h2 {
+      @extend %visually-hidden;
+    }
+
+    h3 {
+      text-transform: uppercase;
+      color: $color-text-light;
+      margin: 0;
+      padding: 0;
+    }
+
+    #footer-nav {
+      border-bottom: 1px solid #272727;
+      padding: 35px 0;
+
+      ul {
+        @include list-unstyled;
+        @include container;
+        text-align: left;
+        display: table;
+      }
+
+      li {
+        display: table-cell;
+        text-align: center;
+        padding: 0 15px;
+
+        @include media('<medium') {
+          display: block;
+          margin-bottom: 20px;
+        }
+
+        &:first-child {
+          padding-left: 0;
+        }
+
+        &:last-child {
+          padding-right: 0;
+        }
+
+        @include media('<medium') {
+          text-align: center;
+          padding: 0;
+        }
+      }
+
+      a {
+        @include font-size(16);
+        color: #aaa;
+        text-decoration: none;
+        text-transform: uppercase;
+        border: 0;
+
+        &:hover {
+          opacity: 0.5;
+        }
+
+        &.active {
+          color: #39A5C8;
+        }
+      }
+    }
+
+    .social {
+      text-align: center;
+      border-bottom: 1px solid #272727;
+      padding-bottom: 37px;
+      margin-bottom: 29px;
+      padding-top: 35px;
+
+      h3 {
+        float: left;
+        @include font-size(16);
+        line-height: 60px;
+
+        @include media('<medium') {
+          float: none;
+          @include font-size(24);
+        }
+      }
+
+      ul {
+        @extend .list-unstyled;
+      }
+
+      li {
+        display: inline-block;
+        margin: 0 10px;
+
+        @include media('<medium') {
+          margin: 10px;
+        }
+      }
+
+      a {
+        display: block;
+        background-color: #272727;
+        color: $color-text-light;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 67px;
+        height: 67px;
+        border-radius: 50%;
+        border: 0;
+        @extend .audible-text;
+
+        &:hover {
+          background-color: #535353;
+        }
+
+        &.twitter {
+          background-image: url('../img/footer/twitter.svg');
+        }
+
+        &.facebook {
+          background-image: url('../img/footer/facebook.svg');
+        }
+
+        &.linkedin {
+          background-image: url('../img/footer/linkedin.svg');
+        }
+
+        &.gplus {
+          background-image: url('../img/footer/gplus.svg');
+          background-position: center bottom;
+        }
+
+        &.youtube {
+          background-image: url('../img/footer/youtube.svg');
+        }
+
+        &.labs {
+          background-image: url('../img/footer/labs.svg');
+        }
+
+        &.webagility {
+          background-image: url('../img/footer/webagility.svg');
+          background-position: center center;
+          background-size: contain;
+        }
+      }
+    }
+
+    .offices {
+      @extend .container;
+      overflow: hidden;
+      padding-bottom: 42px;
+
+      a {
+        border: 0;
+        color: $color-text-light;
+        display: inline-block;
+      }
+
+      h3 {
+        @include grid-span(2);
+        padding: 0;
+        @include font-size(24);
+
+        @include media('<medium') {
+          margin-bottom: 20px;
+        }
+      }
+
+      h4, p {
+        margin: 0;
+        font-family: $font-family-text;
+        font-weight: lighter;
+        @include font-size(14);
+        line-height: 20/14;
+      }
+
+      .map {
+        @include grid-span(3);
+
+        @include media('<=medium') {
+          display: none;
+        }
+
+        img {
+          width: 175px;
+          height: 175px;
+          border-radius: 50%;
+          opacity: 0.8;
+          margin: 0;
+        }
+      }
+
+      .international {
+        @include grid-span(7);
+
+        ul {
+          @extend .list-unstyled;
+        }
+
+        li {
+          @include grid-span(6);
+          padding-bottom: 24px;
+        }
+
+        .phone {
+          color: #aaa;
+          font-weight: lighter;
+        }
+      }
+    }
+
+    .copyright {
+      background: #272727;
+      color: #aaa;
+      @include font-size(14);
+      padding: 20px 0;
+
+      & > p {
+        @extend .container;
+      }
+    }
+
+  }
+}

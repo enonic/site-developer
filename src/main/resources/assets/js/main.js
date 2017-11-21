@@ -12,26 +12,10 @@ $('.page-default__main-menu').enonicMenu({
     toggleBtn: $('.page-default__main-menu-trigger')
 });
 
-require('./plugins/enonic-carousel.js');
-$('.enonicarousel').enoniCarousel({
-    slideNav: true,
-    animate: true,
-    startAnimated: true
-});
-
 require('./vendor/prism.js');
-
-
 
 var svg4everybody = require('./vendor/svg4everybody.js');
 svg4everybody();
-
-require('./plugins/tabs.js');
-$(function() {
-    $('.js-tabs').tabs({});
-});
-
-
 
 require('./vendor/jquery.validate.min.js');
 require('./vendor/jquery.form.min.js');

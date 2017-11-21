@@ -1,168 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <div data-th-replace="/site/pages/fragments/fragments::head-meta-fragment"></div>
-    <div data-th-replace="/site/pages/fragments/fragments::head-assets-fragment"></div>
-    <title data-th-text="${pageTitle}">Enonic Market</title>
-</head>
+<head data-th-replace="/site/pages/fragments/fragments::head-fragment"></head>
 
-<body data-th-classappend="(${headerType} == 'layered' ? 'header-layered' : '')">
-<div class="page-default__header-wrapper">
-    <header class="page-default__header" data-th-classappend="${headerColor == 'dark' ? 'page-default__header--inverted' : ''}">
-        <div class="page-default__header-container">
-            <div class="page-default__header-toolbar">
-                <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='page-default', inverted=${headerColor == 'dark' ? 'true' : 'false'})"></div>
+<body data-th-class="page-default__body" data-th-classappend="(${headerType} == 'layered' ? 'header-layered' : '')">
+<div data-th-replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-default')"></div>
 
-                <div class="page-default__header-spacebreaker"></div>
-
-                <form class="page-default__header-search-form live-search__form" method="get" action="#"
-                      data-th-if="${showHeaderSearch}"
-                      data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
-                    <div class="page-default__header-search-box live-search__search-box" role="search">
-                        <!--<span class="page-default__header-search-icon" aria-hidden="true"></span>-->
-
-                    <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=page-default__header-search-icon,extraclass=${headerColor == 'dark' ? 'inverted' : ''})"></svg>
-                    <input class="page-default__header-search-input live-search__input" type="text" name="q"
-                           placeholder="search"
-                           autocomplete="off"/>
-                </div>
-                <ul class="page-default__header-search-result live-search__result"></ul>
-                <div class="live-search__no-results">No results</div>
-            </form>
-
-                <button class="page-default__main-menu-trigger" id="page-default__main-menu-trigger" aria-haspopup="true"
-                        aria-owns="page-default__main-menu" aria-controls="page-default__main-menu"
-                        aria-expanded="false">
-                    <span class="page-default__main-menu-trigger-label" data-th-classappend="${headerColor == 'dark' ? 'page-default__main-menu-trigger-label--inverted' : ''}">Menu</span>
-                    <span class="page-default__main-menu-trigger-icon" data-th-classappend="${headerColor == 'dark' ? 'page-default__main-menu-trigger-icon--inverted' : ''}"></span>
-                </button>
-            </div>
-
-            <div class="page-default__main-menu" id="page-default__main-menu" aria-expanded="false" aria-labelledby="page-default__main-menu-trigger">
-                <nav class="page-default__main-menu-nav">
-                    <ul class="page-default__main-menu-nav-list">
-                        <li class="page-default__main-menu-nav-item" data-th-each="menuItem : ${menuItems}">
-                            <a class="page-default__main-menu-nav-link"
-                               data-th-classappend="${menuItem.path == currentPath ? 'page-default__nav-link--active' : ''}"
-                               data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
-                               data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}">Page title</a>
-                            <ul class="page-default__main-menu-nav-list page-default__main-menu-nav-list--level-2"
-                                data-th-if="${menuItem.hasChildren}">
-                                <li class="page-default__main-menu-nav-item" data-th-each="submenuItem : ${menuItem.children}">
-                                    <a class="page-default__main-menu-nav-link"
-                                       data-th-classappend="${submenuItem.path == currentPath ? 'page-default__nav-link--active' : ''}"
-                                       data-th-href="${portal.pageUrl({'_path=' + submenuItem.path})}"
-                                       data-th-text="${submenuItem.menuName} ?: ${submenuItem.displayName}">Page title</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
-                </nav>
-
-                <div class="page-default__enonic-sites">
-                    <ul class="page-default__enonic-sites-list">
-                        <li class="page-default__enonic-sites-item">
-                            <a class="page-default__enonic-sites-link" href="https://enonic.com">
-                                <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-fragment"></div>
-                            </a>
-                        </li>
-                        <li class="page-default__enonic-sites-item">
-                            <a class="page-default__enonic-sites-link" href="https://discuss.enonic.com">
-                                <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-discuss-fragment"></div>
-                            </a>
-                        </li>
-                        <li class="page-default__enonic-sites-item">
-                            <a class="page-default__enonic-sites-link" href="http://support.enonic.com">
-                                <div data-th-replace="/site/pages/fragments/fragments::logo-enonic-support-fragment"></div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div class="page-default__content">
+    <main data-th-attr="data-portal-region=${mainRegion.name}">
+        <div data-th-each="component : ${mainRegion.components}" data-th-remove="tag">
+            <div data-portal-component="${component.path}" data-th-remove="tag"></div>
         </div>
-    </header>
+    </main>
 </div>
 
-<main data-th-attr="data-portal-region=${mainRegion.name}">
-    <div data-th-each="component : ${mainRegion.components}" data-th-remove="tag">
-        <div data-portal-component="${component.path}" data-th-remove="tag"></div>
-    </div>
-</main>
+<footer data-th-replace="/site/pages/fragments/fragments::footer-fragment(footerClass='page-default__footer')"></footer>
 
-<footer class="page-default__footer">
-
-    <!--<h2>Footer navigation</h2>-->
-
-    <!--<nav id="footer-nav">-->
-        <!--<ul>-->
-            <!--<li data-th-each="menuItem : ${menuItems}">-->
-                <!--<a href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"-->
-                   <!--data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"-->
-                   <!--data-th-class="${menuItem.path == currentPath ? 'active' : ''}">Page title</a>-->
-            <!--</li>-->
-        <!--</ul>-->
-    <!--</nav>-->
-
-    <section class="social">
-        <div class="container">
-            <h3>Follow us</h3>
-            <ul>
-                <li>
-                    <a href="https://twitter.com/EnonicHQ" class="twitter">Twitter</a>
-                </li>
-                <li>
-                    <a href="https://www.facebook.com/enonic.no" class="facebook">Facebook</a>
-                </li>
-                <li>
-                    <a href="https://www.linkedin.com/company/enonic" class="linkedin">LinkedIn</a>
-                </li>
-                <li>
-                    <a href="https://plus.google.com/+EnonicCommunity/" class="gplus">Google+</a>
-                </li>
-                <li>
-                    <a href="https://www.youtube.com/user/EnonicCommunity" class="youtube">Youtube</a>
-                </li>
-                <li>
-                    <a href="http://webagility.com" class="webagility">Webagility.com</a>
-                </li>
-            </ul>
-        </div>
-    </section>
-
-    <!--<section class="offices">-->
-        <!--<h3>Locations</h3>-->
-
-        <!--<div class="map">-->
-            <!--<a href="contact-us.html" data-th-href="${contactPageUrl}">-->
-                <!--<img src="../../assets/img/footer-map.png"-->
-                     <!--data-th-src="${portal.assetUrl({'_path=img/footer-map.png'})}"-->
-                     <!--alt="World map with Enonic offices"/>-->
-                <!--&lt;!&ndash; http://maps.googleapis.com/maps/api/staticmap?center=36.929541,-4.242653&zoom=0&scale=false&size=200x200&maptype=roadmap&sensor=false&format=png&visual_refresh=true&markers=size:mid%7Ccolor:red|San%20Francisco|Oslo,Norway|Bogota,Colombia| &ndash;&gt;-->
-            <!--</a>-->
-        <!--</div>-->
-        <!--<div class="international">-->
-            <!--<ul>-->
-                <!--<li data-th-each="office : ${offices}">-->
-                    <!--<h4>-->
-                        <!--<a href="contact-us.html" data-th-href="${contactPageUrl}"-->
-                           <!--data-th-text="${office.displayName}">Oslo</a>-->
-                    <!--</h4>-->
-                    <!--<a href="tel:+4690909090" class="phone" data-th-if="${office.phone}"-->
-                       <!--data-th-text="${office.phone}" data-th-href="'tel:' + ${office.phoneNoSpace}">+46 909 09 090</a>-->
-                <!--</li>-->
-            <!--</ul>-->
-        <!--</div>-->
-    <!--</section>-->
-
-    <div class="copyright">
-        <p>Copyright &#169; Enonic AS. All Rights Reserved. We use cookies.</p>
-    </div>
-</footer>
-
-
-
-<script data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
+<script async="async" data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
 
 </body>
 </html>

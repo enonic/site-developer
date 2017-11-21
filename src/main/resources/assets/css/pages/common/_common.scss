@@ -1,0 +1,15 @@
+@mixin page-common {
+  @include page-menu;
+  @include page-header-search;
+  @include page-header;
+  @include page-footer;
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__content {
+    flex-grow: 1;
+  }
+}

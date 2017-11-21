@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head data-th-replace="/site/pages/fragments/fragments::head-fragment"></head>
+
+<body data-th-class="page-search-result__body">
+<div data-th-replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-search-result')"></div>
+
+<div class="page-search-result__content">
+    <div class="page-search-result__result-header">
+        <h2 class="page-search-result__result-heading">
+            <span class="page-search-result__result-heading-text">Total</span>
+            <span data-th-class="page-search-result__result-heading-count" data-th-text="${searchResult.total}">count</span>
+        </h2>
+    </div>
+    <div class="page-search-result__result-list">
+        <div data-th-fragment="product-listing-fragment" data-th-if="${searchResult.hits}" data-th-remove="tag">
+            <div class="product-listing">
+                <ol data-th-class="${'product-listing__list'}">
+                    <div data-th-each="product : ${searchResult.hits}" data-th-remove="tag">
+                        <div data-th-if="${product}" data-th-with="classPrefix=(${classPrefix} ?: 'product-listing')"
+                             data-th-remove="tag">
+                            <li data-th-class="${classPrefix + '__item'}">
+                                <article data-th-class="${classPrefix + '__product'}">
+                                    <a data-th-class="${classPrefix + '__product-link'}" data-th-href="${product.url}">
+                                        <h2 data-th-class="${classPrefix + '__product-heading'}"
+                                            data-th-text="${product.title}">Product name</h2>
+                                    </a>
+                                </article>
+                            </li>
+                        </div>
+                    </div>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer data-th-replace="/site/pages/fragments/fragments::footer-fragment(footerClass='page-search-result__footer')"></footer>
+
+<script async="async" data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
+
+</body>
+</html>

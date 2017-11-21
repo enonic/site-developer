@@ -1,0 +1,58 @@
+@mixin page-header-search {
+
+  &__header-search {
+
+    &-form {
+
+      @include breakpoint(max-width medium) {
+        display: none;
+      }
+
+      .main-nav-toggled & {
+        display: none;
+      }
+
+      &.active {
+        svg {
+          fill: $color-black;
+        }
+      }
+    }
+
+    &-box {
+      position: relative;
+    }
+
+    &-input {
+      width: 0;
+      //@include transition(width ease-in-out 0.3s);
+      transition: width ease-in-out 0.3s;
+      @extend .form-control;
+      padding: 10px 0 10px 40px;
+      border-width: 0px;
+      box-shadow: none;
+      font-size: 1.6rem;
+      opacity: 0;
+
+      &:focus {
+        width: 200px;
+        border-width: 1px;
+        opacity: 1;
+      }
+    }
+
+    &-icon {
+      position: absolute;
+      pointer-events: none;
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      top: 7px;
+      left: 12px;
+
+      &.inverted {
+        fill: $color-white;
+      }
+    }
+  }
+}
