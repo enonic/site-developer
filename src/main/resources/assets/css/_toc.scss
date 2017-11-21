@@ -1,18 +1,43 @@
 .toc {
-  padding: 10px 3.9rem 10px 3.9em;
+  padding: 10px 2.9rem 10px 1rem;
   order: 1;
-  color: $color-anchor;
+  flex-shrink: 0;
+  background-color: #f8f8f7;
+  margin-left: 20px;
+  margin-bottom: 20px;
 
   position: sticky;
   top: 0;
   height: 100%;
 
-  > .toc-list {
-    margin-left: 0;
+  #js-toc {
+    > .toc-list {
+      margin-left: 0;
+    }
   }
+
+  .toc-list {
+    @include list-unstyled;
+
+    a {
+      color: $color-toc-blue;
+    }
+
+    li ul a {
+      color: $color-black;
+    }
+  }
+
+  .toc-title {
+    font-size: 2rem;
+    color: $color-toc-gray;
+    margin-bottom: 5px;
+  }
+
 
   @media screen and (max-width: 768px) {
     position: static;
     height: auto;
+    margin-left: 0px;
   }
 }
