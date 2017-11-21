@@ -36,8 +36,8 @@ function getCards() {
 function createCard(content) {
     return {
         title: content.displayName,
-        text: content.data.shortdescription || content.data.raw.substr(0, 128) + '...',
+        text: content.data.shortdescription || 'Mock text', //content.data.raw.substr(0, 128) + '...',
         tags: content.data.tags || [],
-        url: libs.util.getSiteUrl() + 'guides/' + content._name
+        url: libs.util.getSiteUrl() + content._path.replace(libs.util.getSitePath() + '/', '')
     }
 }

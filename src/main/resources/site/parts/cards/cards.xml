@@ -7,7 +7,7 @@
             <occurrences minimum="0" maximum="0"/>
             <config>
                 <relationship-type>system:reference</relationship-type>
-                <allow-content-type>guide</allow-content-type>
+                <allow-content-type>doc</allow-content-type>
                 <allowPath>${site}/*</allowPath>
             </config>
         </input>

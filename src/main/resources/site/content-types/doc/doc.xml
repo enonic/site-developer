@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+    <display-name>Doc</display-name>
+    <super-type>base:structured</super-type>
+    <is-abstract>false</is-abstract>
+    <form>
+        <input name="shortdescription" type="TextLine">
+            <label>Short description</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="tags" type="Tag">
+            <label>Tags</label>
+            <occurrences minimum="0" maximum="0"/>
+        </input>
+        <input name="image" type="ImageSelector">
+            <label>Teaser image</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="repository" type="TextLine">
+            <label>Repository</label>
+            <occurrences minimum="0" maximum="1"/>
+            <help-text>Github url to clone a repo</help-text>
+            <config>
+                <regexp>^(https://github.com/).*?</regexp>
+            </config>
+        </input>
+        <input name="versioning" type="RadioButton">
+            <label>Versioning</label>
+            <occurrences minimum="1" maximum="1"/>
+            <config>
+                <option value="lstest">Latest Only</option>
+                <option value="versioned">Versioned</option>
+            </config>
+        </input>
+    </form>
+</content-type>
