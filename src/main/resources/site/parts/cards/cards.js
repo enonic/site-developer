@@ -21,7 +21,7 @@ exports.get = function (req) {
 };
 
 function getCards() {
-    var docIds = libs.portal.getComponent().config.cards; // Current component
+    var docIds = asArray(libs.portal.getComponent().config.cards); // Current component
     var cards = [];
 
     if (docIds) {
@@ -40,4 +40,16 @@ function createCard(content) {
         tags: content.data.tags || [],
         url: libs.util.getSiteUrl() + content._path.replace(libs.util.getSitePath() + '/', '')
     }
+}
+
+function asArray(obj) {
+    if (!obj) {
+        return [];
+    }
+
+    if (Array.isArray(obj)) {
+        return obj;
+    }
+
+    return [obj];
 }

@@ -1,10 +1,11 @@
 // Includes.
 var contentLib = require('/lib/xp/content');
 var util = require('/lib/util');
+var portalLib = require('/lib/xp/portal');
 
 // To entry.
 function toEntry(content, html) {
-    if (!content || !isGuide(content)) {
+    if (!content || !isDoc(content)) {
         return;
     }
 
@@ -25,32 +26,22 @@ function toEntry(content, html) {
     return result;
 }
 
-function isGuide(content) {
-    return content.type === app.name + ':guide';
+function isDoc(content) {
+    return content.type === app.name + ':docpage';
 }
 
 // Get entry.
 exports.findEntry = function (entry) {
-    var nodeByPath = contentLib.get({
-        key: util.getSitePath() + '/' + entry.category + '/' + entry.name
-    });
+    var content = portalLib.getContent();
 
-    if (nodeByPath) {
-        return toEntry(nodeByPath, true);
-    }
-
-    var nodeById = contentLib.get({
-        key: entry.name
-    });
-
-    if (nodeById) {
-        return toEntry(nodeById, true);
+    if (content) {
+        return toEntry(content, true);
     }
 };
 
 // Search entries.
 exports.search = function (query, start, count) {
-    var expr = "type ='" + app.name + ":guide' " +
+    var expr = "type ='" + app.name + ":docpage' " +
                "AND _parentPath LIKE '/content" + util.getSitePath() + "/*' " +
                "AND fulltext('data.raw', '" + (query || '') + "')";
 

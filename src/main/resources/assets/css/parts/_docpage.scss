@@ -1,4 +1,4 @@
-.guide-content {
+.docpage-content {
   @import '_asciidoctor';
   @import '_toc';
 
@@ -27,7 +27,7 @@
 }
 
 @media screen and (max-width: 768px) {
-  .guide-content {
+  .docpage-content {
     display: block;
 
     #title {

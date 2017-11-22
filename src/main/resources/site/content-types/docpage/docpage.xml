@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+    <display-name>Docpage</display-name>
+    <super-type>base:structured</super-type>
+    <is-abstract>false</is-abstract>
+    <form>
+        <input name="html" type="HtmlArea">
+            <label>HTML</label>
+        </input>
+    </form>
+</content-type>

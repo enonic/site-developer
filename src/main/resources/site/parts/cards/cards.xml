@@ -3,7 +3,7 @@
     <display-name>Cards</display-name>
     <config>
         <input type="ContentSelector" name="cards">
-            <label>Guides to show </label>
+            <label>Docs to show </label>
             <occurrences minimum="0" maximum="0"/>
             <config>
                 <relationship-type>system:reference</relationship-type>
