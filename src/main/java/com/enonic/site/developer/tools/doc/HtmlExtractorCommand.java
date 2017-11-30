@@ -15,7 +15,6 @@ public final class HtmlExtractorCommand
     private String path;
 
     public ExtractedDoc execute()
-        throws Exception
     {
         try
         {
@@ -24,7 +23,7 @@ public final class HtmlExtractorCommand
         catch ( final Exception e )
         {
             LOGGER.error( "Failed to fetch [" + path + "]", e );
-            throw new Exception( "Failed to fetch [" + path + "]", e );
+            throw new RuntimeException( "Failed to fetch [" + path + "]", e );
         }
     }
 

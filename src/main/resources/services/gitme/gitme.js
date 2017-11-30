@@ -5,7 +5,6 @@ var contextLib = require('/lib/xp/context');
 var contentLib = require('/lib/xp/content');
 
 var repoDest = './docs-repos/';
-var branch = 'draft';
 
 function sudo(callback) {
     return contextLib.run({
@@ -62,7 +61,7 @@ function doExecute(req) {
         cloneRepo(repo);
         buildDoc(repo);
         docs.forEach(function (doc) {
-           importDoc(repo, doc);
+           importDocs(repo, doc);
         });
     }
 }
@@ -101,54 +100,11 @@ function buildDoc(repo) {
     bean.destination = repoDest;
     bean.name = repo.full_name;
     bean.execute();
-    log.info('build done');
 }
 
-function importDoc(repo, docContent) {
-    var docData = extractHtml(repo);
-    updateDoc(docContent, docData);
+function importDocs(repo, doc) {
+    var bean = __.newBean('com.enonic.site.developer.tools.doc.ImportLocalFilesCommand');
+    bean.localPath = repoDest + repo.full_name + '/build/docs/html5';
+    bean.importPath = doc._path.replace('/content', '');
+    bean.execute();
 }
-
-function extractHtml(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.doc.HtmlExtractorCommand');
-    bean.path = repoDest + repo.full_name + '/build/docs/html5/index.html';
-    return __.toNativeObject(bean.execute());
-}
-
-// Update docpage
-function updateDoc(doc, docData) {
-    var docPage = getContent({
-        key: doc._path + '/index.html',
-        branch: branch
-    });
-
-    if (docPage) {
-        log.info('updating ' + doc._name + '/index.html...');
-        modifyContent({
-            key: docPage._path,
-            branch: branch,
-            requireValid: false,
-            editor: function (old) {
-                old.data.html = docData.html;
-                //old.data.raw = docData.text; //requireValid=false doesn't seem to work
-                return old;
-            }
-        });
-        log.info('index.html updated');
-    } else {
-        log.info('creating' + doc._name  + '/index.html...');
-        createContent({
-            name: 'index.html',
-            parentPath: doc._path,
-            displayName: 'index.html',
-            contentType: app.name + ':docpage',
-            branch: branch,
-            requireValid: false,
-            data: {
-                html: docData.html,
-                // raw: docData.text
-            }
-        });
-        log.info('index.html created');
-    }
-};
