@@ -27,7 +27,7 @@ dependencies {
     include "com.enonic.xp:lib-portal:${xpVersion}"
     include "com.enonic.xp:lib-thymeleaf:${xpVersion}"
     include 'org.jsoup:jsoup:1.10.2'
-    include "com.enonic.xp:toolbox:${xpVersion}"
+    include 'org.eclipse.jgit:org.eclipse.jgit:4.0.1.201506240215-r'
     testCompile 'junit:junit:4.10'
     testCompile 'org.mockito:mockito-core:1.+'
     include "com.enonic.lib:util:1.1.0"

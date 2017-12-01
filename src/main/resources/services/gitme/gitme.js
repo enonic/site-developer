@@ -90,15 +90,15 @@ function findDocs(repoUrl) {
 function cloneRepo(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.repo.GitRepoCloneCommand');
     bean.repository = repo.html_url;
-    bean.destination = repoDest;
-    bean.name = repo.full_name;
+    bean.destination = repoDest + repo.full_name;
+    bean.repoName = repo.full_name;
     bean.execute();
 }
 
 function buildDoc(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.doc.BuildDocCommand');
-    bean.destination = repoDest;
-    bean.name = repo.full_name;
+    bean.destination = repoDest + repo.full_name;
+    bean.repoName = repo.full_name;
     bean.execute();
 }
 

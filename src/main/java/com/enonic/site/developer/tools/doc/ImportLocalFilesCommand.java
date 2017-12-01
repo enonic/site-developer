@@ -127,7 +127,7 @@ public final class ImportLocalFilesCommand
 
     private void createDocpage( final ContentPath parentRepoPath, final Path filePath )
     {
-        LOGGER.info( "Creating docpage " + parentRepoPath + filePath.getFileName() );
+        LOGGER.info( "Creating docpage " + parentRepoPath + "/" + filePath.getFileName() );
 
         final HtmlExtractorCommand htmlExtractorCommand = new HtmlExtractorCommand();
         htmlExtractorCommand.setPath( filePath.toString() );

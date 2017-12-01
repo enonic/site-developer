@@ -10,7 +10,7 @@ public class BuildDocCommandTest
     {
         final BuildDocCommand buildDocCommand = new BuildDocCommand();
         buildDocCommand.setDestination( "C:/Dev/Enonic/docs-repos/" );
-        buildDocCommand.setName( "enonic/lib-xslt" );
+        buildDocCommand.setRepoName( "enonic/lib-xslt" );
         buildDocCommand.execute();
     }
 }
