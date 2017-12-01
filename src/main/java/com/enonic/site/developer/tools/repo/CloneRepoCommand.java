@@ -18,9 +18,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class GitRepoCloneCommand
+public final class CloneRepoCommand
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( GitRepoCloneCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( CloneRepoCommand.class );
 
     private static final String GITHUB_URL = "https://github.com/";
 

@@ -8,9 +8,9 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class HtmlExtractorCommand
+public final class ExtractDocHtmlCommand
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( HtmlExtractorCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( ExtractDocHtmlCommand.class );
 
     private String path;
 

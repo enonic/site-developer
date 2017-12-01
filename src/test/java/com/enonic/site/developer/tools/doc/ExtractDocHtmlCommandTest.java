@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class HtmlExtractorCommandTest
+public class ExtractDocHtmlCommandTest
 {
     @Test
     public void testExtract()
@@ -21,11 +21,11 @@ public class HtmlExtractorCommandTest
     private ExtractedDoc extractDoc( final String fileName )
         throws Exception
     {
-        final HtmlExtractorCommand htmlExtractorCommand = new HtmlExtractorCommand();
+        final ExtractDocHtmlCommand extractDocHtmlCommand = new ExtractDocHtmlCommand();
 
-        htmlExtractorCommand.setPath( getFilePath( fileName ) );
+        extractDocHtmlCommand.setPath( getFilePath( fileName ) );
 
-        return htmlExtractorCommand.execute();
+        return extractDocHtmlCommand.execute();
     }
 
     private String getFilePath( final String fileName )

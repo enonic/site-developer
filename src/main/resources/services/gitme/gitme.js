@@ -88,7 +88,7 @@ function findDocs(repoUrl) {
 };
 
 function cloneRepo(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.repo.GitRepoCloneCommand');
+    var bean = __.newBean('com.enonic.site.developer.tools.repo.CloneRepoCommand');
     bean.repository = repo.html_url;
     bean.destination = repoDest + repo.full_name;
     bean.repoName = repo.full_name;
@@ -96,14 +96,14 @@ function cloneRepo(repo) {
 }
 
 function buildDoc(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.doc.BuildDocCommand');
+    var bean = __.newBean('com.enonic.site.developer.tools.repo.BuildRepoCommand');
     bean.destination = repoDest + repo.full_name;
     bean.repoName = repo.full_name;
     bean.execute();
 }
 
 function importDocs(repo, doc) {
-    var bean = __.newBean('com.enonic.site.developer.tools.doc.ImportLocalFilesCommand');
+    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportLocalFilesCommand');
     bean.localPath = repoDest + repo.full_name + '/build/docs/html5';
     bean.importPath = doc._path.replace('/content', '');
     bean.execute();

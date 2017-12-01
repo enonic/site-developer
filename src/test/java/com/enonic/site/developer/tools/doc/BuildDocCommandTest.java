@@ -1,6 +1,6 @@
 package com.enonic.site.developer.tools.doc;
 
-import org.junit.Test;
+import com.enonic.site.developer.tools.repo.BuildRepoCommand;
 
 public class BuildDocCommandTest
 {
@@ -8,9 +8,9 @@ public class BuildDocCommandTest
     public void testBuild()
         throws Exception
     {
-        final BuildDocCommand buildDocCommand = new BuildDocCommand();
-        buildDocCommand.setDestination( "C:/Dev/Enonic/docs-repos/" );
-        buildDocCommand.setRepoName( "enonic/lib-xslt" );
-        buildDocCommand.execute();
+        final BuildRepoCommand buildRepoCommand = new BuildRepoCommand();
+        buildRepoCommand.setDestination( "C:/Dev/Enonic/docs-repos/" );
+        buildRepoCommand.setRepoName( "enonic/lib-xslt" );
+        buildRepoCommand.execute();
     }
 }

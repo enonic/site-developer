@@ -1,4 +1,4 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.imports;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.site.developer.tools.doc.ExtractDocHtmlCommand;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
@@ -129,11 +130,11 @@ public final class ImportLocalFilesCommand
     {
         LOGGER.info( "Creating docpage " + parentRepoPath + "/" + filePath.getFileName() );
 
-        final HtmlExtractorCommand htmlExtractorCommand = new HtmlExtractorCommand();
-        htmlExtractorCommand.setPath( filePath.toString() );
+        final ExtractDocHtmlCommand extractDocHtmlCommand = new ExtractDocHtmlCommand();
+        extractDocHtmlCommand.setPath( filePath.toString() );
 
         final PropertyTree data = new PropertyTree();
-        data.addString( "html", htmlExtractorCommand.execute().getHtml() );
+        data.addString( "html", extractDocHtmlCommand.execute().getHtml() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).

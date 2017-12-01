@@ -1,19 +1,17 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.repo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class BuildDocCommand
+public final class BuildRepoCommand
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( BuildDocCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( BuildRepoCommand.class );
 
     private String destination;
 
