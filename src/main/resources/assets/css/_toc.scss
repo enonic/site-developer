@@ -13,6 +13,9 @@
   #js-toc {
     > .toc-list {
       margin-left: 0;
+      list-style-type: square;
+      color: gray;
+      list-style-position: inside;
     }
   }
 
@@ -21,10 +24,19 @@
 
     a {
       color: $color-toc-blue;
+
+      &:hover {
+        color: $color-toc-dark-blue;
+      }
     }
 
-    li ul a {
-      color: $color-black;
+    li ul li {
+      list-style-type: none;
+      font-size: 0.9em;
+
+      &:before {
+        content: "–  ";
+      }
     }
   }
 
