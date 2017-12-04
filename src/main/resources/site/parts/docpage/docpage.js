@@ -1,6 +1,9 @@
-var docLib = require('/lib/doc');
-var thymeleafLib = require('/lib/xp/thymeleaf');
-var util = require('/lib/util');
+var libs = {
+    thymeleaf: require('/lib/xp/thymeleaf'),
+    portal: require('/lib/xp/portal'),
+    doc: require('/lib/doc'),
+    util: require('/lib/util')
+}
 
 function findKey(req) {
     var path = req.path;
@@ -24,7 +27,7 @@ function findBook(req) {
         return;
     }
 
-    return docLib.findEntry(key);
+    return libs.doc.findEntry(key);
 }
 
 exports.get = function (req) {
@@ -37,16 +40,16 @@ exports.get = function (req) {
     }
 
     var model = {
-        siteName: util.getSiteDisplayName(),
+        siteName: libs.util.getSiteDisplayName(),
         title: book.title,
-        content: book.html,
-        baseUrl: util.getSiteUrl()
+        content: libs.portal.processHtml({ value: book.html }),
+        baseUrl: libs.util.getSiteUrl()
     };
 
     var view = resolve('docpage.html');
 
     return {
-        body: thymeleafLib.render(view, model),
+        body: libs.thymeleaf.render(view, model),
         contentType: 'text/html; charset=UTF-8'
     };
 };

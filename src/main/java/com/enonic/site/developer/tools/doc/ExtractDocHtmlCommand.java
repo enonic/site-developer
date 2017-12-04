@@ -34,9 +34,8 @@ public final class ExtractDocHtmlCommand
         Document doc = Jsoup.parse( input, "UTF-8", "index.html" );
         final Element content = doExtract( doc );
 
-        final ExtractedDoc result = new ExtractedDoc();
-        result.setHtml( content.toString() );
-        result.setText( content.text() );
+        final ExtractedDoc result = new ExtractedDoc(content);
+
         return result;
     }
 

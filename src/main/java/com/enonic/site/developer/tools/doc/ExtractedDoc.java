@@ -1,28 +1,28 @@
 package com.enonic.site.developer.tools.doc;
 
+import org.jsoup.nodes.Element;
+
 public final class ExtractedDoc
 {
-    private String html;
+    private Element content;
 
-    private String text;
+    public ExtractedDoc( final Element content )
+    {
+        this.content = content;
+    }
 
     public String getHtml()
     {
-        return html;
-    }
-
-    public void setHtml( final String html )
-    {
-        this.html = html;
+        return content.toString();
     }
 
     public String getText()
     {
-        return text;
+        return content.text();
     }
 
-    public void setText( final String text )
+    public Element getContent()
     {
-        this.text = text;
+        return content;
     }
 }

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,9 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.site.developer.tools.doc.ExtractDocHtmlCommand;
+import com.enonic.site.developer.tools.doc.ExtractedDoc;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -43,7 +47,7 @@ public final class ImportLocalFilesCommand
         login( "su" ).
         build();
 
-    private String localPath;
+    private Path localPath;
 
     private String importPath;
 
@@ -63,14 +67,28 @@ public final class ImportLocalFilesCommand
     {
         try
         {
-            final Path sourcePath = new File( localPath ).toPath();
-            Files.walk( sourcePath ).filter( path -> !this.isRootFile() ).forEach( path -> this.createContent( sourcePath, path ) );
+            importFoldersAndMedia();
+            importDocpages(); // Loading docpages after all media that docpage may refer to is loaded
         }
         catch ( final Exception e )
         {
             LOGGER.error( "Failed to import data from [" + localPath + "]", e );
             throw new RuntimeException( "Failed to import data from [" + localPath + "]", e );
         }
+    }
+
+    private void importFoldersAndMedia()
+        throws IOException
+    {
+        this.isRootFile = true;
+        Files.walk( localPath ).filter( path -> !isRootFile() && !isDocpage( path ) ).forEach( path -> createContent( path ) );
+    }
+
+    private void importDocpages()
+        throws IOException
+    {
+        this.isRootFile = true;
+        Files.walk( localPath ).filter( path -> !isRootFile() && isDocpage( path ) ).forEach( path -> createDocpage( path ) );
     }
 
     private boolean isRootFile()
@@ -84,74 +102,90 @@ public final class ImportLocalFilesCommand
         return false;
     }
 
-    private void createContent( final Path sourcePath, final Path path )
+    private boolean isDocpage( final Path path )
     {
-        final ContentPath parentRepoPath = makeParentRepoPath( sourcePath.relativize( path ) );
+        return path.getFileName().toString().equals( DEFAULT_DOCPAGE_NAME );
+    }
 
-        if ( contentService.contentExists( ContentPath.from( parentRepoPath, path.getFileName().toString() ) ) )
+    private void createContent( final Path path )
+    {
+        if ( Files.isDirectory( path ) )
+        {
+            createFolder( path );
+        }
+        else
+        {
+            createMedia( path );
+        }
+    }
+
+    private ContentPath makeRepoPath( final Path path )
+    {
+        return ContentPath.from(
+            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + localPath.relativize( path ).toString().replace( "\\", "/" ) );
+    }
+
+    private void createFolder( final Path path )
+    {
+        final ContentPath repoPath = makeRepoPath( path );
+
+        if ( contentService.contentExists( repoPath ) )
         {
             return;
         }
 
-        if ( Files.isDirectory( path ) )
-        {
-            createFolder( parentRepoPath, path );
-        }
-        else if ( path.getFileName().toString().equals( DEFAULT_DOCPAGE_NAME ) )
-        {
-            createDocpage( parentRepoPath, path );
-        }
-        else
-        {
-            createMedia( parentRepoPath, path );
-        }
-
-    }
-
-    private ContentPath makeParentRepoPath( final Path path )
-    {
-        return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
-                                     ( path.getParent() == null ? "" : path.getParent().toString().replace( "\\", "/" ) + "/" ) );
-    }
-
-    private void createFolder( final ContentPath parentRepoPath, final Path path )
-    {
-        LOGGER.info( "Creating folder " + parentRepoPath + path.getFileName() );
+        LOGGER.info( "Creating folder " + repoPath );
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( path.getFileName().toString() ).
-            parent( parentRepoPath ).
+            parent( repoPath.getParentPath() ).
             type( ContentTypeName.folder() ).
             build();
         contentService.create( createContentParams );
     }
 
-    private void createDocpage( final ContentPath parentRepoPath, final Path filePath )
+    private void createDocpage( final Path path )
     {
-        LOGGER.info( "Creating docpage " + parentRepoPath + "/" + filePath.getFileName() );
+        final ContentPath repoPath = makeRepoPath( path );
+
+        if ( contentService.contentExists( repoPath ) )
+        {
+            return;
+        }
+
+        LOGGER.info( "Creating docpage " + repoPath );
 
         final ExtractDocHtmlCommand extractDocHtmlCommand = new ExtractDocHtmlCommand();
-        extractDocHtmlCommand.setPath( filePath.toString() );
+        extractDocHtmlCommand.setPath( path.toString() );
+        final ExtractedDoc extractedDoc = extractDocHtmlCommand.execute();
+        new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
 
         final PropertyTree data = new PropertyTree();
-        data.addString( "html", extractDocHtmlCommand.execute().getHtml() );
+        data.addString( "html", extractedDoc.getHtml() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
-            displayName( filePath.getFileName().toString() ).
-            parent( parentRepoPath ).
+            displayName( path.getFileName().toString() ).
+            parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             build();
         contentService.create( createContentParams );
     }
 
-    private void createMedia( final ContentPath parentRepoPath, final Path filePath )
+    private void createMedia( final Path path )
     {
-        LOGGER.info( "Creating media " + parentRepoPath + filePath.getFileName() );
+        final ContentPath repoPath = makeRepoPath( path );
+
+        if ( contentService.contentExists( repoPath ) )
+        {
+            return;
+        }
+
+        LOGGER.info( "Creating media " + repoPath );
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadMedia( filePath ) ).
-            name( filePath.getFileName().toString() ).
-            parent( parentRepoPath );
+        createMediaParams.byteSource( loadMedia( path ) ).
+            name( path.getFileName().toString() ).
+            parent( repoPath.getParentPath() );
 
         contentService.create( createMediaParams );
     }
@@ -172,7 +206,7 @@ public final class ImportLocalFilesCommand
 
     public void setLocalPath( final String localPath )
     {
-        this.localPath = localPath;
+        this.localPath = new File( localPath ).toPath();
     }
 
     public void setImportPath( final String importPath )
@@ -202,6 +236,61 @@ public final class ImportLocalFilesCommand
         this.contentService = context.getService( ContentService.class ).get();
         this.applicationKey = context.getApplicationKey();
     }
+
+    private final class UrlRewriter
+    {
+        private final Pattern URL_PATTERN = Pattern.compile( "(.+):(.+)" );
+
+        private final String tag;
+
+        private final String attr;
+
+        private UrlRewriter( final String tag, final String attr )
+        {
+            this.tag = tag;
+            this.attr = attr;
+        }
+
+        private void rewrite( final Element root )
+        {
+            for ( final Element e : root.select( this.tag ) )
+            {
+                final String href = e.attr( this.attr );
+                if ( shouldRewriteUrl( href ) )
+                {
+                    e.attr( this.attr, rewriteUrl( href ) );
+                }
+            }
+        }
+
+        private boolean shouldRewriteUrl( final String url )
+        {
+            return !isNullOrEmpty( url ) && !URL_PATTERN.matcher( url ).matches();
+        }
+
+        private boolean isNullOrEmpty( final String value )
+        {
+            return ( value == null ) || value.equals( "" );
+        }
+
+        private String rewriteUrl( final String href )
+        {
+            final Content media = contentService.getByPath( ContentPath.from( importPath + "/" + href ) );
+
+            return getMediaPrefix( media.getType() ) + media.getId();
+        }
+    }
+
+    private String getMediaPrefix( final ContentTypeName contentTypeName )
+    {
+        if ( contentTypeName.isImageMedia() )
+        {
+            return "image://";
+        }
+
+        return "";
+    }
+
 }
 
 
