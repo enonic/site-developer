@@ -159,6 +159,8 @@ public final class ImportLocalFilesCommand
         extractDocHtmlCommand.setPath( path.toString() );
         final ExtractedDoc extractedDoc = extractDocHtmlCommand.execute();
         new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
 
         final PropertyTree data = new PropertyTree();
         data.addString( "html", extractedDoc.getHtml() );
@@ -289,6 +291,11 @@ public final class ImportLocalFilesCommand
         if ( contentTypeName.isImageMedia() )
         {
             return "image://";
+        }
+
+        if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
+        {
+            return "media://";
         }
 
         return "";
