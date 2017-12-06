@@ -4,39 +4,58 @@ var util = require('/lib/util');
 var portalLib = require('/lib/xp/portal');
 
 // To entry.
-function toEntry(content, html) {
-    if (!content || !isDoc(content)) {
+function toEntry(content) {
+    if (!content) {
         return;
     }
 
     var result = {
         key: content._name,
-        vendor: content.data.vendor,
         name: content._name,
-        title: content.displayName,
+        title: content.data.title || content.displayName,
         tags: content.data.tags,
-        baseUrl: content.data.baseUrl,
-        url: util.getSiteUrl() + 'guides/' + content._name
+        url: portalLib.pageUrl({path: content._path}).replace('/index.html', ''),
+        html: content.data.html
     };
-
-    if (html) {
-        result.html = content.data.html
-    }
 
     return result;
 }
 
-function isDoc(content) {
+function toSearchResultEntry(content) {
+    if (!content) {
+        return;
+    }
+
+    var result = {
+        name: content._name,
+        title: content.data.title || content.displayName,
+        url: portalLib.pageUrl({path: content._path})
+    };
+
+    return result;
+}
+
+function isDocpage(content) {
     return content.type === app.name + ':docpage';
+}
+
+function isDoc(content) {
+    return content.type === app.name + ':doc';
 }
 
 // Get entry.
 exports.findEntry = function (entry) {
     var content = portalLib.getContent();
 
-    if (content) {
+    if (isDocpage(content)) {
         return toEntry(content, true);
     }
+
+    if (isDoc(content)) {
+        return toEntry(contentLib.get({key: content._path + '/index.html'}), true);
+    }
+
+    return;
 };
 
 // Search entries.
@@ -54,7 +73,7 @@ exports.search = function (query, start, count) {
     var entries = [];
     for (var i = 0; i < result.hits.length; i++) {
         var hit = result.hits[i];
-        var entry = toEntry(contentLib.get({key: hit._id}), false);
+        var entry = toSearchResultEntry(contentLib.get({key: hit._path.replace('/index.html', '')}));
         if (entry) {
             entry.score = hit.score;
             entries.push(entry);

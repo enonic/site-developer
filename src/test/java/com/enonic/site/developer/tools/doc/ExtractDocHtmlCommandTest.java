@@ -16,6 +16,7 @@ public class ExtractDocHtmlCommandTest
         assertNotNull( extractedDoc );
         assertTrue( extractedDoc.getText().startsWith( "This library provides basic XSLT rendering functionality" ) );
         assertTrue( extractedDoc.getHtml().startsWith( "<div id=\"content\"> " ) );
+        assertEquals( "XSLT Library",extractedDoc.getTitle() );
     }
 
     private ExtractedDoc extractDoc( final String fileName )

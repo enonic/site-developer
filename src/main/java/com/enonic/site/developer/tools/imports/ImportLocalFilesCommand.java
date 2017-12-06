@@ -162,12 +162,15 @@ public final class ImportLocalFilesCommand
 
         final PropertyTree data = new PropertyTree();
         data.addString( "html", extractedDoc.getHtml() );
+        data.addString( "title", extractedDoc.getTitle() );
+        data.addString( "raw", extractedDoc.getText() );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
             displayName( path.getFileName().toString() ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
+            requireValid( false ).
             build();
         contentService.create( createContentParams );
     }

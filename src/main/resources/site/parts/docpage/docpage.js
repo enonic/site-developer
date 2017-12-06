@@ -42,8 +42,7 @@ exports.get = function (req) {
     var model = {
         siteName: libs.util.getSiteDisplayName(),
         title: book.title,
-        content: libs.portal.processHtml({ value: book.html }),
-        baseUrl: libs.util.getSiteUrl()
+        content: libs.portal.processHtml({ value: book.html })
     };
 
     var view = resolve('docpage.html');

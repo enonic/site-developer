@@ -6,9 +6,12 @@ public final class ExtractedDoc
 {
     private Element content;
 
-    public ExtractedDoc( final Element content )
+    private String title;
+
+    public ExtractedDoc( final Element content, final String title )
     {
         this.content = content;
+        this.title = title;
     }
 
     public String getHtml()
@@ -24,5 +27,10 @@ public final class ExtractedDoc
     public Element getContent()
     {
         return content;
+    }
+
+    public String getTitle()
+    {
+        return title;
     }
 }

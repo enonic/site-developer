@@ -33,8 +33,10 @@ public final class ExtractDocHtmlCommand
         File input = new File( path );
         Document doc = Jsoup.parse( input, "UTF-8", "index.html" );
         final Element content = doExtract( doc );
+        final Element title = doc.select( "head title" ).first();
+        final String titleText = title != null ? title.ownText() : "";
 
-        final ExtractedDoc result = new ExtractedDoc(content);
+        final ExtractedDoc result = new ExtractedDoc(content, titleText);
 
         return result;
     }
