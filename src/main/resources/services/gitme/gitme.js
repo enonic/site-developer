@@ -58,8 +58,8 @@ function doExecute(req) {
     var docs = findDocs(repoUrl);
 
     if (docs.length > 0) {
-        // cloneRepo(repo);
-        // buildDoc(repo);
+        cloneRepo(repo);
+        buildDoc(repo);
         docs.forEach(function (doc) {
            importDocs(repo, doc);
         });
