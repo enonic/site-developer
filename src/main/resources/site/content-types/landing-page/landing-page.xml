@@ -8,5 +8,4 @@
     <is-built-in>false</is-built-in>
     <allow-child-content>true</allow-child-content>
     <form/>
-  <x-data mixin="menu-item"/>
 </content-type>
