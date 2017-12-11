@@ -52,19 +52,20 @@ function execute(req) {
 }
 
 function doExecute(req) {
-    var reqBodyJson = JSON.parse(req.body);
-    var repo = reqBodyJson.repository;
-    var repoUrl = repo.html_url;
-    var docs = findDocs(repoUrl);
+    var repo = getRepoInfo(req)
+    var docs = findDocs(repo.html_url);
 
     if (docs.length == 0) {
         return;
     }
 
-    var versions = getDocVersions(repo);
+    buildAndImportMasterVersion(repo, docs);
+    buildAndImportOtherVersions(repo, docs);
+}
 
-    buildAndImportMasterVersion(repo, docs, versions);
-    buildAndImportOtherVersions(repo, docs, versions);
+function getRepoInfo(req) {
+    var reqBodyJson = JSON.parse(req.body);
+    return reqBodyJson.repository;
 }
 
 // Find all entry keys.
@@ -88,16 +89,18 @@ function findDocs(repoUrl) {
     return keys;
 };
 
-function buildAndImportMasterVersion(repo, docs, versions) {
+function buildAndImportMasterVersion(repo, docs) {
     cloneRepo(repo);
     buildDoc(repo);
 
     docs.forEach(function (doc) {
-        importDocs(repo, doc, !!versions ? 'beta' : null);
+        importDocs(repo, doc, 'beta');
     });
 }
 
-function buildAndImportOtherVersions(repo, docs, versions) {
+function buildAndImportOtherVersions(repo, docs) {
+    var versions = getDocVersions(repo);
+
     if (!versions) {
         return;
     }
