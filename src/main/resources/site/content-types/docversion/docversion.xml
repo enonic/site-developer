@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+  <display-name>Docversion</display-name>
+  <super-type>base:structured</super-type>
+  <is-abstract>false</is-abstract>
+</content-type>

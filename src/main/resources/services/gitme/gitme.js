@@ -57,13 +57,14 @@ function doExecute(req) {
     var repoUrl = repo.html_url;
     var docs = findDocs(repoUrl);
 
-    if (docs.length > 0) {
-        cloneRepo(repo);
-        buildDoc(repo);
-        docs.forEach(function (doc) {
-           importDocs(repo, doc);
-        });
+    if (docs.length == 0) {
+        return;
     }
+
+    var versions = getDocVersions(repo);
+
+    buildAndImportMasterVersion(repo, docs, versions);
+    buildAndImportOtherVersions(repo, docs, versions);
 }
 
 // Find all entry keys.
@@ -87,11 +88,38 @@ function findDocs(repoUrl) {
     return keys;
 };
 
-function cloneRepo(repo) {
+function buildAndImportMasterVersion(repo, docs, versions) {
+    cloneRepo(repo);
+    buildDoc(repo);
+
+    docs.forEach(function (doc) {
+        importDocs(repo, doc, !!versions ? 'beta' : null);
+    });
+}
+
+function buildAndImportOtherVersions(repo, docs, versions) {
+    if (!versions) {
+        return;
+    }
+
+    versions.forEach(function (v) {
+        cloneRepo(repo, v.checkout);
+        buildDoc(repo);
+
+        docs.forEach(function (doc) {
+            importDocs(repo, doc, v.version);
+        });
+    });
+}
+
+function cloneRepo(repo, checkout) {
     var bean = __.newBean('com.enonic.site.developer.tools.repo.CloneRepoCommand');
     bean.repository = repo.html_url;
     bean.destination = repoDest + repo.full_name;
     bean.repoName = repo.full_name;
+    if (!!checkout) {
+        bean.checkout = checkout;
+    }
     bean.execute();
 }
 
@@ -102,9 +130,18 @@ function buildDoc(repo) {
     bean.execute();
 }
 
-function importDocs(repo, doc) {
+function importDocs(repo, doc, version) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportLocalFilesCommand');
     bean.localPath = repoDest + repo.full_name + '/build/docs/html5';
     bean.importPath = doc._path.replace('/content', '');
+    if (!!version) {
+        bean.version = version;
+    }
     bean.execute();
+}
+
+function getDocVersions(repo) {
+    var bean = __.newBean('com.enonic.site.developer.tools.imports.GetVersionsCommand');
+    bean.localPath = repoDest + repo.full_name + '/docs';
+    return JSON.parse(__.toNativeObject(bean.execute()));
 }

@@ -51,7 +51,7 @@ public class ImportLocalFilesCommandTest
     }
 
     @Test
-    public void testVerifyContentTreeCreated()
+    public void testContentTreeCreated()
         throws Exception
     {
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
@@ -65,7 +65,7 @@ public class ImportLocalFilesCommandTest
     }
 
     @Test
-    public void testVerifyPaths()
+    public void testPathsAreCorrect()
         throws Exception
     {
         final List<String> contentPaths =

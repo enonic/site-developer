@@ -34,6 +34,8 @@ public final class CloneRepoCommand
 
     public String repoName;
 
+    public String checkout; // Branch or commit to checkout
+
     public void execute()
     {
         try
@@ -49,7 +51,7 @@ public final class CloneRepoCommand
 
     private void doExecute() throws Exception
     {
-        String gitRepositoryUri = resolveGitRepositoryUri();
+        final String gitRepositoryUri = resolveGitRepositoryUri();
         cloneGitRepository( gitRepositoryUri );
     }
 
@@ -72,8 +74,8 @@ public final class CloneRepoCommand
         LOGGER.info( "Retrieving Git repository from \"" + gitRepositoryUri + "\" ..." );
 
         // Creates the destination directory if it does not exist
-        File destinationDirectory = new File( destination );
-        File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
+        final File destinationDirectory = new File( destination );
+        final File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
         temporaryDirectory.mkdirs();
 
         try
@@ -83,7 +85,13 @@ public final class CloneRepoCommand
                 setURI( gitRepositoryUri ).
                 setDirectory( temporaryDirectory );
 
-            Git git = cloneCommand.call();
+            final Git git = cloneCommand.call();
+
+            // Checks out the specified branch or commit if necessary
+            if ( checkout != null )
+            {
+                git.checkout().setName( checkout ).call();
+            }
 
             //Closes the repository
             git.getRepository().close();
@@ -173,5 +181,10 @@ public final class CloneRepoCommand
     public void setRepoName( String repoName )
     {
         this.repoName = repoName;
+    }
+
+    public void setCheckout( final String checkout )
+    {
+        this.checkout = checkout;
     }
 }

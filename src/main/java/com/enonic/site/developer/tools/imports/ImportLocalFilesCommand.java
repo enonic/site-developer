@@ -51,6 +51,8 @@ public final class ImportLocalFilesCommand
 
     private String importPath;
 
+    private String version;
+
     private ApplicationKey applicationKey;
 
     private ContentService contentService;
@@ -67,6 +69,7 @@ public final class ImportLocalFilesCommand
     {
         try
         {
+            createDocVersion();
             importFoldersAndMedia();
             importDocpages(); // Loading docpages after all media that docpage may refer to is loaded
         }
@@ -75,6 +78,25 @@ public final class ImportLocalFilesCommand
             LOGGER.error( "Failed to import data from [" + localPath + "]", e );
             throw new RuntimeException( "Failed to import data from [" + localPath + "]", e );
         }
+    }
+
+    private void createDocVersion()
+    {
+        if ( version == null || version.isEmpty() )
+        {
+            return;
+        }
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( version ).
+            parent( ContentPath.from( importPath ) ).
+            type( ContentTypeName.from( applicationKey + ":docversion" ) ).
+            build();
+
+        contentService.create( createContentParams );
+
+        importPath = importPath + "/" + version;
     }
 
     private void importFoldersAndMedia()
@@ -217,6 +239,11 @@ public final class ImportLocalFilesCommand
     public void setImportPath( final String importPath )
     {
         this.importPath = importPath;
+    }
+
+    public void setVersion( final String version )
+    {
+        this.version = version;
     }
 
     private void runAsAdmin( final Runnable runnable )

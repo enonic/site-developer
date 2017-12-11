@@ -1,0 +1,10 @@
+[
+  {
+    "version": "1.0.0",
+    "checkout": "branchName"
+  },
+  {
+    "version": "1.0.2",
+    "checkout": "commitHash"
+  }
+]
