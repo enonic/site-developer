@@ -43,6 +43,10 @@ function isDoc(content) {
     return content.type === app.name + ':doc';
 }
 
+function isDocVersion(content) {
+    return content.type === app.name + ':docversion';
+}
+
 // Get entry.
 exports.findEntry = function (entry) {
     var content = portalLib.getContent();
@@ -51,7 +55,7 @@ exports.findEntry = function (entry) {
         return toEntry(content, true);
     }
 
-    if (isDoc(content)) {
+    if (isDoc(content) || isDocVersion(content)) {
         return toEntry(contentLib.get({key: content._path + '/index.html'}), true);
     }
 
