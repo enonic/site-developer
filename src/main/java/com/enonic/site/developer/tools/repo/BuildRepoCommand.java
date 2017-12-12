@@ -56,7 +56,7 @@ public final class BuildRepoCommand
         }
         else
         {
-            commandAndArgs.addAll( Arrays.asList( "gradlew", "buildDoc" ) );
+            commandAndArgs.addAll( Arrays.asList( "./gradlew", "buildDoc" ) );
         }
 
 
