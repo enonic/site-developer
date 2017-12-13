@@ -19,18 +19,6 @@ function queryContent(params) {
     return sudo(contentLib.query.bind(null, params));
 }
 
-function createContent(params) {
-    return sudo(contentLib.create.bind(null, params));
-}
-
-function getContent(params) {
-    return sudo(contentLib.get.bind(null, params));
-}
-
-function modifyContent(params) {
-    return sudo(contentLib.modify.bind(null, params));
-}
-
 exports.post = function (req) {
     callExecuteAsync(req);
     return;

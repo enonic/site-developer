@@ -29,6 +29,9 @@ function getCards() {
             cards.push(createCard(libs.content.get({key: id})));
         });
     }
+    else {
+        cards = searchCards();
+    }
 
     return cards;
 }
@@ -44,7 +47,7 @@ function createCard(content) {
 
 function asArray(obj) {
     if (!obj) {
-        return [];
+        return null;
     }
 
     if (Array.isArray(obj)) {
@@ -52,4 +55,25 @@ function asArray(obj) {
     }
 
     return [obj];
+}
+
+function searchCards() {
+    var content = libs.portal.getContent();
+
+    var expr = "type ='" + app.name + ":doc' " +
+               "AND _path LIKE '/content" + content._path + "/*' ";
+
+    var result = libs.content.query({
+        query: expr,
+        start: 0,
+        count: 100
+    });
+
+    var cards = [];
+    for (var i = 0; i < result.hits.length; i++) {
+        var hit = result.hits[i];
+        cards.push(createCard(libs.content.get({key: hit._path})));
+    }
+
+    return cards;
 }

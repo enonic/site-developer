@@ -75,7 +75,7 @@ public final class CloneRepoCommand
 
         // Creates the destination directory if it does not exist
         final File destinationDirectory = new File( destination );
-        final File temporaryDirectory = new File( destinationDirectory, ".InitAppTemporaryDirectory" );
+        final File temporaryDirectory = new File( destinationDirectory, ".CloneRepoTemporaryDirectory" );
         temporaryDirectory.mkdirs();
 
         try

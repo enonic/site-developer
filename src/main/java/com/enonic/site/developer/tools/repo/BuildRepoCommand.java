@@ -74,6 +74,10 @@ public final class BuildRepoCommand
 
         Map<String, Object> options = options().backend( "html5" ).attributes( attributes ).asMap();
 
+//        Map<String, Object> options =
+//            options().safe( SafeMode.UNSAFE ).mkDirs( true ).toDir( new File( destination + "/build/docs" ) ).backend( "html5" ).attributes(
+//                attributes ).asMap();
+
         asciidoctor.convertDirectory( new AsciiDocDirectoryWalker( destination + "/docs" ), options );
     }
 
