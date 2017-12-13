@@ -1,15 +1,26 @@
 package com.enonic.site.developer.tools.repo;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
+import org.asciidoctor.AsciiDocDirectoryWalker;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Placement;
+import org.jruby.RubyInstanceConfig;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
+
+import static org.asciidoctor.Asciidoctor.Factory.create;
+import static org.asciidoctor.AttributesBuilder.attributes;
+import static org.asciidoctor.OptionsBuilder.options;
+
 public final class BuildRepoCommand
+    implements ScriptBean
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( BuildRepoCommand.class );
 
@@ -17,50 +28,53 @@ public final class BuildRepoCommand
 
     private String repoName;
 
+    private ContentService contentService;
+
+    private BeanContext beanContext;
+
+    public static void main( String[] args )
+        throws Exception
+    {
+
+        final BuildRepoCommand buildRepoCommand = new BuildRepoCommand();
+        buildRepoCommand.setDestination( "C:/Dev/Enonic/lib-xslt" );
+        buildRepoCommand.setRepoName( "lib-xslt" );
+        buildRepoCommand.execute();
+    }
+
+
     public void execute()
         throws Exception
     {
         try
         {
-            LOGGER.info( "Building repo '" + repoName + "' ..." );
-            ProcessBuilder pb = new ProcessBuilder( makeCommand() );
-            pb.directory( new File( destination ) );
-            pb.redirectErrorStream( true );
-            Process p = pb.start();
-            p.waitFor();
-            p.destroyForcibly();
+            doExecute();
         }
         catch ( final Throwable t )
         {
-            LOGGER.error( "Failed to build repo '" + repoName + "'", t );
-            throw t;
+            LOGGER.error( "Failed to build asciidoc in [" + repoName + "]", t );
+            throw new RuntimeException( "Failed to build asciidoc in [" + repoName + "]", t );
         }
-
-        final File buildDir = new File( destination + "/build" );
-        if ( !buildDir.exists() )
-        {
-            LOGGER.error( "Failed to build repo '" + repoName + "'" );
-            throw new Exception( "Failed to build repo '" + repoName + "'" );
-        }
-
-        LOGGER.info( "Repo '" + repoName + "' built successfully" );
     }
 
-    private List<String> makeCommand()
+    private void doExecute()
+        throws Exception
     {
-        final List<String> commandAndArgs = new ArrayList<>();
+        RubyInstanceConfig config = new RubyInstanceConfig();
+        config.setLoader( this.getClass().getClassLoader() );
 
-        if ( SystemUtils.IS_OS_WINDOWS )
-        {
-            commandAndArgs.addAll( Arrays.asList( "cmd", "/c", "gradlew", "buildDoc" ) );
-        }
-        else
-        {
-            commandAndArgs.addAll( Arrays.asList( "./gradlew", "buildDoc" ) );
-        }
+        JavaEmbedUtils.initialize( Arrays.asList( "META-INF/jruby.home/lib/ruby/2.0", "gems/asciidoctor-1.5.6.1/lib" ), config );
 
+        Asciidoctor asciidoctor = create( this.getClass().getClassLoader() );
 
-        return commandAndArgs;
+        Map<String, Object> attributes = attributes().backend( "html5" ).icons( "font" ).setAnchors( true ).attribute( "sectlinks", true ).
+            attribute( "encoding", "utf-8" ).linkAttrs( true ).attribute( "idprefix", "" ).
+            attribute( "toclevels", 2 ).
+            tableOfContents( Placement.RIGHT ).asMap();
+
+        Map<String, Object> options = options().backend( "html5" ).attributes( attributes ).asMap();
+
+        asciidoctor.convertDirectory( new AsciiDocDirectoryWalker( destination + "/docs" ), options );
     }
 
     public void setDestination( String destination )
@@ -71,5 +85,12 @@ public final class BuildRepoCommand
     public void setRepoName( String repoName )
     {
         this.repoName = repoName;
+    }
+
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.beanContext = context;
+        this.contentService = context.getService( ContentService.class ).get();
     }
 }

@@ -21,6 +21,7 @@ app {
 }
 
 dependencies {
+    include 'org.asciidoctor:asciidoctorj:1.5.6'
     compile "com.enonic.xp:core-api:${xpVersion}"
     compile "com.enonic.xp:portal-api:${xpVersion}"
     include "com.enonic.xp:lib-content:${xpVersion}"

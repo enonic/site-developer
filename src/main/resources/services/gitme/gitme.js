@@ -135,7 +135,7 @@ function buildDoc(repo) {
 
 function importDocs(repo, doc, version) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportLocalFilesCommand');
-    bean.localPath = repoDest + repo.full_name + '/build/docs/html5';
+    bean.localPath = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
     if (!!version) {
         bean.version = version;

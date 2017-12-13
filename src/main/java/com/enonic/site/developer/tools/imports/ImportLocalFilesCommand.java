@@ -103,14 +103,16 @@ public final class ImportLocalFilesCommand
         throws IOException
     {
         this.isRootFile = true;
-        Files.walk( localPath ).filter( path -> !isRootFile() && !isDocpage( path ) ).forEach( path -> createContent( path ) );
+        Files.walk( localPath ).filter( path -> !isRootFile() && !isForbidden( path ) && !isDocpage( path ) ).forEach(
+            path -> createContent( path ) );
     }
 
     private void importDocpages()
         throws IOException
     {
         this.isRootFile = true;
-        Files.walk( localPath ).filter( path -> !isRootFile() && isDocpage( path ) ).forEach( path -> createDocpage( path ) );
+        Files.walk( localPath ).filter( path -> !isRootFile() && !isForbidden( path ) && isDocpage( path ) ).forEach(
+            path -> createDocpage( path ) );
     }
 
     private boolean isRootFile()
@@ -122,6 +124,23 @@ public final class ImportLocalFilesCommand
         }
 
         return false;
+    }
+
+    private boolean isForbidden( final Path path )
+    {
+        if ( path.endsWith( ".json" ) )
+        {
+            return true;
+        }
+
+        if ( path.endsWith( ".adoc" ) )
+        {
+            return true;
+        }
+
+        {
+            return false;
+        }
     }
 
     private boolean isDocpage( final Path path )

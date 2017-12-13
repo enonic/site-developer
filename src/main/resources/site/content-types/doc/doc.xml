@@ -24,13 +24,5 @@
                 <regexp>^(https://github.com/).*?</regexp>
             </config>
         </input>
-        <input name="versioning" type="RadioButton">
-            <label>Versioning</label>
-            <occurrences minimum="1" maximum="1"/>
-            <config>
-              <option value="latest">Latest Only</option>
-                <option value="versioned">Versioned</option>
-            </config>
-        </input>
     </form>
 </content-type>
