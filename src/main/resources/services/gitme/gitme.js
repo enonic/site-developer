@@ -59,8 +59,12 @@ function doExecute(req) {
         return;
     }
 
-    buildAndImportMasterVersion(repo, docs);
-    buildAndImportOtherVersions(repo, docs);
+    buildMasterVersion(repo);
+
+    var versions = getDocVersions(repo);
+
+    importMasterVersion(repo, docs, !!versions);
+    buildAndImportOtherVersions(repo, docs, versions);
 }
 
 function getRepoInfo(req) {
@@ -89,18 +93,18 @@ function findDocs(repoUrl) {
     return keys;
 };
 
-function buildAndImportMasterVersion(repo, docs) {
+function buildMasterVersion(repo) {
     cloneRepo(repo);
     buildDoc(repo);
+}
 
+function importMasterVersion(repo, docs, isMultiversion) {
     docs.forEach(function (doc) {
-        importDocs(repo, doc, 'beta');
+        importDocs(repo, doc, isMultiversion ? 'beta' : null);
     });
 }
 
-function buildAndImportOtherVersions(repo, docs) {
-    var versions = getDocVersions(repo);
-
+function buildAndImportOtherVersions(repo, docs, versions) {
     if (!versions) {
         return;
     }

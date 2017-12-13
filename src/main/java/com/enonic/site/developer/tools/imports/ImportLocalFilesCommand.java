@@ -128,12 +128,12 @@ public final class ImportLocalFilesCommand
 
     private boolean isForbidden( final Path path )
     {
-        if ( path.endsWith( ".json" ) )
+        if ( path.toString().endsWith( ".json" ) )
         {
             return true;
         }
 
-        if ( path.endsWith( ".adoc" ) )
+        if ( path.toString().endsWith( ".adoc" ) )
         {
             return true;
         }
