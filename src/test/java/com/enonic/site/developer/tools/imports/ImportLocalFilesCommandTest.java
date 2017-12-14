@@ -41,7 +41,7 @@ public class ImportLocalFilesCommandTest
         applicationKey = ApplicationKey.from( "myapplication" );
         importLocalFilesCommand = new ImportLocalFilesCommand();
         importLocalFilesCommand.setImportPath( importPath );
-        importLocalFilesCommand.setLocalPath( getPath( "docs" ) );
+        importLocalFilesCommand.setSourceDir( getPath( "docs" ) );
 
         final BeanContext beanContext = Mockito.mock( BeanContext.class );
         final Supplier<ContentService> serviceSupplier = Mockito.mock( Supplier.class );

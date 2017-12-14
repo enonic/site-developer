@@ -119,15 +119,15 @@ function cloneRepo(repo, checkout) {
 }
 
 function buildDoc(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.repo.BuildRepoCommand');
-    bean.destination = repoDest + repo.full_name;
+    var bean = __.newBean('com.enonic.site.developer.tools.doc.BuildAsciiDocCommand');
+    bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.repoName = repo.full_name;
     bean.execute();
 }
 
 function importDocs(repo, doc, version) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportLocalFilesCommand');
-    bean.localPath = repoDest + repo.full_name + '/docs';
+    bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
     if (!!version) {
         bean.version = version;
@@ -137,6 +137,6 @@ function importDocs(repo, doc, version) {
 
 function getDocVersions(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.GetVersionsCommand');
-    bean.localPath = repoDest + repo.full_name + '/docs';
+    bean.sourceDir = repoDest + repo.full_name + '/docs';
     return JSON.parse(__.toNativeObject(bean.execute()));
 }

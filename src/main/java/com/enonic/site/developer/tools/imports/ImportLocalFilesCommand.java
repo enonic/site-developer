@@ -47,7 +47,7 @@ public final class ImportLocalFilesCommand
         login( "su" ).
         build();
 
-    private Path localPath;
+    private Path sourceDir;
 
     private String importPath;
 
@@ -75,8 +75,8 @@ public final class ImportLocalFilesCommand
         }
         catch ( final Exception e )
         {
-            LOGGER.error( "Failed to import data from [" + localPath + "]", e );
-            throw new RuntimeException( "Failed to import data from [" + localPath + "]", e );
+            LOGGER.error( "Failed to import data from [" + sourceDir + "]", e );
+            throw new RuntimeException( "Failed to import data from [" + sourceDir + "]", e );
         }
     }
 
@@ -103,7 +103,7 @@ public final class ImportLocalFilesCommand
         throws IOException
     {
         this.isRootFile = true;
-        Files.walk( localPath ).filter( path -> !isRootFile() && !isForbidden( path ) && !isDocpage( path ) ).forEach(
+        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && !isDocpage( path ) ).forEach(
             path -> createContent( path ) );
     }
 
@@ -111,7 +111,7 @@ public final class ImportLocalFilesCommand
         throws IOException
     {
         this.isRootFile = true;
-        Files.walk( localPath ).filter( path -> !isRootFile() && !isForbidden( path ) && isDocpage( path ) ).forEach(
+        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && isDocpage( path ) ).forEach(
             path -> createDocpage( path ) );
     }
 
@@ -163,7 +163,7 @@ public final class ImportLocalFilesCommand
     private ContentPath makeRepoPath( final Path path )
     {
         return ContentPath.from(
-            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + localPath.relativize( path ).toString().replace( "\\", "/" ) );
+            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + sourceDir.relativize( path ).toString().replace( "\\", "/" ) );
     }
 
     private void createFolder( final Path path )
@@ -238,10 +238,8 @@ public final class ImportLocalFilesCommand
 
     protected ByteSource loadMedia( final Path filePath )
     {
-        try
+        try (final InputStream imageStream = new FileInputStream( filePath.toFile() ))
         {
-            final InputStream imageStream = new FileInputStream( filePath.toFile() );
-
             return ByteSource.wrap( ByteStreams.toByteArray( imageStream ) );
         }
         catch ( IOException e )
@@ -250,9 +248,9 @@ public final class ImportLocalFilesCommand
         }
     }
 
-    public void setLocalPath( final String localPath )
+    public void setSourceDir( final String sourceDir )
     {
-        this.localPath = new File( localPath ).toPath();
+        this.sourceDir = new File( sourceDir ).toPath();
     }
 
     public void setImportPath( final String importPath )

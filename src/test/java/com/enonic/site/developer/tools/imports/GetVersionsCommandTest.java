@@ -18,7 +18,7 @@ public class GetVersionsCommandTest
         throws Exception
     {
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommand();
-        getVersionsCommand.setLocalPath( getPath( "versions" ) );
+        getVersionsCommand.setSourceDir( getPath( "versions" ) );
         final String result = getVersionsCommand.execute();
 
         assertNotNull( result );
@@ -29,7 +29,7 @@ public class GetVersionsCommandTest
         throws Exception
     {
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommand();
-        getVersionsCommand.setLocalPath( "non_existing_path" );
+        getVersionsCommand.setSourceDir( "non_existing_path" );
 
         exception.expect( RuntimeException.class );
 
@@ -41,7 +41,7 @@ public class GetVersionsCommandTest
         throws Exception
     {
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommand();
-        getVersionsCommand.setLocalPath( getPath( "versions_not_exist" ) );
+        getVersionsCommand.setSourceDir( getPath( "versions_not_exist" ) );
         final String result = getVersionsCommand.execute();
 
         assertNull( result );

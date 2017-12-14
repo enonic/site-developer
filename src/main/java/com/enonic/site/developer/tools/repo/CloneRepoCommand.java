@@ -73,8 +73,9 @@ public final class CloneRepoCommand
     {
         LOGGER.info( "Retrieving Git repository from \"" + gitRepositoryUri + "\" ..." );
 
-        // Creates the destination directory if it does not exist
+        // Creates the destination directory if it does not exist and cleans it
         final File destinationDirectory = new File( destination );
+        FileUtils.deleteDirectory( destinationDirectory );
         final File temporaryDirectory = new File( destinationDirectory, ".CloneRepoTemporaryDirectory" );
         temporaryDirectory.mkdirs();
 

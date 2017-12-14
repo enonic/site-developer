@@ -12,7 +12,7 @@ public class GetVersionsCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( GetVersionsCommand.class );
 
-    private Path localPath;
+    private Path sourceDir;
 
     private final String versionsJsonName = "versions.json";
 
@@ -24,8 +24,8 @@ public class GetVersionsCommand
         }
         catch ( final Exception e )
         {
-            LOGGER.error( "Failed to fetch versions json in  [" + localPath + "]", e );
-            throw new RuntimeException( "Failed to fetch versions json in [" + localPath + "]", e );
+            LOGGER.error( "Failed to fetch versions json in  [" + sourceDir + "]", e );
+            throw new RuntimeException( "Failed to fetch versions json in [" + sourceDir + "]", e );
         }
     }
 
@@ -34,28 +34,28 @@ public class GetVersionsCommand
     {
         checkPathToLookForVersionsExists();
 
-        localPath = localPath.resolve( versionsJsonName );
+        sourceDir = sourceDir.resolve( versionsJsonName );
 
-        if ( !localPath.toFile().exists() )
+        if ( !sourceDir.toFile().exists() )
         {
-            LOGGER.warn( "No [versions.json] found at path [" + localPath + "]" );
+            LOGGER.warn( "No [versions.json] found at path [" + sourceDir + "]" );
             return null;
         }
 
-        return new String( Files.readAllBytes( localPath ) );
+        return new String( Files.readAllBytes( sourceDir ) );
     }
 
     private void checkPathToLookForVersionsExists()
         throws NoSuchFileException
     {
-        if ( !localPath.toFile().exists() )
+        if ( !sourceDir.toFile().exists() )
         {
-            throw new NoSuchFileException( "Path to look for [versions.json] does not exist [" + localPath + "]" );
+            throw new NoSuchFileException( "Path to look for [versions.json] does not exist [" + sourceDir + "]" );
         }
     }
 
-    public void setLocalPath( final String localPath )
+    public void setSourceDir( final String sourceDir )
     {
-        this.localPath = new File( localPath ).toPath();
+        this.sourceDir = new File( sourceDir ).toPath();
     }
 }
