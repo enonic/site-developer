@@ -8,7 +8,7 @@
     max-width: 1280px;
   }
 
-  @include media('>=medium', '<large') {
+  @include media('>=medium', '<xlarge') {
     padding-left: 60px;
     padding-right: 60px;
   }

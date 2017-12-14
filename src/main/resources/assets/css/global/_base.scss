@@ -102,3 +102,7 @@ main {
     margin-bottom: 30px;
   }
 }
+
+[data-portal-region='main'] {
+  overflow: auto; // to remove collapsing margins
+}
