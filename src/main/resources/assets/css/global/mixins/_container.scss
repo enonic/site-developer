@@ -1,20 +1,10 @@
 @mixin container {
   margin: 0 auto;
   width: 100%;
-  padding-left: 120px;
-  padding-right: 120px;
+  padding-left: 20px;
+  padding-right: 20px;
 
   @include media('>=large') {
     max-width: 1280px;
-  }
-
-  @include media('>=medium', '<xlarge') {
-    padding-left: 60px;
-    padding-right: 60px;
-  }
-
-  @include media('<medium') {
-    padding-left: 20px;
-    padding-right: 20px;
   }
 }
