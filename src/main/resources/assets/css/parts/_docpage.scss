@@ -1,6 +1,5 @@
 .docpage-content {
   @import '_asciidoctor';
-  @import '_toc';
 
   display: flex;
   justify-content: center;
@@ -28,10 +27,57 @@
   h2, h3 {
     text-transform: none;
   }
-}
 
-@media screen and (max-width: 768px) {
-  .docpage-content {
+  .toc {
+    padding: 10px 2.9rem 10px 1rem;
+    order: 1;
+    flex-shrink: 0;
+    background-color: #f8f8f7;
+    margin-left: 20px;
+    margin-bottom: 20px;
+
+    position: sticky;
+    top: 0;
+    height: 100%;
+
+    #js-toc {
+      > .toc-list {
+        margin-left: 0;
+        list-style-type: square;
+        color: gray;
+        list-style-position: inside;
+      }
+    }
+
+    .toc-list {
+      @include list-unstyled;
+
+      a {
+        color: $color-toc-blue;
+
+        &:hover {
+          color: $color-toc-dark-blue;
+        }
+      }
+
+      li ul li {
+        list-style-type: none;
+        font-size: 0.9em;
+
+        &:before {
+          content: "–  ";
+        }
+      }
+    }
+
+    .toc-title {
+      font-size: 2rem;
+      color: $color-toc-gray;
+      margin-bottom: 5px;
+    }
+  }
+
+  &._0-1024 {
     display: block;
 
     #title {
@@ -42,5 +88,10 @@
       display: block;
     }
 
+    .toc {
+      position: static;
+      height: auto;
+      margin-left: 0px;
+    }
   }
 }
