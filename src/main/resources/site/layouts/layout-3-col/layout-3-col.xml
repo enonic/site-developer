@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<layout>
+  <display-name>3 column layout</display-name>
+  <config>
+    <item-set name="bgColor">
+      <label>Background color</label>
+      <items>
+        <inline mixin="theme-color-picker"/>
+      </items>
+      <immutable>false</immutable>
+      <occurrences minimum="0" maximum="1"/>
+    </item-set>
+    <input type="Checkbox" name="paddingTop">
+      <label>Top padding</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+  </config>
+  <regions>
+    <region name="left"/>
+    <region name="middle"/>
+    <region name="right"/>
+  </regions>
+</layout>

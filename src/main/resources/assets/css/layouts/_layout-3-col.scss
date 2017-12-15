@@ -1,0 +1,25 @@
+.layout-3-col {
+
+  @include layout;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  [data-portal-region='left'] {
+    width: 33%;
+    margin-right: 10px;
+  }
+
+  [data-portal-region='middle'] {
+    width: 33%;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  [data-portal-region='right'] {
+    width: 33%;
+    margin-left: 10px;
+  }
+}

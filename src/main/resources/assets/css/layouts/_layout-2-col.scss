@@ -1,0 +1,19 @@
+.layout-2-col {
+  @include layout;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  [data-portal-region='left'] {
+    width: 50%;
+    margin-right: 10px;
+  }
+
+  [data-portal-region='right'] {
+    width: 50%;
+    margin-left: 10px;
+  }
+
+}

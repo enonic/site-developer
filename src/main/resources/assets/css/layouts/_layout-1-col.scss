@@ -1,18 +1,5 @@
 .layout-1-col {
 
-  &--padding-top {
-    @extend .layout-padding-top;
-  }
+  @include layout;
 
-  &--white {
-    background-color: #fff;
-  }
-
-  &--grey {
-    background-color: #f0f0f0;
-  }
-
-  &--blue {
-    background-color: #C4EBFF;
-  }
 }

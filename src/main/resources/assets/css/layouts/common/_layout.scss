@@ -1,0 +1,17 @@
+@mixin layout {
+  &--padding-top {
+    @extend .layout-padding-top;
+  }
+
+  &--white {
+    background-color: #fff;
+  }
+
+  &--grey {
+    background-color: #f0f0f0;
+  }
+
+  &--blue {
+    background-color: #C4EBFF;
+  }
+}
