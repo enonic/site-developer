@@ -1,4 +1,4 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.asciidoc;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ExtractDocHtmlCommandTest
+public class ExtractAsciiDocHtmlCommandTest
 {
     @Test
     public void testExtract()
@@ -22,11 +22,11 @@ public class ExtractDocHtmlCommandTest
     private ExtractedDoc extractDoc( final String fileName )
         throws Exception
     {
-        final ExtractDocHtmlCommand extractDocHtmlCommand = new ExtractDocHtmlCommand();
+        final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
 
-        extractDocHtmlCommand.setPath( getFilePath( fileName ) );
+        extractAsciiDocHtmlCommand.setPath( getFilePath( fileName ) );
 
-        return extractDocHtmlCommand.execute();
+        return extractAsciiDocHtmlCommand.execute();
     }
 
     private String getFilePath( final String fileName )

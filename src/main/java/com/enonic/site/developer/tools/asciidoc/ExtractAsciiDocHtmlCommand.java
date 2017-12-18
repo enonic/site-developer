@@ -1,4 +1,4 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.asciidoc;
 
 import java.io.File;
 
@@ -8,9 +8,9 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ExtractDocHtmlCommand
+public final class ExtractAsciiDocHtmlCommand
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( ExtractDocHtmlCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( ExtractAsciiDocHtmlCommand.class );
 
     private String path;
 

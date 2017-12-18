@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.site.developer.tools.doc.ExtractDocHtmlCommand;
-import com.enonic.site.developer.tools.doc.ExtractedDoc;
+import com.enonic.site.developer.tools.asciidoc.ExtractAsciiDocHtmlCommand;
+import com.enonic.site.developer.tools.asciidoc.ExtractedDoc;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -35,43 +35,39 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public final class ImportLocalFilesCommand
+public abstract class ImportCommand
     implements ScriptBean
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( ImportLocalFilesCommand.class );
+    private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
 
-    private static final String DEFAULT_DOCPAGE_NAME = "index.html";
+    protected static final String DEFAULT_ASCIIDOC_NAME = "index.html";
+
+    protected Path sourceDir;
+
+    protected String importPath;
+
+    protected ApplicationKey applicationKey;
+
+    protected ContentService contentService;
+
+    protected boolean isRootFile = true;
 
     private static final User SUPER_USER = User.create().
         key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
         login( "su" ).
         build();
 
-    private Path sourceDir;
-
-    private String importPath;
-
-    private String version;
-
-    private ApplicationKey applicationKey;
-
-    private ContentService contentService;
-
-    private boolean isRootFile = true;
-
-    public void execute()
+    public final void execute()
         throws Exception
     {
         runAsAdmin( this::doExecute );
     }
 
-    public void doExecute()
+    private void doExecute()
     {
         try
         {
-            createDocVersion();
-            importFoldersAndMedia();
-            importDocpages(); // Loading docpages after all media that docpage may refer to is loaded
+            importData();
         }
         catch ( final Exception e )
         {
@@ -80,42 +76,18 @@ public final class ImportLocalFilesCommand
         }
     }
 
-    private void createDocVersion()
-    {
-        if ( version == null || version.isEmpty() )
-        {
-            return;
-        }
+    protected abstract void importData()
+        throws Exception;
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( version ).
-            parent( ContentPath.from( importPath ) ).
-            type( ContentTypeName.from( applicationKey + ":docversion" ) ).
-            build();
-
-        contentService.create( createContentParams );
-
-        importPath = importPath + "/" + version;
-    }
-
-    private void importFoldersAndMedia()
+    protected void importFoldersAndMedia()
         throws IOException
     {
         this.isRootFile = true;
-        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && !isDocpage( path ) ).forEach(
+        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && !isCompiledAsciiDoc( path ) ).forEach(
             path -> createContent( path ) );
     }
 
-    private void importDocpages()
-        throws IOException
-    {
-        this.isRootFile = true;
-        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && isDocpage( path ) ).forEach(
-            path -> createDocpage( path ) );
-    }
-
-    private boolean isRootFile()
+    protected boolean isRootFile()
     {
         if ( isRootFile )
         {
@@ -126,7 +98,7 @@ public final class ImportLocalFilesCommand
         return false;
     }
 
-    private boolean isForbidden( final Path path )
+    protected boolean isForbidden( final Path path )
     {
         if ( path.toString().endsWith( ".json" ) )
         {
@@ -143,9 +115,9 @@ public final class ImportLocalFilesCommand
         }
     }
 
-    private boolean isDocpage( final Path path )
+    protected boolean isCompiledAsciiDoc( final Path path )
     {
-        return path.getFileName().toString().equals( DEFAULT_DOCPAGE_NAME );
+        return path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
     }
 
     private void createContent( final Path path )
@@ -160,7 +132,7 @@ public final class ImportLocalFilesCommand
         }
     }
 
-    private ContentPath makeRepoPath( final Path path )
+    protected ContentPath makeRepoPath( final Path path )
     {
         return ContentPath.from(
             importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + sourceDir.relativize( path ).toString().replace( "\\", "/" ) );
@@ -185,39 +157,6 @@ public final class ImportLocalFilesCommand
         contentService.create( createContentParams );
     }
 
-    private void createDocpage( final Path path )
-    {
-        final ContentPath repoPath = makeRepoPath( path );
-
-        if ( contentService.contentExists( repoPath ) )
-        {
-            return;
-        }
-
-        LOGGER.info( "Creating docpage " + repoPath );
-
-        final ExtractDocHtmlCommand extractDocHtmlCommand = new ExtractDocHtmlCommand();
-        extractDocHtmlCommand.setPath( path.toString() );
-        final ExtractedDoc extractedDoc = extractDocHtmlCommand.execute();
-        new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
-        new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
-        new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
-
-        final PropertyTree data = new PropertyTree();
-        data.addString( "html", extractedDoc.getHtml() );
-        data.addString( "title", extractedDoc.getTitle() );
-        data.addString( "raw", extractedDoc.getText() );
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
-            displayName( path.getFileName().toString() ).
-            parent( repoPath.getParentPath() ).
-            type( ContentTypeName.from( applicationKey + ":docpage" ) ).
-            requireValid( false ).
-            build();
-        contentService.create( createContentParams );
-    }
-
     private void createMedia( final Path path )
     {
         final ContentPath repoPath = makeRepoPath( path );
@@ -236,7 +175,7 @@ public final class ImportLocalFilesCommand
         contentService.create( createMediaParams );
     }
 
-    protected ByteSource loadMedia( final Path filePath )
+    private ByteSource loadMedia( final Path filePath )
     {
         try (final InputStream imageStream = new FileInputStream( filePath.toFile() ))
         {
@@ -248,19 +187,17 @@ public final class ImportLocalFilesCommand
         }
     }
 
-    public void setSourceDir( final String sourceDir )
+    protected ExtractedDoc getAsciiDoc( final Path path )
     {
-        this.sourceDir = new File( sourceDir ).toPath();
-    }
+        final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
+        extractAsciiDocHtmlCommand.setPath( path.toString() );
+        final ExtractedDoc extractedDoc = extractAsciiDocHtmlCommand.execute();
 
-    public void setImportPath( final String importPath )
-    {
-        this.importPath = importPath;
-    }
+        new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
 
-    public void setVersion( final String version )
-    {
-        this.version = version;
+        return extractedDoc;
     }
 
     private void runAsAdmin( final Runnable runnable )
@@ -277,6 +214,16 @@ public final class ImportLocalFilesCommand
             principals( RoleKeys.ADMIN ).
             user( SUPER_USER ).
             build();
+    }
+
+    public void setSourceDir( final String sourceDir )
+    {
+        this.sourceDir = new File( sourceDir ).toPath();
+    }
+
+    public void setImportPath( final String importPath )
+    {
+        this.importPath = importPath;
     }
 
     @Override
@@ -328,23 +275,20 @@ public final class ImportLocalFilesCommand
 
             return getMediaPrefix( media.getType() ) + media.getId();
         }
-    }
 
-    private String getMediaPrefix( final ContentTypeName contentTypeName )
-    {
-        if ( contentTypeName.isImageMedia() )
+        private String getMediaPrefix( final ContentTypeName contentTypeName )
         {
-            return "image://";
-        }
+            if ( contentTypeName.isImageMedia() )
+            {
+                return "image://";
+            }
 
-        if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
-        {
-            return "media://";
-        }
+            if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
+            {
+                return "media://";
+            }
 
-        return "";
+            return "";
+        }
     }
-
 }
-
-

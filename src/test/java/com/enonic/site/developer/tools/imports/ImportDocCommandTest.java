@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -24,30 +23,27 @@ import com.enonic.xp.script.bean.BeanContext;
 
 import static org.junit.Assert.*;
 
-public class ImportLocalFilesCommandTest
+public class ImportDocCommandTest
 {
     private ContentService contentService;
 
-    private ApplicationKey applicationKey;
-
     private String importPath = "/developersite/doctest";
 
-    private ImportLocalFilesCommand importLocalFilesCommand;
+    private ImportDocCommand importDocCommand;
 
     @Before
     public void setUp()
     {
         contentService = Mockito.mock( ContentService.class );
-        applicationKey = ApplicationKey.from( "myapplication" );
-        importLocalFilesCommand = new ImportLocalFilesCommand();
-        importLocalFilesCommand.setImportPath( importPath );
-        importLocalFilesCommand.setSourceDir( getPath( "docs" ) );
+        importDocCommand = new ImportDocCommand();
+        importDocCommand.setImportPath( importPath );
+        importDocCommand.setSourceDir( getPath( "docs" ) );
 
         final BeanContext beanContext = Mockito.mock( BeanContext.class );
         final Supplier<ContentService> serviceSupplier = Mockito.mock( Supplier.class );
         Mockito.when( beanContext.getService( ContentService.class ) ).thenReturn( serviceSupplier );
         Mockito.when( serviceSupplier.get() ).thenReturn( contentService );
-        importLocalFilesCommand.initialize( beanContext );
+        importDocCommand.initialize( beanContext );
     }
 
     @Test
@@ -58,7 +54,7 @@ public class ImportLocalFilesCommandTest
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
             Content.create().name( "name" ).parentPath( ContentPath.ROOT ).build() );
 
-        importLocalFilesCommand.execute();
+        importDocCommand.execute();
 
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( Mockito.any( CreateContentParams.class ) );
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( Mockito.any( CreateMediaParams.class ) );
@@ -76,10 +72,10 @@ public class ImportLocalFilesCommandTest
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
             Content.create().name( "name" ).parentPath( ContentPath.ROOT ).build() );
-        ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
-        ArgumentCaptor<CreateMediaParams> createMediaParamsArgumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
+        final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
+        final ArgumentCaptor<CreateMediaParams> createMediaParamsArgumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
 
-        importLocalFilesCommand.execute();
+        importDocCommand.execute();
 
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( createContentParamsArgumentCaptor.capture() );
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( createMediaParamsArgumentCaptor.capture() );
@@ -96,13 +92,14 @@ public class ImportLocalFilesCommandTest
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
             Media.create().id( ContentId.from( "testid" ) ).name( "name" ).type( ContentTypeName.imageMedia() ).parentPath( ContentPath.ROOT ).build() );
-        ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
+        final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
 
-        importLocalFilesCommand.execute();
+        importDocCommand.execute();
 
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( createContentParamsArgumentCaptor.capture() );
 
-        CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter( params -> params.getDisplayName().equals( "index.html" ) ).findFirst().get();
+        final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
+            params -> params.getDisplayName().equals( "index.html" ) ).findFirst().get();
 
         assertTrue( docpageContentParams.getData().getString( "html" ).contains( "image://testid" ) );
     }

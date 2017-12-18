@@ -60,7 +60,7 @@ function asArray(obj) {
 function searchCards() {
     var content = libs.portal.getContent();
 
-    var expr = "type ='" + app.name + ":doc' " +
+    var expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide') " +
                "AND _path LIKE '/content" + content._path + "/*' ";
 
     var result = libs.content.query({

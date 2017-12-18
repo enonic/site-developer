@@ -41,18 +41,14 @@ function execute(req) {
 
 function doExecute(req) {
     var repo = getRepoInfo(req)
-    var docs = findDocs(repo.html_url);
 
-    if (docs.length == 0) {
+    if (!isRepoReferencedByAnyContent(repo.html_url)) {
         return;
     }
 
-    buildMasterVersion(repo);
-
-    var versions = getDocVersions(repo);
-
-    importMasterVersion(repo, docs, !!versions);
-    buildAndImportOtherVersions(repo, docs, versions);
+    cloneAndBuildMaster(repo);
+    importGuides(repo);
+    importDocs(repo);
 }
 
 function getRepoInfo(req) {
@@ -60,17 +56,28 @@ function getRepoInfo(req) {
     return reqBodyJson.repository;
 }
 
-// Find all entry keys.
-function findDocs(repoUrl) {
-    var expr = "type ='" + app.name + ":doc' AND data.repository = '" + repoUrl + "'";
+function isRepoReferencedByAnyContent(repoUrl) {
+    var expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide' ) AND data.repository = '" + repoUrl + "'";
+
+    var result = queryContent({
+        query: expr,
+        start: 0,
+        count: 0
+    });
+
+    log.info('Docs found from repo "' + repoUrl + '" - ' + result.total);
+
+    return result.total > 0;
+};
+
+function findContentsLinkedToRepo(repoUrl, contentType) {
+    var expr = "type ='" + app.name + ":" + contentType + "' AND data.repository = '" + repoUrl + "'";
 
     var result = queryContent({
         query: expr,
         start: 0,
         count: 10000
     });
-
-    log.info('Docs found from repo "' + repoUrl + '" - ' + result.total);
 
     var keys = [];
     for (var i = 0; i < result.hits.length; i++) {
@@ -81,14 +88,39 @@ function findDocs(repoUrl) {
     return keys;
 };
 
-function buildMasterVersion(repo) {
+function cloneAndBuildMaster(repo) {
     cloneRepo(repo);
-    buildDoc(repo);
+    buildAsciiDoc(repo);
 }
 
-function importMasterVersion(repo, docs, isMultiversion) {
+function importGuides(repo) {
+    var guides = findContentsLinkedToRepo(repo.html_url, 'guide');
+
+    if (guides.length == 0) {
+        return;
+    }
+
+    guides.forEach(function (guide) {
+        importGuide(repo, guide);
+    });
+}
+
+function importDocs(repo) {
+    var docs = findContentsLinkedToRepo(repo.html_url, 'doc');
+
+    if (docs.length == 0) {
+        return;
+    }
+
+    var versions = getDocVersions(repo);
+
+    importMasterVersion(repo, docs, !!versions);
+    buildAndImportOtherVersions(repo, docs, versions);
+}
+
+function importMasterVersion(repo, docs, isMultiVersioned) {
     docs.forEach(function (doc) {
-        importDocs(repo, doc, isMultiversion ? 'beta' : null);
+        importDoc(repo, doc, isMultiVersioned ? 'beta' : null);
     });
 }
 
@@ -99,10 +131,10 @@ function buildAndImportOtherVersions(repo, docs, versions) {
 
     versions.forEach(function (v) {
         cloneRepo(repo, v.checkout);
-        buildDoc(repo);
+        buildAsciiDoc(repo);
 
         docs.forEach(function (doc) {
-            importDocs(repo, doc, v.version);
+            importDoc(repo, doc, v.version);
         });
     });
 }
@@ -118,15 +150,22 @@ function cloneRepo(repo, checkout) {
     bean.execute();
 }
 
-function buildDoc(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.doc.BuildAsciiDocCommand');
+function buildAsciiDoc(repo) {
+    var bean = __.newBean('com.enonic.site.developer.tools.asciidoc.BuildAsciiDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.repoName = repo.full_name;
     bean.execute();
 }
 
-function importDocs(repo, doc, version) {
-    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportLocalFilesCommand');
+function importGuide(repo, guide) {
+    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
+    bean.sourceDir = repoDest + repo.full_name + '/docs';
+    bean.importPath = guide._path.replace('/content', '');
+    bean.execute();
+}
+
+function importDoc(repo, doc, version) {
+    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
     if (!!version) {

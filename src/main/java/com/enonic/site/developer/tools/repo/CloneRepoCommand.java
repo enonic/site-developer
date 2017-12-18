@@ -28,13 +28,13 @@ public final class CloneRepoCommand
 
     private static final String GIT_REPOSITORY_SUFFIX = ".git";
 
-    public String destination;
+    private String destination;
 
-    public String repository;
+    private String repository;
 
-    public String repoName;
+    private String repoName;
 
-    public String checkout; // Branch or commit to checkout
+    private String checkout; // Branch or commit to checkout
 
     public void execute()
     {

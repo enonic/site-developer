@@ -47,11 +47,15 @@ function isDocVersion(content) {
     return content.type === app.name + ':docversion';
 }
 
+function isGuide(content) {
+    return content.type === app.name + ':guide';
+}
+
 // Get entry.
 exports.findEntry = function (entry) {
     var content = portalLib.getContent();
 
-    if (isDocpage(content)) {
+    if (isDocpage(content) || isGuide(content)) {
         return toEntry(content, true);
     }
 

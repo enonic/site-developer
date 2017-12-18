@@ -1,4 +1,4 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.asciidoc;
 
 import java.util.Arrays;
 
@@ -23,16 +23,6 @@ public final class BuildAsciiDocCommand
     private String repoName;
 
     private String sourceDir;
-
-    public static void main( String[] args )
-        throws Exception
-    {
-        final BuildAsciiDocCommand buildAsciiDocCommand = new BuildAsciiDocCommand();
-        buildAsciiDocCommand.setSourceDir( "C:/Dev/Enonic/lib-xslt" );
-        buildAsciiDocCommand.setRepoName( "lib-xslt" );
-        buildAsciiDocCommand.execute();
-    }
-
 
     public void execute()
         throws Exception

@@ -1,4 +1,4 @@
-package com.enonic.site.developer.tools.doc;
+package com.enonic.site.developer.tools.asciidoc;
 
 public class BuildAsciiDocCommandTest
 {
