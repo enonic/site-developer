@@ -1,10 +1,10 @@
 [
   {
-    "version": "1.0.0",
+    "label": "1.0.0",
     "checkout": "branchName"
   },
   {
-    "version": "1.0.2",
+    "label": "1.0.2",
     "checkout": "commitHash"
   }
 ]

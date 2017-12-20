@@ -55,11 +55,11 @@ function isGuide(content) {
 exports.findEntry = function (entry) {
     var content = portalLib.getContent();
 
-    if (isDocpage(content) || isGuide(content)) {
+    if (isDocpage(content) || isGuide(content) || isDocVersion(content)) {
         return toEntry(content, true);
     }
 
-    if (isDoc(content) || isDocVersion(content)) {
+    if (isDoc(content)) {
         return toEntry(contentLib.get({key: content._path + '/index.html'}), true);
     }
 

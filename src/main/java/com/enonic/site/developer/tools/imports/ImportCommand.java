@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
@@ -24,6 +25,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -38,24 +40,24 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public abstract class ImportCommand
     implements ScriptBean
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
-
     protected static final String DEFAULT_ASCIIDOC_NAME = "index.html";
 
-    protected Path sourceDir;
-
-    protected String importPath;
-
-    protected ApplicationKey applicationKey;
-
-    protected ContentService contentService;
-
-    protected boolean isRootFile = true;
+    private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
 
     private static final User SUPER_USER = User.create().
         key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
         login( "su" ).
         build();
+
+    protected Path sourceDir;
+
+    protected String importPath;
+
+    protected Optional<Content> rootDocContent;
+
+    protected ApplicationKey applicationKey;
+
+    protected ContentService contentService;
 
     public final void execute()
         throws Exception
@@ -67,6 +69,7 @@ public abstract class ImportCommand
     {
         try
         {
+            initRootDocContent();
             importData();
         }
         catch ( final Exception e )
@@ -76,30 +79,29 @@ public abstract class ImportCommand
         }
     }
 
-    protected abstract void importData()
-        throws Exception;
+    protected abstract void initRootDocContent();
 
-    protected void importFoldersAndMedia()
+    private void importData()
+        throws Exception
+    {
+        importFoldersAndMedia();
+        importAsciiDocs();
+    }
+
+    private void importFoldersAndMedia()
         throws IOException
     {
-        this.isRootFile = true;
-        Files.walk( sourceDir ).filter( path -> !isRootFile() && !isForbidden( path ) && !isCompiledAsciiDoc( path ) ).forEach(
+        Files.walk( sourceDir ).filter( path -> !isForbidden( path ) && !isCompiledAsciiDoc( path ) ).forEach(
             path -> createContent( path ) );
     }
 
-    protected boolean isRootFile()
+    private boolean isForbidden( final Path path )
     {
-        if ( isRootFile )
+        if ( path.equals( sourceDir ) )
         {
-            isRootFile = false;
             return true;
         }
 
-        return false;
-    }
-
-    protected boolean isForbidden( final Path path )
-    {
         if ( path.toString().endsWith( ".json" ) )
         {
             return true;
@@ -115,9 +117,9 @@ public abstract class ImportCommand
         }
     }
 
-    protected boolean isCompiledAsciiDoc( final Path path )
+    private boolean isCompiledAsciiDoc( final Path path )
     {
-        return path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
+        return path.getFileName().toString().endsWith( ".html" );
     }
 
     private void createContent( final Path path )
@@ -130,12 +132,6 @@ public abstract class ImportCommand
         {
             createMedia( path );
         }
-    }
-
-    protected ContentPath makeRepoPath( final Path path )
-    {
-        return ContentPath.from(
-            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + sourceDir.relativize( path ).toString().replace( "\\", "/" ) );
     }
 
     private void createFolder( final Path path )
@@ -155,6 +151,12 @@ public abstract class ImportCommand
             type( ContentTypeName.folder() ).
             build();
         contentService.create( createContentParams );
+    }
+
+    private ContentPath makeRepoPath( final Path path )
+    {
+        return ContentPath.from(
+            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + sourceDir.relativize( path ).toString().replace( "\\", "/" ) );
     }
 
     private void createMedia( final Path path )
@@ -187,7 +189,45 @@ public abstract class ImportCommand
         }
     }
 
-    protected ExtractedDoc getAsciiDoc( final Path path )
+    private void importAsciiDocs()
+        throws IOException
+    {
+        Files.walk( sourceDir ).filter( this::isCompiledAsciiDoc ).forEach( this::importAsciiDoc );
+    }
+
+    private void importAsciiDoc( final Path path )
+    {
+        if ( isRootAsciiDoc( path ) && rootDocContent.isPresent() )
+        {
+            updateRootContentWithAsciiDoc( path );
+        }
+        else
+        {
+            createDocpage( path );
+        }
+    }
+
+    private boolean isRootAsciiDoc( final Path path )
+    {
+        return path.getParent().equals( sourceDir ) && path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
+    }
+
+    private void updateRootContentWithAsciiDoc( final Path asciiDocPath )
+    {
+        final ExtractedDoc asciiDoc = getAsciiDoc( asciiDocPath );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams().
+            contentId( rootDocContent.get().getId() ).
+            editor( edit -> {
+                edit.data.setString( "html", asciiDoc.getHtml() );
+                edit.data.setString( "title", asciiDoc.getTitle() );
+                edit.data.setString( "raw", asciiDoc.getText() );
+            } );
+
+        contentService.update( updateContentParams );
+    }
+
+    private ExtractedDoc getAsciiDoc( final Path path )
     {
         final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
         extractAsciiDocHtmlCommand.setPath( path.toString() );
@@ -198,6 +238,34 @@ public abstract class ImportCommand
         new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
 
         return extractedDoc;
+    }
+
+    private void createDocpage( final Path path )
+    {
+        final ContentPath repoPath = makeRepoPath( path );
+
+        if ( contentService.contentExists( repoPath ) )
+        {
+            return;
+        }
+
+        LOGGER.info( "Creating docpage " + repoPath );
+
+        final ExtractedDoc asciiDoc = getAsciiDoc( path );
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "html", asciiDoc.getHtml() );
+        data.addString( "title", asciiDoc.getTitle() );
+        data.addString( "raw", asciiDoc.getText() );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( data ).
+            displayName( path.getFileName().toString() ).
+            parent( repoPath.getParentPath() ).
+            type( ContentTypeName.from( applicationKey + ":docpage" ) ).
+            requireValid( false ).
+            build();
+        contentService.create( createContentParams );
     }
 
     private void runAsAdmin( final Runnable runnable )

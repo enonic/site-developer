@@ -3,4 +3,9 @@
   <display-name>Docversion</display-name>
   <super-type>base:structured</super-type>
   <is-abstract>false</is-abstract>
+  <form>
+    <input name="html" type="HtmlArea">
+      <label>HTML</label>
+    </input>
+  </form>
 </content-type>

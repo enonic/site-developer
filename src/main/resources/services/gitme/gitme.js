@@ -134,7 +134,7 @@ function buildAndImportOtherVersions(repo, docs, versions) {
         buildAsciiDoc(repo);
 
         docs.forEach(function (doc) {
-            importDoc(repo, doc, v.version);
+            importDoc(repo, doc, v.label);
         });
     });
 }
@@ -164,12 +164,12 @@ function importGuide(repo, guide) {
     bean.execute();
 }
 
-function importDoc(repo, doc, version) {
+function importDoc(repo, doc, label) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
-    if (!!version) {
-        bean.version = version;
+    if (!!label) {
+        bean.label = label;
     }
     bean.execute();
 }

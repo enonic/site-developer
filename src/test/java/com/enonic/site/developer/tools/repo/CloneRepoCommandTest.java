@@ -1,11 +1,9 @@
 package com.enonic.site.developer.tools.repo;
 
-import org.junit.Test;
-
 public class CloneRepoCommandTest
 {
 
-    @Test
+    //    @Test
     public void clonetest()
         throws Exception
     {
