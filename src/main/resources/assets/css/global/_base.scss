@@ -104,5 +104,5 @@ main {
 }
 
 [data-portal-region='main'] {
-  overflow: auto; // to remove collapsing margins
+  @extend %clearfix;
 }
