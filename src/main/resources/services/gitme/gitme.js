@@ -114,29 +114,52 @@ function importDocs(repo) {
 
     var versions = getDocVersions(repo);
 
-    importMasterVersion(repo, docs, !!versions);
+    importMasterVersion(repo, docs, versions);
     buildAndImportOtherVersions(repo, docs, versions);
 }
 
-function importMasterVersion(repo, docs, isMultiVersioned) {
+function importMasterVersion(repo, docs, versions) {
+    var isMultiVersioned = !!versions && versions.length > 0;
+    var label = isMultiVersioned ? 'beta' : 'latest';
+    var isLatest = isMultiVersioned ? false : true;
+
     docs.forEach(function (doc) {
-        importDoc(repo, doc, isMultiVersioned ? 'beta' : null);
+        importDoc(repo, doc, label, isLatest);
     });
 }
 
 function buildAndImportOtherVersions(repo, docs, versions) {
-    if (!versions) {
+    if (!versions || versions.length == 0) {
         return;
     }
+
+    defineLatestVersion(versions);
 
     versions.forEach(function (v) {
         cloneRepo(repo, v.checkout);
         buildAsciiDoc(repo);
 
         docs.forEach(function (doc) {
-            importDoc(repo, doc, v.label);
+            importDoc(repo, doc, v.label, v.latest);
         });
     });
+}
+
+function defineLatestVersion(versions) {
+    var isLatestRegExp = /^true$/i;
+
+    var isLatestSpecified = false;
+
+    versions.forEach(function (version) {
+        version.latest = isLatestRegExp.test(version.latest);
+        if (!!version.latest) {
+            isLatestSpecified = true;
+        }
+    });
+
+    if (!isLatestSpecified) {
+        versions[0].latest = true;
+    }
 }
 
 function cloneRepo(repo, checkout) {
@@ -164,12 +187,13 @@ function importGuide(repo, guide) {
     bean.execute();
 }
 
-function importDoc(repo, doc, label) {
+function importDoc(repo, doc, label, isLatest) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
     if (!!label) {
         bean.label = label;
+        bean.isLatest = isLatest;
     }
     bean.execute();
 }

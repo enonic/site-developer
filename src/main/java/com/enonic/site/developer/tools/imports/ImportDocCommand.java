@@ -17,6 +17,8 @@ public final class ImportDocCommand
 
     private String label;
 
+    private boolean isLatest;
+
     protected void initRootDocContent()
     {
         if ( label == null || label.isEmpty() )
@@ -27,8 +29,11 @@ public final class ImportDocCommand
 
         LOGGER.info( "Creating docversion content [" + label + "]" );
 
+        final PropertyTree data = new PropertyTree();
+        data.addBoolean( "isLatest", isLatest );
+
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
+            contentData( data ).
             displayName( label ).
             parent( ContentPath.from( importPath ) ).
             type( ContentTypeName.from( applicationKey + ":docversion" ) ).
@@ -42,6 +47,11 @@ public final class ImportDocCommand
     public void setLabel( final String label )
     {
         this.label = label;
+    }
+
+    public void setIsLatest( final boolean isLatest )
+    {
+        this.isLatest = isLatest;
     }
 }
 

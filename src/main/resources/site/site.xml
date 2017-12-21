@@ -4,6 +4,9 @@
     <mapping controller="/site/controllers/search-result.js" order="10">
       <pattern>/search</pattern>
     </mapping>
+    <mapping controller="/site/controllers/doc-controller.js" order="10">
+      <match>type:'com.enonic.site.developer:doc'</match>
+    </mapping>
     <mapping controller="/site/parts/software-show/shield.js" order="10">
       <pattern>.*\/vendors?\/.*shield.svg</pattern>
     </mapping>
