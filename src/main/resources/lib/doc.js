@@ -27,7 +27,7 @@ function toSearchResultEntry(content) {
     }
 
     var result = {
-        name: content._name,
+        name: content.displayName,
         title: content.data.title || content.displayName,
         url: portalLib.pageUrl({path: content._path})
     };
@@ -68,15 +68,22 @@ exports.findEntry = function (entry) {
 
 // Search entries.
 exports.search = function (query, start, count) {
-    var expr = "type ='" + app.name + ":docpage' " +
-               "AND _parentPath LIKE '/content" + util.getSitePath() + "/*' " +
-               "AND fulltext('data.raw', '" + (query || '') + "')";
+    var expr = "type IN ('" + app.name + ":docpage', '" + app.name + ":docversion', '" + app.name + ":guide') " +
+               "AND _path LIKE '/content" + util.getSitePath() + "/*' " +
+               "AND (fulltext('data.raw', '" + (query || '') + "', 'AND') OR ngram('data.raw', '" + (query || '') + "', 'AND'))";
 
     var result = contentLib.query({
         query: expr,
         start: start || 0,
         count: count || 100
     });
+
+    log.info('Expr: ' + expr);
+    log.info('Result: ');
+    result.hits.forEach(function (hit) {
+        log.info(hit._path)
+    })
+
 
     var entries = [];
     for (var i = 0; i < result.hits.length; i++) {
