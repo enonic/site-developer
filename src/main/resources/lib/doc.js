@@ -14,7 +14,7 @@ function toEntry(content) {
         name: content._name,
         title: content.data.title || content.displayName,
         tags: content.data.tags,
-        url: portalLib.pageUrl({path: content._path}).replace('/index.html', ''),
+        url: portalLib.pageUrl({path: content._path}),
         html: content.data.html
     };
 
@@ -27,12 +27,28 @@ function toSearchResultEntry(content) {
     }
 
     var result = {
-        name: content.displayName,
+        name: getSearchResultName(content),
         title: content.data.title || content.displayName,
         url: portalLib.pageUrl({path: content._path})
     };
 
     return result;
+}
+
+function getSearchResultName(content) {
+    if (!isDocVersion(content)) {
+        return content.displayName;
+    }
+
+    var doc = getDocVersionParent(content);
+    return doc.displayName + ' : ' + content.displayName;
+}
+
+function getDocVersionParent(content) {
+    var path = content._path;
+    var parentPath = path.substr(0, path.lastIndexOf('/'));
+
+    return contentLib.get({key: parentPath});
 }
 
 function isDocpage(content) {
@@ -78,17 +94,10 @@ exports.search = function (query, start, count) {
         count: count || 100
     });
 
-    log.info('Expr: ' + expr);
-    log.info('Result: ');
-    result.hits.forEach(function (hit) {
-        log.info(hit._path)
-    })
-
-
     var entries = [];
     for (var i = 0; i < result.hits.length; i++) {
         var hit = result.hits[i];
-        var entry = toSearchResultEntry(contentLib.get({key: hit._path.replace('/index.html', '')}));
+        var entry = toSearchResultEntry(hit);
         if (entry) {
             entry.score = hit.score;
             entries.push(entry);
