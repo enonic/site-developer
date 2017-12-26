@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentPath;
 
-public class ImportGuideCommand
+public final class ImportGuideCommand
     extends ImportCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( ImportGuideCommand.class );

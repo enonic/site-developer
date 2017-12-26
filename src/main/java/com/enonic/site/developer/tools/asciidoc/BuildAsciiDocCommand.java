@@ -7,6 +7,7 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
+import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public final class BuildAsciiDocCommand
             attribute( "toclevels", 2 ).
             tableOfContents( Placement.RIGHT ).get();
 
-        return options().backend( "html5" ).attributes( attributes ).get();
+        return options().backend( "html5" ).safe( SafeMode.SAFE ).attributes( attributes ).get();
     }
 
     public void setSourceDir( String sourceDir )

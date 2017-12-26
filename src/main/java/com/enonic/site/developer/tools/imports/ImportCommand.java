@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,7 +261,7 @@ public abstract class ImportCommand
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
-            displayName( path.getFileName().toString() ).
+            displayName( FilenameUtils.getBaseName( path.getFileName().toString() ) ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             requireValid( false ).
