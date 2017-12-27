@@ -1,20 +1,50 @@
-<div class="docpage-content">
-    <div class="title">
-        <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
-    </div>
+<div class="docpage">
+    <div data-th-if="${isShowHeader}" data-th-class="docpage__header">
+        <div class="docpage__header-title">
+            <a data-th-href="${rootDocUrl}" data-th-text="${rootDocTitle}">Title</a>
+        </div>
+        <div data-th-class="docpage__header-search">
+            <form class="docpage__header-search-form live-search__form" method="get" action="#" data-th-action="${searchResultPageUrl}"
+                  data-th-attr="data-live-search-url=${serviceUrl}" role="search">
+                <div class="live-search__search-box">
+                    <input class="docpage__header-search-input live-search__input" type="text" name="q" placeholder="Search the document"
+                           autocomplete="off"/>
+                </div>
+                <ul class=" live-search__result"></ul>
+                <div class="live-search__no-results">No results</div>
+            </form>
+        </div>
+        <div data-th-class="docpage__header-versions">
+            <select class="docpage__header-version-select" data-th-if="${versions}">
+                <div data-th-each="version : ${versions}" data-th-remove="tag">
+                    <option data-th-text="${version.isLatest} ? 'Latest (' + ${version.label} +')' : ${version.label}"
+                            data-th-attr="value=${version.label}, selected=${version.isCurrent ? 'selected' : null},
+                                          v-url=${version.url}"></option>
+                </div>
 
-    <div class="toc">
-        <div class="toc-title">Table of Contents</div>
-        <div id="js-toc">
+            </select>
         </div>
     </div>
 
-    <div class="doc">
-        <div id="title">
+    <div class="docpage__content">
+        <div class="title">
             <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
         </div>
-        <div data-th-remove="tag" data-th-utext="${content}">Content here...</div>
+
+        <div class="toc">
+            <div class="toc-title">Table of Contents</div>
+            <div id="js-toc">
+            </div>
+        </div>
+
+        <div class="doc">
+            <div id="title">
+                <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
+            </div>
+            <div data-th-remove="tag" data-th-utext="${content}">Content here...</div>
+        </div>
     </div>
+
 </div>
 
 <script data-th-src="${portal.assetUrl({'_path=js/tocbot.min.js'})}"></script>

@@ -11,13 +11,23 @@
       &::after {
         display: block;
         content: '';
-        width: 20px;
+        width: 21px;
         height: 20px;
         background: url('../img/spinner.svg') top left no-repeat;
         background-size: contain;
         position: absolute;
         right: 20px;
         top: 13px;
+        animation: spin .6s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     }
   }

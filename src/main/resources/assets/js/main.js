@@ -13,7 +13,7 @@ $('.page-default__main-menu').enonicMenu({
 });
 
 require('./plugins/responsive.js');
-$('.docpage-content').responsive([[0, 1024], [1024, Infinity]]);
+$('.docpage').responsive([[0, 1024], [1024, Infinity]]);
 
 require('./vendor/prism.js');
 
@@ -25,6 +25,9 @@ require('./vendor/jquery.form.min.js');
 
 // Pages
 require('./pages/default.js');
+
+// Parts
+require('./parts/docpage.js');
 
 /*$(function () {
  $('.page-header-search__icon').on('click', function () {
