@@ -65,7 +65,7 @@ public class ImportDocCommandTest
         throws Exception
     {
         final List<String> contentPaths =
-            Arrays.asList( makeRepoPath( "images" ), makeRepoPath( "images/secondary" ), makeRepoPath( "index.html" ) );
+            Arrays.asList( makeRepoPath( "images" ), makeRepoPath( "images/secondary" ), makeRepoPath( "index" ) );
         final List<String> mediaPaths =
             Arrays.asList( makeRepoPath( "images/kitchen.jpg" ), makeRepoPath( "images/secondary/bedroom.jpg" ), makeRepoPath( "images/song.mp3" ) );
 
@@ -99,7 +99,7 @@ public class ImportDocCommandTest
         Mockito.verify( contentService, Mockito.times( 3 ) ).create( createContentParamsArgumentCaptor.capture() );
 
         final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
-            params -> params.getDisplayName().equals( "index.html" ) ).findFirst().get();
+            params -> params.getDisplayName().equals( "index" ) ).findFirst().get();
 
         assertTrue( docpageContentParams.getData().getString( "html" ).contains( "image://testid" ) );
     }
