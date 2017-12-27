@@ -6,6 +6,7 @@
     padding: 12px 0px;
     margin-bottom: 20px;
     background-color: $color-dark-gray;
+    z-index: 1;
 
     &.sticky {
       position: fixed;
