@@ -94,10 +94,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=1"/>
     <meta name="robots" content="NOODP"/>
+    <meta name="theme-color" content="#ffffff">
 </div>
 
 <div data-th-fragment="head-assets-fragment" data-th-remove="tag">
-    <link rel="shortcut icon" data-th-href="${portal.assetUrl({'_path=img/favicon.ico'})}"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" data-th-href="${portal.assetUrl({'_path=favicons/apple-touch-icon.png'})}" href="favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" data-th-href="${portal.assetUrl({'_path=favicons/favicon-32x32.png'})}" href="favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" data-th-href="${portal.assetUrl({'_path=favicons/favicon-16x16.png'})}" href="favicons/favicon-16x16.png">
+    <link rel="manifest" data-th-href="${portal.assetUrl({'_path=favicons/manifest.json'})}" href="favicons/manifest.json">
+    <link rel="mask-icon" color="#5bbad5" data-th-href="${portal.assetUrl({'_path=favicons/safari-pinned-tab.svg'})}" href="favicons/safari-pinned-tab.svg">
     <script data-th-replace="/site/pages/fragments/fragments::loadCSS-fragment"></script>
     <script data-th-utext="'loadCSS(\'' + ${portal.assetUrl({'_path=css/non-critical.css'}) + '\');'}">
     </script>
