@@ -56,8 +56,8 @@ public class ImportDocCommandTest
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 3 ) ).create( Mockito.any( CreateContentParams.class ) );
-        Mockito.verify( contentService, Mockito.times( 3 ) ).create( Mockito.any( CreateMediaParams.class ) );
+        Mockito.verify( contentService, Mockito.times( 9 ) ).create( Mockito.any( CreateContentParams.class ) );
+        Mockito.verify( contentService, Mockito.times( 4 ) ).create( Mockito.any( CreateMediaParams.class ) );
     }
 
     @Test
@@ -77,8 +77,8 @@ public class ImportDocCommandTest
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 3 ) ).create( createContentParamsArgumentCaptor.capture() );
-        Mockito.verify( contentService, Mockito.times( 3 ) ).create( createMediaParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 4 ) ).create( createMediaParamsArgumentCaptor.capture() );
 
         assertTrue( createContentParamsArgumentCaptor.getAllValues().stream().map( params -> params.getParent() + "/" + params.getDisplayName() ).collect(
             Collectors.toList() ).containsAll( contentPaths ) );
@@ -96,7 +96,7 @@ public class ImportDocCommandTest
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 3 ) ).create( createContentParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
 
         final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
             params -> params.getDisplayName().equals( "index" ) ).findFirst().get();

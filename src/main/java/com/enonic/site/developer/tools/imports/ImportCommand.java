@@ -154,9 +154,12 @@ public abstract class ImportCommand
 
         LOGGER.info( "Creating empty docpage " + repoPath );
 
+        final String name = FilenameUtils.getBaseName( path.getFileName().toString() );
+
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
-            displayName( FilenameUtils.getBaseName( path.getFileName().toString() ) ).
+            name( name ).
+            displayName( name ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             requireValid( false ).
@@ -173,9 +176,11 @@ public abstract class ImportCommand
             return;
         }
 
+
         LOGGER.info( "Creating folder " + repoPath );
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
+            name( path.getFileName().toString() ).
             displayName( path.getFileName().toString() ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.folder() ).
@@ -266,6 +271,7 @@ public abstract class ImportCommand
         new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
+        new DocpageUrlRewriter( "a", "href" ).rewrite( extractedDoc.getContent() );
 
         return extractedDoc;
     }
@@ -291,9 +297,12 @@ public abstract class ImportCommand
         data.addString( "title", asciiDoc.getTitle() );
         data.addString( "raw", asciiDoc.getText() );
 
+        final String name = FilenameUtils.getBaseName( path.getFileName().toString() );
+
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
-            displayName( FilenameUtils.getBaseName( path.getFileName().toString() ) ).
+            name( name ).
+            displayName( name ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             requireValid( false ).
@@ -334,13 +343,13 @@ public abstract class ImportCommand
         this.applicationKey = context.getApplicationKey();
     }
 
-    private final class UrlRewriter
+    private class UrlRewriter
     {
-        private final Pattern URL_PATTERN = Pattern.compile( "(.+):(.+)" );
+        protected final Pattern URL_PATTERN = Pattern.compile( "(.+):(.+)" );
 
-        private final String tag;
+        protected final String tag;
 
-        private final String attr;
+        protected final String attr;
 
         private UrlRewriter( final String tag, final String attr )
         {
@@ -348,7 +357,7 @@ public abstract class ImportCommand
             this.attr = attr;
         }
 
-        private void rewrite( final Element root )
+        protected void rewrite( final Element root )
         {
             for ( final Element e : root.select( this.tag ) )
             {
@@ -360,7 +369,7 @@ public abstract class ImportCommand
             }
         }
 
-        private boolean shouldRewriteUrl( final String url )
+        protected boolean shouldRewriteUrl( final String url )
         {
             return !isNullOrEmpty( url ) && !URL_PATTERN.matcher( url ).matches();
         }
@@ -370,7 +379,7 @@ public abstract class ImportCommand
             return ( value == null ) || value.equals( "" );
         }
 
-        private String rewriteUrl( final String href )
+        protected String rewriteUrl( final String href )
         {
             final Content media = contentService.getByPath( ContentPath.from( importPath + "/" + href ) );
 
@@ -390,6 +399,25 @@ public abstract class ImportCommand
             }
 
             return "";
+        }
+    }
+
+    private final class DocpageUrlRewriter
+        extends UrlRewriter
+    {
+        private DocpageUrlRewriter( final String tag, final String attr )
+        {
+            super( tag, attr );
+        }
+
+        protected boolean shouldRewriteUrl( final String url )
+        {
+            return super.shouldRewriteUrl( url ) && url.endsWith( ".html" );
+        }
+
+        protected String rewriteUrl( final String href )
+        {
+            return href.replace( DEFAULT_ASCIIDOC_NAME, "." ).replace( ".html", "" );
         }
     }
 }

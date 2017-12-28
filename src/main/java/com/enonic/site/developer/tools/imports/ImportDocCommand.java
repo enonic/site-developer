@@ -34,6 +34,7 @@ public final class ImportDocCommand
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
+            name( label ).
             displayName( label ).
             parent( ContentPath.from( importPath ) ).
             type( ContentTypeName.from( applicationKey + ":docversion" ) ).
