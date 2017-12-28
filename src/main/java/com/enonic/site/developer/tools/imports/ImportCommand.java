@@ -22,6 +22,7 @@ import com.enonic.site.developer.tools.asciidoc.ExtractedDoc;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
@@ -127,12 +128,40 @@ public abstract class ImportCommand
     {
         if ( Files.isDirectory( path ) )
         {
-            createFolder( path );
+            if ( isAsciiDocNameSakePresent( path ) )
+            {
+                createEmptyDocpage( path );
+            }
+            else
+            {
+                createFolder( path );
+            }
         }
         else
         {
             createMedia( path );
         }
+    }
+
+    private boolean isAsciiDocNameSakePresent( final Path path )
+    {
+        return new File( path.toString() + ".html" ).exists();
+    }
+
+    private void createEmptyDocpage( final Path path )
+    {
+        final ContentPath repoPath = makeRepoPath( path );
+
+        LOGGER.info( "Creating empty docpage " + repoPath );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( FilenameUtils.getBaseName( path.getFileName().toString() ) ).
+            parent( repoPath.getParentPath() ).
+            type( ContentTypeName.from( applicationKey + ":docpage" ) ).
+            requireValid( false ).
+            build();
+        contentService.create( createContentParams );
     }
 
     private void createFolder( final Path path )
@@ -156,8 +185,8 @@ public abstract class ImportCommand
 
     private ContentPath makeRepoPath( final Path path )
     {
-        return ContentPath.from(
-            importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) + sourceDir.relativize( path ).toString().replace( "\\", "/" ) );
+        return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
+                                     sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
     }
 
     private void createMedia( final Path path )
@@ -200,11 +229,11 @@ public abstract class ImportCommand
     {
         if ( isRootAsciiDoc( path ) && rootDocContent.isPresent() )
         {
-            updateRootContentWithAsciiDoc( path );
+            updateContentWithAsciiDoc( path, rootDocContent.get().getId() );
         }
         else
         {
-            createDocpage( path );
+            createOrUpdateDocpage( path );
         }
     }
 
@@ -213,12 +242,12 @@ public abstract class ImportCommand
         return path.getParent().equals( sourceDir ) && path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
     }
 
-    private void updateRootContentWithAsciiDoc( final Path asciiDocPath )
+    private void updateContentWithAsciiDoc( final Path asciiDocPath, final ContentId contentId )
     {
         final ExtractedDoc asciiDoc = getAsciiDoc( asciiDocPath );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams().
-            contentId( rootDocContent.get().getId() ).
+            contentId( contentId ).
             editor( edit -> {
                 edit.data.setString( "html", asciiDoc.getHtml() );
                 edit.data.setString( "title", asciiDoc.getTitle() );
@@ -241,12 +270,15 @@ public abstract class ImportCommand
         return extractedDoc;
     }
 
-    private void createDocpage( final Path path )
+    private void createOrUpdateDocpage( final Path path )
     {
         final ContentPath repoPath = makeRepoPath( path );
 
         if ( contentService.contentExists( repoPath ) )
         {
+            LOGGER.info( "Updating docpage " + repoPath );
+            final Content docpage = contentService.getByPath( repoPath );
+            updateContentWithAsciiDoc( path, docpage.getId() );
             return;
         }
 
