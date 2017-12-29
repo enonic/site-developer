@@ -38,11 +38,14 @@ public class ImportDocCommandTest
         importDocCommand = new ImportDocCommand();
         importDocCommand.setImportPath( importPath );
         importDocCommand.setSourceDir( getPath( "docs" ) );
+        importDocCommand.setLabel( "beta" );
 
         final BeanContext beanContext = Mockito.mock( BeanContext.class );
         final Supplier<ContentService> serviceSupplier = Mockito.mock( Supplier.class );
         Mockito.when( beanContext.getService( ContentService.class ) ).thenReturn( serviceSupplier );
         Mockito.when( serviceSupplier.get() ).thenReturn( contentService );
+        Mockito.when( contentService.create( Mockito.any( CreateContentParams.class ) ) ).thenReturn(
+            Content.create().name( "beta" ).parentPath( ContentPath.ROOT ).build() );
         importDocCommand.initialize( beanContext );
     }
 
@@ -65,9 +68,10 @@ public class ImportDocCommandTest
         throws Exception
     {
         final List<String> contentPaths =
-            Arrays.asList( makeRepoPath( "images" ), makeRepoPath( "images/secondary" ), makeRepoPath( "index" ) );
+            Arrays.asList( makeRepoPath( "beta/images" ), makeRepoPath( "beta/images/secondary" ), makeRepoPath( "beta/includes" ) );
         final List<String> mediaPaths =
-            Arrays.asList( makeRepoPath( "images/kitchen.jpg" ), makeRepoPath( "images/secondary/bedroom.jpg" ), makeRepoPath( "images/song.mp3" ) );
+            Arrays.asList( makeRepoPath( "beta/images/kitchen.jpg" ), makeRepoPath( "beta/images/secondary/bedroom.jpg" ),
+                           makeRepoPath( "beta/images/song.mp3" ) );
 
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
@@ -87,7 +91,8 @@ public class ImportDocCommandTest
     }
 
     @Test
-    public void testImgUrlsAreRewritten() throws Exception
+    public void testImgUrlsAreRewritten()
+        throws Exception
     {
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
@@ -99,7 +104,7 @@ public class ImportDocCommandTest
         Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
 
         final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
-            params -> params.getDisplayName().equals( "index" ) ).findFirst().get();
+            params -> params.getDisplayName().equals( "linked_at_root" ) ).findFirst().get();
 
         assertTrue( docpageContentParams.getData().getString( "html" ).contains( "image://testid" ) );
     }

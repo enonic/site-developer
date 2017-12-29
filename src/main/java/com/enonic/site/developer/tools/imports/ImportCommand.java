@@ -271,7 +271,7 @@ public abstract class ImportCommand
         new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
-        new DocpageUrlRewriter( "a", "href" ).rewrite( extractedDoc.getContent() );
+        new DocpageUrlRewriter( "a", "href", isRootAsciiDoc( path ) ).rewrite( extractedDoc.getContent() );
 
         return extractedDoc;
     }
@@ -405,9 +405,12 @@ public abstract class ImportCommand
     private final class DocpageUrlRewriter
         extends UrlRewriter
     {
-        private DocpageUrlRewriter( final String tag, final String attr )
+        private final boolean isRootDoc;
+
+        private DocpageUrlRewriter( final String tag, final String attr, final boolean isRootDoc )
         {
             super( tag, attr );
+            this.isRootDoc = isRootDoc;
         }
 
         protected boolean shouldRewriteUrl( final String url )
@@ -417,6 +420,11 @@ public abstract class ImportCommand
 
         protected String rewriteUrl( final String href )
         {
+            if ( isRootDoc )
+            {
+                return rootDocContent.get().getName() + "/" + href.replace( ".html", "" );
+            }
+
             return href.replace( DEFAULT_ASCIIDOC_NAME, "." ).replace( ".html", "" );
         }
     }
