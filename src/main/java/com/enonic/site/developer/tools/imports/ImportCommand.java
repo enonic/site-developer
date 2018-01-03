@@ -73,6 +73,7 @@ public abstract class ImportCommand
         {
             initRootDocContent();
             importData();
+            postProcess();
         }
         catch ( final Exception e )
         {
@@ -188,7 +189,7 @@ public abstract class ImportCommand
         contentService.create( createContentParams );
     }
 
-    private ContentPath makeRepoPath( final Path path )
+    protected final ContentPath makeRepoPath( final Path path )
     {
         return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
                                      sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
@@ -242,7 +243,7 @@ public abstract class ImportCommand
         }
     }
 
-    private boolean isRootAsciiDoc( final Path path )
+    protected final boolean isRootAsciiDoc( final Path path )
     {
         return path.getParent().equals( sourceDir ) && path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
     }
@@ -308,6 +309,11 @@ public abstract class ImportCommand
             requireValid( false ).
             build();
         contentService.create( createContentParams );
+    }
+
+    protected void postProcess()
+    {
+
     }
 
     private void runAsAdmin( final Runnable runnable )

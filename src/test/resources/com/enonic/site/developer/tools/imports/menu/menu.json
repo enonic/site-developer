@@ -1,0 +1,32 @@
+{
+  "menuItems": [
+    {
+      "title": "Index",
+      "document": "index",
+      "menuItems": [
+        {
+          "title": "Included",
+          "document": "includes/included"
+        },
+        {
+          "title": "Some deep data",
+          "document": "namesake/some_deep_data",
+          "menuItems": [
+            {
+              "title": "More deep data",
+              "document": "namesake/some dir/more_deep_data"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Linked at root",
+      "document": "linked_at_root"
+    },
+    {
+      "title": "Namesake",
+      "document": "namesake"
+    }
+  ]
+}

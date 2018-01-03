@@ -36,15 +36,22 @@ function getDoc() {
 };
 
 function createModel(doc) {
-    var model = {
-        title: doc.data.title || doc.displayName,
-        content: libs.portal.processHtml({value: doc.data.html}),
-        isShowHeader: isHeaderShown(doc)
-    };
-
     if (isGuide(doc)) {
-        return model;
+        return doCreateModel(doc);
     }
+
+    return createDocModel(doc);
+}
+
+function doCreateModel(doc) {
+    return {
+        title: doc.data.title || doc.displayName,
+        content: libs.portal.processHtml({value: doc.data.html})
+    };
+}
+
+function createDocModel(doc) {
+    var model = doCreateModel(doc);
 
     var serviceUrl = libs.portal.serviceUrl({
         service: 'search',
@@ -56,12 +63,20 @@ function createModel(doc) {
     var rootDoc = getNearestContentByType(doc, 'doc');
     var versionContent = getNearestContentByType(doc, 'docversion');
     var versions = getVersions(rootDoc, versionContent);
+    var menu = getMenu(versionContent);
+    var hasMenu = !!menu && !!menu.menuItems && menu.menuItems.length > 0;
 
     model.rootDocTitle = rootDoc.displayName;
-    model.serviceUrl = serviceUrl;
-    model.service = 'search';
     model.rootDocUrl = libs.portal.pageUrl({path: versionContent._path});
+    model.service = 'search';
+    model.serviceUrl = serviceUrl;
     model.versions = versions;
+    model.menu = menu;
+    model.hasMenu = hasMenu;
+
+    if (hasMenu) {
+        model.navigation = getNavigation(menu);
+    }
 
     return model;
 }
@@ -101,6 +116,92 @@ function getVersions(rootDoc, currentVersion) {
     return versions;
 }
 
+function getMenu(versionContent) {
+    if (!versionContent.data.menu) {
+        return null;
+    }
+
+    var menu = JSON.parse(versionContent.data.menu);
+
+    processMenuUrls(menu.menuItems);
+
+    function processMenuUrls(menuItems) {
+        if (!menuItems) {
+            return;
+        }
+
+        menuItems.forEach(function (menuItem) {
+            generateMenuItemUrl(menuItem);
+            processMenuUrls(menuItem.menuItems);
+        });
+    }
+
+    return menu;
+}
+
+function generateMenuItemUrl(menuItem) {
+    if (!menuItem.contentId) {
+        return '';
+    }
+
+    try {
+        var menuItemContent = libs.content.get({key: menuItem.contentId});
+    }
+    catch (e) {
+        log.error(e);
+        return '';
+    }
+
+    var currentContent = libs.portal.getContent();
+    var isActive = currentContent._id == menuItemContent._id ? true : false;
+
+    menuItem.isActive = isActive;
+    menuItem.url = libs.portal.pageUrl({path: menuItemContent._path});
+}
+
+function getNavigation(menu) {
+
+    var activeMenuItem = null;
+
+    traverseMenuItems(menu.menuItems, []);
+
+    function traverseMenuItems(menuItems, navPaths) {
+        if (!menuItems) {
+            return;
+        }
+
+        menuItems.forEach(function (menuItem) {
+            menuItem.nav = navPaths.slice(0);
+            menuItem.nav.push({title: menuItem.title, url: menuItem.url});
+            if (menuItem.isActive) {
+                activeMenuItem = menuItem;
+                return;
+            }
+            traverseMenuItems(menuItem.menuItems, menuItem.nav);
+        });
+    }
+
+    if (activeMenuItem) {
+        return activeMenuItem.nav;
+    }
+
+    return null;
+}
+
+function generateNavigationItems(menuItem) {
+    var items = [];
+    var item = menuItem.parent;
+
+    while (!!item) {
+        items.unshift(item);
+        item = item.parent;
+    }
+
+    items.push(menuItem);
+
+    menuItem.navigationItems = items;
+}
+
 function isDocpage(content) {
     return content.type === app.name + ':docpage';
 }
@@ -115,8 +216,4 @@ function isDocVersion(content) {
 
 function isGuide(content) {
     return content.type === app.name + ':guide';
-}
-
-function isHeaderShown(content) {
-    return isDocpage(content) || isDocVersion(content);
 }
