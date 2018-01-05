@@ -103,8 +103,10 @@
   &-content {
     @import '_asciidoctor';
 
+    width: 100%;
     display: flex;
     justify-content: center;
+    align-items: baseline;
 
     &-header {
       display: flex;
@@ -170,20 +172,20 @@
     }
 
     .toc {
-      padding: 10px 2.9rem 10px 1rem;
+      padding: 5px 2.9rem 5px 1rem;
+      border-left: 4px solid $color-toc-red;
       order: 1;
       flex-shrink: 0;
-      background-color: #f8f8f7;
       margin-left: 20px;
       margin-bottom: 20px;
 
       position: sticky;
-      top: 0;
-      height: 100%;
+      top: 5px;
 
       #js-toc {
         > .toc-list {
           margin-left: 0;
+          margin-bottom: 0px;
           list-style-type: square;
           color: gray;
           list-style-position: inside;
@@ -212,9 +214,10 @@
       }
 
       .toc-title {
-        font-size: 2rem;
-        color: $color-toc-gray;
-        margin-bottom: 5px;
+        @include font-size(16);
+        font-family: "akkurat", Arial, sans-serif;
+        margin-bottom: 10px;
+        margin-top: 0px;
       }
     }
 
