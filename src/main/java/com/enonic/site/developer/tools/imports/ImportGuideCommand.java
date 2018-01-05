@@ -12,7 +12,7 @@ public final class ImportGuideCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( ImportGuideCommand.class );
 
-    protected void initRootDocContent()
+    protected void initRootContent()
     {
         final ContentPath repoPath = ContentPath.from( importPath );
 
@@ -22,9 +22,9 @@ public final class ImportGuideCommand
             throw new RuntimeException( "Guide at path [" + importPath + "] not found! Unable to import AsciiDocs" );
         }
 
-        rootDocContent = Optional.of( contentService.getByPath( repoPath ) );
+        rootContent = Optional.of( contentService.getByPath( repoPath ) );
 
-        if ( !rootDocContent.get().getType().toString().equals( applicationKey + ":guide" ) )
+        if ( !rootContent.get().getType().toString().equals( applicationKey + ":guide" ) )
         {
             LOGGER.error( "Content at path [" + importPath + "] is not Guide! Unable to import AsciiDocs" );
             throw new RuntimeException( "Content at path [" + importPath + "] is not Guide! Unable to import AsciiDocs" );

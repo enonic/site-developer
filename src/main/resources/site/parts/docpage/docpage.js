@@ -107,7 +107,7 @@ function getVersions(rootDoc, currentVersion) {
     result.hits.forEach(function (version) {
         versions.push({
             label: version.displayName,
-            isLatest: version.data.isLatest,
+            isLatest: version._id == rootDoc.data.latest,
             isCurrent: version._id == currentVersion._id,
             url: libs.portal.pageUrl({path: version._path})
         })

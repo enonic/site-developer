@@ -14,11 +14,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.Reference;
 
 public final class ImportDocCommand
     extends ImportCommand
@@ -31,45 +33,55 @@ public final class ImportDocCommand
 
     private boolean isLatest;
 
-    public static void main( String[] args )
-    {
-        final ImportDocCommand importDocCommand = new ImportDocCommand();
-        importDocCommand.setSourceDir( "C:/Dev/Enonic/lib-xslt/docs/" );
-        importDocCommand.setImportPath( "/developersite/doctest" );
-        importDocCommand.rootDocContent = Optional.empty();
-        importDocCommand.importMenu();
-    }
-
-    protected void initRootDocContent()
+    protected void initRootContent()
     {
         if ( label == null || label.isEmpty() )
         {
-            rootDocContent = Optional.empty();
+            rootContent = Optional.empty();
             return;
         }
 
+        createDocversion();
+
+        if ( isLatest )
+        {
+            updateLatestInRootDoc();
+        }
+    }
+
+    private void createDocversion()
+    {
         LOGGER.info( "Creating docversion content [" + label + "]" );
 
-        final PropertyTree data = new PropertyTree();
-        data.addBoolean( "isLatest", isLatest );
-
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
+            contentData( new PropertyTree() ).
             name( label ).
             displayName( label ).
             parent( ContentPath.from( importPath ) ).
             type( ContentTypeName.from( applicationKey + ":docversion" ) ).
             build();
 
-        rootDocContent = Optional.of( contentService.create( createContentParams ) );
+        rootContent = Optional.of( contentService.create( createContentParams ) );
 
         importPath = importPath + "/" + label;
+    }
+
+    private void updateLatestInRootDoc()
+    {
+        final Content rootDoc = contentService.getByPath( rootContent.get().getParentPath() );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams().
+            contentId( rootDoc.getId() ).
+            requireValid( false ).
+            editor( edit -> edit.data.setReference( "latest", Reference.from( rootContent.get().getId().toString() ) ) );
+
+        contentService.update( updateContentParams );
     }
 
     @Override
     protected void postProcess()
     {
-        if ( rootDocContent.isPresent() )
+        if ( rootContent.isPresent() )
         {
             importMenu();
         }
@@ -90,7 +102,7 @@ public final class ImportDocCommand
             final ObjectMapper mapper = new ObjectMapper();
             final MenuItem menuRoot = mapper.readValue( menuInputStream, MenuItem.class );
             processMenuUrls( menuRoot.getMenuItems() );
-            addMenuDataToRootDocContent( mapper.writeValueAsString( menuRoot ) );
+            addMenuDataToRootContent( mapper.writeValueAsString( menuRoot ) );
         }
         catch ( final IOException e )
         {
@@ -113,7 +125,7 @@ public final class ImportDocCommand
 
         if ( isRootAsciiDoc( menuItemLocalPath ) )
         {
-            return rootDocContent.get().getId().toString();
+            return rootContent.get().getId().toString();
         }
 
         final ContentPath contentPath = makeRepoPath( menuItemLocalPath );
@@ -126,10 +138,10 @@ public final class ImportDocCommand
         return contentService.getByPath( contentPath ).getId().toString();
     }
 
-    private void addMenuDataToRootDocContent( final String menu )
+    private void addMenuDataToRootContent( final String menu )
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams().
-            contentId( rootDocContent.get().getId() ).
+            contentId( rootContent.get().getId() ).
             editor( edit -> edit.data.setString( "menu", menu ) );
 
         contentService.update( updateContentParams );

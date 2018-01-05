@@ -24,5 +24,13 @@
                 <regexp>^(https://github.com/).*?</regexp>
             </config>
         </input>
+        <input name="latest" type="ContentSelector">
+            <label>Latest</label>
+            <occurrences minimum="0" maximum="1"/>
+            <config>
+                <allowContentType>docversion</allowContentType>
+                <allowPath>./*</allowPath>
+            </config>
+        </input>
     </form>
 </content-type>

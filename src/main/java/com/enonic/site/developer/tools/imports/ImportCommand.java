@@ -55,7 +55,7 @@ public abstract class ImportCommand
 
     protected String importPath;
 
-    protected Optional<Content> rootDocContent;
+    protected Optional<Content> rootContent;
 
     protected ApplicationKey applicationKey;
 
@@ -71,7 +71,7 @@ public abstract class ImportCommand
     {
         try
         {
-            initRootDocContent();
+            initRootContent();
             importData();
             postProcess();
         }
@@ -82,7 +82,7 @@ public abstract class ImportCommand
         }
     }
 
-    protected abstract void initRootDocContent();
+    protected abstract void initRootContent();
 
     private void importData()
         throws Exception
@@ -233,9 +233,9 @@ public abstract class ImportCommand
 
     private void importAsciiDoc( final Path path )
     {
-        if ( isRootAsciiDoc( path ) && rootDocContent.isPresent() )
+        if ( isRootAsciiDoc( path ) && rootContent.isPresent() )
         {
-            updateContentWithAsciiDoc( path, rootDocContent.get().getId() );
+            updateContentWithAsciiDoc( path, rootContent.get().getId() );
         }
         else
         {
@@ -428,7 +428,7 @@ public abstract class ImportCommand
         {
             if ( isRootDoc )
             {
-                return rootDocContent.get().getName() + "/" + href.replace( ".html", "" );
+                return rootContent.get().getName() + "/" + href.replace( ".html", "" );
             }
 
             return href.replace( DEFAULT_ASCIIDOC_NAME, "." ).replace( ".html", "" );
