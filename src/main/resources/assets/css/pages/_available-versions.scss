@@ -1,0 +1,13 @@
+.available {
+  display: flex;
+  flex-direction: column;
+
+  &-versions {
+    margin-left: 30px;
+    white-space: nowrap;
+
+    a {
+      text-decoration: none;
+    }
+  }
+}
