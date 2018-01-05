@@ -11,5 +11,8 @@
       <pattern>.*\/vendors?\/.*shield.svg</pattern>
     </mapping>
   </mappings>
+  <mapping controller="/lib/enonic/url-redirect/index.js">
+    <match>type:'com.enonic.site.developer:url'</match>
+  </mapping>
   <x-data mixin="menu-item"/>
 </site>
