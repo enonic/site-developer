@@ -18,7 +18,6 @@ app {
     displayName = "Enonic Developer Site"
     vendorName = 'Enonic AS'
     vendorUrl = 'http://enonic.com'
-    systemVersion = "${xpVersion}"
 }
 
 dependencies {
