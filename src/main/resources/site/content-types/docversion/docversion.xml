@@ -7,7 +7,7 @@
     <input name="html" type="HtmlArea">
       <label>HTML</label>
     </input>
-    <input name="menu" type="HtmlArea">
+    <input name="menu" type="TextArea">
       <label>Menu</label>
     </input>
   </form>
