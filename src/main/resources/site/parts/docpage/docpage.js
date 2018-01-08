@@ -75,7 +75,7 @@ function createDocModel(doc) {
     model.hasMenu = hasMenu;
 
     if (hasMenu) {
-        model.navigation = getNavigation(menu);
+        model.navigation = getNavigation(menu, versionContent);
     }
 
     return model;
@@ -157,13 +157,17 @@ function generateMenuItemUrl(menuItem) {
 
     menuItem.isActive = isActive;
     menuItem.url = libs.portal.pageUrl({path: menuItemContent._path});
+
+    return isActive;
 }
 
-function getNavigation(menu) {
+function getNavigation(menu, versionContent) {
 
     var activeMenuItem = null;
 
-    traverseMenuItems(menu.menuItems, []);
+    var rootVersionNavItem = {title: 'Doc', url: libs.portal.pageUrl({path: versionContent._path})};
+
+    traverseMenuItems(menu.menuItems, [rootVersionNavItem]);
 
     function traverseMenuItems(menuItems, navPaths) {
         if (!menuItems) {
@@ -175,8 +179,8 @@ function getNavigation(menu) {
             menuItem.nav.push({title: menuItem.title, url: menuItem.url});
             if (menuItem.isActive) {
                 activeMenuItem = menuItem;
-                return;
             }
+            menuItem.hasChildren = !!menuItem.menuItems && menuItem.menuItems.length > 0;
             traverseMenuItems(menuItem.menuItems, menuItem.nav);
         });
     }
@@ -186,20 +190,6 @@ function getNavigation(menu) {
     }
 
     return null;
-}
-
-function generateNavigationItems(menuItem) {
-    var items = [];
-    var item = menuItem.parent;
-
-    while (!!item) {
-        items.unshift(item);
-        item = item.parent;
-    }
-
-    items.push(menuItem);
-
-    menuItem.navigationItems = items;
 }
 
 function isDocpage(content) {

@@ -3,15 +3,65 @@
   display: flex;
 
   &-menu {
-    background-color: $color-dark-milk;
+    background-color: $color-menu-gray;
     margin-right: 20px;
-    padding: 0 20px;
+    padding: 0 30px;
+    min-width: 230px;
 
     a {
       text-decoration: none;
     }
 
-    ul {
+    li {
+      position: relative;
+      list-style: none;
+    }
+
+    li input {
+      position: absolute;
+      opacity: 0;
+      z-index: 2;
+      cursor: pointer;
+      height: 16px;
+      width: 16px;
+      top: 4px;
+      left: -18px;
+    }
+
+    li input + label + ol > li {
+      display: none;
+    }
+
+    li label {
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: -12px;
+        top: 7px;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 5px solid black;
+      }
+    }
+
+    li input:checked + label {
+      &:before {
+        content: '';
+        position: absolute;
+        left: -15px;
+        top: 10px;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid black;
+      }
+    }
+
+    li input:checked + label + ol > li {
+      display: block;
+    }
+
+    ol {
       padding-left: 20px;
 
       li {
@@ -36,7 +86,7 @@
         }
 
         &.active {
-          > a {
+          > label a, > a {
             color: $color-highlight;
 
             &:hover {
@@ -51,16 +101,20 @@
       position: sticky;
       top: 15px;
 
-      > ul {
+      > ol {
         padding-left: 0px;
-        list-style-position: inside;
       }
     }
 
     &__title {
       margin-top: 15px;
-      text-align: center;
+      text-align: left;
+      font-weight: bold;
       @include font-size(18);
+
+      a {
+        color: $color-black;
+      }
     }
 
     &__search {

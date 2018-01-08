@@ -143,12 +143,18 @@
 
 
 <div data-th-fragment="doc-menu-fragment" data-th-remove="tag">
-    <ul>
+    <ol>
         <li data-th-each="menuItem : ${menuItems}" data-th-class="${menuItem.isActive ? 'active' : '' }">
-            <a data-th-href="${menuItem.url}" data-th-text="${menuItem.title}">text</a>
-            <div data-th-replace="/site/pages/fragments/fragments::doc-menu-fragment(menuItems=${menuItem.menuItems})"></div>
+            <div data-th-if="${menuItem.hasChildren}" data-th-remove="tag">
+                <input type="checkbox" checked="true">
+                <label><a data-th-href="${menuItem.url}" data-th-text="${menuItem.title}">text</a></label>
+                <div data-th-replace="/site/pages/fragments/fragments::doc-menu-fragment(menuItems=${menuItem.menuItems})"></div>
+            </div>
+            <div data-th-unless="${menuItem.hasChildren}" data-th-remove="tag">
+                <a data-th-href="${menuItem.url}" data-th-text="${menuItem.title}">text</a>
+            </div>
         </li>
-    </ul>
+    </ol>
 </div>
 
 <div data-th-fragment="doc-versions-fragment" class="docpage-versions" data-th-if="${versions}">
