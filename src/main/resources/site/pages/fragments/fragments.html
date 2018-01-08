@@ -146,7 +146,7 @@
     <ol>
         <li data-th-each="menuItem : ${menuItems}" data-th-class="${menuItem.isActive ? 'active' : '' }">
             <div data-th-if="${menuItem.hasChildren}" data-th-remove="tag">
-                <input type="checkbox" checked="true">
+                <input type="checkbox" data-th-attr="checked=${menuItem.hasActive ? 'true' : 'false'}">
                 <label><a data-th-href="${menuItem.url}" data-th-text="${menuItem.title}">text</a></label>
                 <div data-th-replace="/site/pages/fragments/fragments::doc-menu-fragment(menuItems=${menuItem.menuItems})"></div>
             </div>

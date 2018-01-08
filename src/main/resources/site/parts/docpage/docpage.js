@@ -127,13 +127,22 @@ function getMenu(versionContent) {
 
     function processMenuUrls(menuItems) {
         if (!menuItems) {
-            return;
+            return false;
         }
+
+        var hasActiveItem = false;
 
         menuItems.forEach(function (menuItem) {
             generateMenuItemUrl(menuItem);
-            processMenuUrls(menuItem.menuItems);
+            var hasActive = processMenuUrls(menuItem.menuItems);
+            menuItem.hasActive = hasActive;
+
+            if (menuItem.isActive || menuItem.hasActive) {
+                hasActiveItem = true;
+            }
         });
+
+        return hasActiveItem;
     }
 
     return menu;
