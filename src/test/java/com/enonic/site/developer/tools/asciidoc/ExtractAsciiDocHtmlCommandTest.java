@@ -19,6 +19,15 @@ public class ExtractAsciiDocHtmlCommandTest
         assertEquals( "XSLT Library",extractedDoc.getTitle() );
     }
 
+    @Test
+    public void testTitleIsNullWhenDocHasTitleUntitled()
+        throws Exception
+    {
+        final ExtractedDoc extractedDoc = extractDoc( "namesake.html" );
+        assertNotNull( extractedDoc );
+        assertNull( extractedDoc.getTitle() );
+    }
+
     private ExtractedDoc extractDoc( final String fileName )
         throws Exception
     {

@@ -34,11 +34,13 @@ public final class ExtractAsciiDocHtmlCommand
         Document doc = Jsoup.parse( input, "UTF-8", "index.html" );
         final Element content = doExtract( doc );
         final Element title = doc.select( "head title" ).first();
-        final String titleText = title != null ? title.ownText() : "";
 
-        final ExtractedDoc result = new ExtractedDoc(content, titleText);
+        if ( title == null || title.ownText().trim().isEmpty() || title.ownText().trim().equals( "Untitled" ) )
+        {
+            return new ExtractedDoc( content );
+        }
 
-        return result;
+        return new ExtractedDoc( content, title.ownText() );
     }
 
     private Element doExtract( final Document doc )

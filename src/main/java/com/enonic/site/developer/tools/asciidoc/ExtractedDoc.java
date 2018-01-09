@@ -8,6 +8,11 @@ public final class ExtractedDoc
 
     private String title;
 
+    public ExtractedDoc( final Element content )
+    {
+        this.content = content;
+    }
+
     public ExtractedDoc( final Element content, final String title )
     {
         this.content = content;

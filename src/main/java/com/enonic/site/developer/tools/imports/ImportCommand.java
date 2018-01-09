@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -299,11 +300,12 @@ public abstract class ImportCommand
         data.addString( "raw", asciiDoc.getText() );
 
         final String name = FilenameUtils.getBaseName( path.getFileName().toString() );
+        final String displayName = StringUtils.isEmpty( asciiDoc.getTitle() ) ? name : asciiDoc.getTitle();
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
             name( name ).
-            displayName( name ).
+            displayName( displayName ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             requireValid( false ).
