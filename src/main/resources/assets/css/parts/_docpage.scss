@@ -12,91 +12,6 @@
       text-decoration: none;
     }
 
-    li {
-      position: relative;
-      list-style: none;
-    }
-
-    li input {
-      position: absolute;
-      opacity: 0;
-      z-index: 2;
-      cursor: pointer;
-      height: 16px;
-      width: 16px;
-      top: 4px;
-      left: -21px;
-    }
-
-    li input + label + ol > li {
-      display: none;
-    }
-
-    li label {
-
-      &:before {
-        content: '';
-        position: absolute;
-        left: -20px;
-        top: 7px;
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        border-left: 5px solid black;
-      }
-    }
-
-    li input:checked + label {
-      &:before {
-        content: '';
-        position: absolute;
-        left: -20px;
-        top: 10px;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid black;
-      }
-    }
-
-    li input:checked + label + ol > li {
-      display: block;
-    }
-
-    ol {
-      padding-left: 20px;
-
-      li {
-        white-space: nowrap;
-        @include font-size(16);
-
-        a {
-          color: $color-cod-gray;
-
-          &:hover {
-            color: $color-black;
-          }
-        }
-
-        li a {
-          color: $color-dove-gray;
-          @include font-size(15);
-
-          &:hover {
-            color: $color-black;
-          }
-        }
-
-        &.active {
-          > label a, > a {
-            color: $color-highlight;
-
-            &:hover {
-              color: $color-dark-highlight;
-            }
-          }
-        }
-      }
-    }
-
     &-wrapper {
       position: sticky;
       top: 15px;
@@ -105,6 +20,88 @@
         margin: 0;
         padding: 15px 0 15px 20px;
       }
+
+      ol {
+        padding-left: 20px;
+
+        li {
+          white-space: nowrap;
+          @include font-size(16);
+          position: relative;
+          list-style: none;
+
+          input {
+            position: absolute;
+            opacity: 0;
+            z-index: 2;
+            cursor: pointer;
+            height: 16px;
+            width: 16px;
+            top: 4px;
+            left: -21px;
+
+            + label + ol > li {
+              display: none;
+            }
+
+            &:checked + label {
+              &:before {
+                content: '';
+                position: absolute;
+                left: -20px;
+                top: 10px;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid black;
+              }
+
+              + ol > li {
+                display: block;
+              }
+            }
+          }
+
+          label {
+            &:before {
+              content: '';
+              position: absolute;
+              left: -20px;
+              top: 7px;
+              border-top: 5px solid transparent;
+              border-bottom: 5px solid transparent;
+              border-left: 5px solid black;
+            }
+          }
+
+          a {
+            color: $color-cod-gray;
+
+            &:hover {
+              color: $color-black;
+            }
+          }
+
+          li a {
+            color: $color-dove-gray;
+            @include font-size(15);
+
+            &:hover {
+              color: $color-black;
+            }
+          }
+
+          &.active {
+            > label a, > a {
+              color: $color-highlight;
+
+              &:hover {
+                color: $color-dark-highlight;
+              }
+            }
+          }
+        }
+      }
+
     }
 
     &__title {
@@ -354,6 +351,43 @@
           padding-left: 50px;
           background-color: $color-menu-gray;
         }
+
+        .docpage-versions {
+          display: block;
+          text-align: center;
+          margin-bottom: 10px;
+          margin-top: -10px;
+
+          width: 120px;
+          margin-left: auto;
+          margin-right: auto;
+          padding: 0px;
+          overflow: hidden;
+          position: relative;
+
+          select {
+            width: 140px;
+            background: transparent;
+            border: none;
+            color: $color-white;
+
+            option {
+              color: $color-black;
+            }
+          }
+
+          &:after {
+            content: '';
+            position: absolute;
+            right: 0px;
+            top: 5px;
+            background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
+            height: 16px;
+            width: 16px;
+            background-size: 16px;
+            z-index: -1;
+          }
+        }
       }
 
       &__search {
@@ -422,44 +456,6 @@
           .docpage-versions, .docpage-menu__search, ol {
             display: none;
           }
-        }
-      }
-
-      .docpage-versions {
-        display: block;
-        text-align: center;
-        margin-bottom: 10px;
-        margin-top: -10px;
-
-        ///
-        width: 120px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0px;
-        overflow: hidden;
-        position: relative;
-
-        select {
-          width: 140px;
-          background: transparent;
-          border: none;
-          color: $color-white;
-
-          option {
-            color: $color-black;
-          }
-        }
-
-        &:after {
-          content: '';
-          position: absolute;
-          right: 0px;
-          top: 5px;
-          background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
-          height: 16px;
-          width: 16px;
-          background-size: 16px;
-          z-index: -1;
         }
       }
 
