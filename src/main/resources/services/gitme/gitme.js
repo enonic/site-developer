@@ -47,7 +47,7 @@ function doExecute(req) {
     }
 
     cloneAndBuildMaster(repo);
-    // importGuides(repo);
+    importGuides(repo);
     importDocs(repo);
 }
 
