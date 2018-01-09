@@ -341,7 +341,9 @@
     }
 
     .docpage-menu {
-      position: relative;
+      position: sticky;
+      top: 0px;
+      z-index: 1;
       margin-right: 0px;
       margin-bottom: 15px;
       padding: 0;
