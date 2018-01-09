@@ -186,6 +186,12 @@
               color: $color-cod-gray;
             }
           }
+
+          &:first-child {
+            a {
+              padding-left: 0px;
+            }
+          }
         }
 
       }
