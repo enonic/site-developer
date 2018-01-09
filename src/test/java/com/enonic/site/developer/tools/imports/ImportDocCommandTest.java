@@ -104,7 +104,7 @@ public class ImportDocCommandTest
         Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
 
         final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
-            params -> params.getDisplayName().equals( "linked_at_root" ) ).findFirst().get();
+            params -> params.getName().toString().equals( "linked_at_root" ) ).findFirst().get();
 
         assertTrue( docpageContentParams.getData().getString( "html" ).contains( "image://testid" ) );
     }
