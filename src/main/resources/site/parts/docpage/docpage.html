@@ -1,10 +1,13 @@
 <div class="docpage" data-th-classappend="(${hasMenu} == true ? 'hasMenu' : '')">
 
     <div data-th-if="${hasMenu}" data-th-class="docpage-menu">
+        <input type="checkbox">
+        <label></label>
         <div class="docpage-menu-wrapper">
             <div class="docpage-menu__title">
                 <a data-th-href="${rootDocUrl}" data-th-text="${rootDocTitle}">Title</a>
             </div>
+            <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
             <div data-th-class="docpage-menu__search">
                 <form class="docpage-menu__search-form live-search__form" method="get" action="#" data-th-action="${searchResultPageUrl}"
                       data-th-attr="data-live-search-url=${serviceUrl}" role="search">

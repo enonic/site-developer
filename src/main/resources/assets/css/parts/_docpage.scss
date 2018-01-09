@@ -6,7 +6,7 @@
     background-color: $color-menu-gray;
     margin-right: 20px;
     padding: 0 30px;
-    min-width: 230px;
+    min-width: 270px;
 
     a {
       text-decoration: none;
@@ -25,7 +25,7 @@
       height: 16px;
       width: 16px;
       top: 4px;
-      left: -18px;
+      left: -21px;
     }
 
     li input + label + ol > li {
@@ -37,7 +37,7 @@
       &:before {
         content: '';
         position: absolute;
-        left: -12px;
+        left: -20px;
         top: 7px;
         border-top: 5px solid transparent;
         border-bottom: 5px solid transparent;
@@ -49,7 +49,7 @@
       &:before {
         content: '';
         position: absolute;
-        left: -15px;
+        left: -20px;
         top: 10px;
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
@@ -102,12 +102,13 @@
       top: 15px;
 
       > ol {
-        padding-left: 0px;
+        margin: 0;
+        padding: 15px 0 15px 20px;
       }
     }
 
     &__title {
-      margin-top: 15px;
+      padding: 15px 0;
       text-align: left;
       font-weight: bold;
       @include font-size(18);
@@ -119,7 +120,6 @@
 
     &__search {
       flex-grow: 1;
-      margin-top: 15px;
       @include font-size(16);
 
       &-input {
@@ -138,6 +138,10 @@
       .live-search__result {
         padding-left: 0px;
       }
+    }
+
+    .docpage-versions {
+      display: none;
     }
   }
 
@@ -285,7 +289,13 @@
     }
   }
 
-  &._0-1024, &.hasMenu {
+  &.hasMenu .docpage-menu {
+    > input, > label {
+      display: none;
+    }
+  }
+
+  &._0-768, &._768-1024, &.hasMenu {
     .docpage-content {
       display: block;
 
@@ -309,12 +319,146 @@
     }
   }
 
-  &._0-1024 .showVersions .title {
-    display: flex;
-    justify-content: space-between;
+  &._0-768, &._0-1024 {
+    .showVersions .title {
+      display: flex;
+      justify-content: space-between;
 
-    .docpage-versions {
-      display: block;
+      .docpage-versions {
+        display: block;
+      }
+    }
+  }
+
+  &._0-768.hasMenu {
+    flex-direction: column;
+
+    .docpage-content-header {
+      display: none;
+    }
+
+    .docpage-menu {
+      position: relative;
+      margin-right: 0px;
+      margin-bottom: 15px;
+      padding: 0;
+      background-color: $color-pelorous;
+
+      &-wrapper {
+        > * {
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+
+        > ol {
+          padding-left: 50px;
+          background-color: $color-menu-gray;
+        }
+      }
+
+      &__search {
+        padding-bottom: 15px;
+      }
+
+      &__title {
+        text-align: center;
+
+        a {
+          color: $color-white;
+        }
+      }
+
+      > input {
+        display: block;
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        opacity: 0;
+        z-index: 2;
+        cursor: pointer;
+        height: 16px;
+        width: 16px;
+
+        &:checked + label {
+          + .docpage-menu-wrapper {
+            .docpage-versions, .docpage-menu__search, ol {
+              display: block;
+            }
+          }
+
+          &:before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 20px;
+            background: url('../img/icons/close.svg') 0 0 no-repeat;
+            height: 16px;
+            width: 16px;
+            background-size: 16px;
+          }
+        }
+      }
+
+      > label {
+        display: block;
+        position: absolute;
+
+        &:before {
+          content: '';
+          position: absolute;
+          left: 30px;
+          top: 20px;
+          background: url('../img/icons/menu.svg') 0 0 no-repeat;
+          height: 16px;
+          width: 16px;
+          background-size: 16px;
+        }
+
+        + .docpage-menu-wrapper {
+          .docpage-versions, .docpage-menu__search, ol {
+            display: none;
+          }
+        }
+      }
+
+      .docpage-versions {
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: -10px;
+
+        ///
+        width: 120px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0px;
+        overflow: hidden;
+        position: relative;
+
+        select {
+          width: 140px;
+          background: transparent;
+          border: none;
+          color: $color-white;
+
+          option {
+            color: $color-black;
+          }
+        }
+
+        &:after {
+          content: '';
+          position: absolute;
+          right: 0px;
+          top: 5px;
+          background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
+          height: 16px;
+          width: 16px;
+          background-size: 16px;
+          z-index: -1;
+        }
+      }
+
     }
   }
 }
