@@ -358,6 +358,10 @@
 
       &__search {
         padding-bottom: 15px;
+
+        input {
+          border: none;
+        }
       }
 
       &__title {
