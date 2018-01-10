@@ -9,6 +9,7 @@
       <config>
         <option value="default">Default</option>
         <option value="layered">Layered</option>
+        <option value="hidden">Hidden</option>
       </config>
     </input>
     <input name="headerColor" type="RadioButton">

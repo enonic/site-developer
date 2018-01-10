@@ -31,7 +31,8 @@ function handleGet(req) {
         });
 
         // Defines whether page header is layered or not
-        model.headerType = content.page.config['headerType'] ? content.page.config['headerType'] : 'default';
+        model.headerClass = getHeaderClass();
+        model.bodyClass = getBodyClass();
 
         // Header logo and menu button color
         model.headerColor = content.page.config['headerColor'] === 'white' ? 'dark' : null;
@@ -43,6 +44,34 @@ function handleGet(req) {
 
     function getPageTitle() {
         return content['displayName'];
+    }
+
+    function getHeaderClass() {
+        var headerType = getHeaderType();
+
+        if (!headerType) {
+            return 'header-default';
+        }
+
+        return 'header-' + headerType;
+    }
+
+    function getBodyClass() {
+        var headerType = getHeaderType();
+
+        if (!!headerType && headerType == 'hidden') {
+            return 'no-header';
+        }
+
+        if (!!headerType && headerType == 'layered') {
+            return 'layered';
+        }
+
+        return '';
+    }
+
+    function getHeaderType() {
+        return content.page.config['headerType'];
     }
 
     return {

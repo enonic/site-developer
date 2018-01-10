@@ -73,6 +73,7 @@ function createDocModel(doc) {
     model.versions = versions;
     model.menu = menu;
     model.hasMenu = hasMenu;
+    model.sitePath = libs.portal.getSite()['_path'];
 
     if (hasMenu) {
         model.navigation = getNavigation(menu, versionContent);

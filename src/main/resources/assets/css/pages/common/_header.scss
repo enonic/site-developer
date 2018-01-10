@@ -61,17 +61,18 @@
       background: rgba(0, 0, 0, 0.94);
     }
 
-    .header-layered & {
+    &.header-layered {
       position: absolute;
       width: 100%;
       z-index: 1000;
     }
+
+    &.header-hidden {
+      display: none;
+    }
   }
 
   &__header-wrapper {
-    .header-layered & {
-      position: relative;
-    }
 
     .main-nav-toggled & {
       position: static;

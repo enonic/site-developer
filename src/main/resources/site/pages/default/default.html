@@ -2,7 +2,7 @@
 <html lang="en">
 <head data-th-replace="/site/pages/fragments/fragments::head-fragment"></head>
 
-<body data-th-class="page-default__body" data-th-classappend="(${headerType} == 'layered' ? 'header-layered' : '')">
+<body data-th-class="page-default__body" data-th-classappend="${bodyClass}">
 <div data-th-replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-default')"></div>
 
 <div class="page-default__content">

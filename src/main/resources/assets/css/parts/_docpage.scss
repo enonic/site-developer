@@ -140,6 +140,10 @@
     .docpage-versions {
       display: none;
     }
+
+    &__header-logo {
+      display: none;
+    }
   }
 
   &-versions {
@@ -469,4 +473,70 @@
 
     }
   }
+}
+
+.no-header {
+
+  .docpage-menu {
+    &__title {
+      text-align: center;
+    }
+
+    &__header-logo {
+      display: block;
+      text-align: center;
+
+      &-img {
+        width: 120px;
+        height: 37px;
+      }
+
+      &-text {
+        @extend %visually-hidden;
+      }
+    }
+
+  }
+
+  .docpage._0-768.hasMenu {
+    .docpage-menu {
+
+      > input {
+        right: 30px;
+        left: auto;
+
+        &:checked + label {
+          &:before {
+            left: auto;
+            right: 30px;
+          }
+        }
+      }
+
+      > label {
+        right: 0px;
+
+        &:before {
+          right: 30px;
+          left: auto;
+        }
+      }
+
+      &__header-logo {
+        display: none;
+      }
+
+      &__header-logo-small-link:before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 18px;
+        background: url('../img/icons/favicon-white.svg') 0 0 no-repeat;
+        height: 23px;
+        width: 20px;
+        background-size: 20px;
+      }
+    }
+  }
+
 }

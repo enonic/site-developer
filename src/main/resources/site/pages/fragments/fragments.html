@@ -7,7 +7,8 @@
 </head>
 <body>
 <div data-th-fragment="header-fragment" data-th-class="${baseClass} + '__header-wrapper'">
-    <header data-th-class="${baseClass} + '__header'" data-th-classappend="${headerColor} == 'dark' ? ${baseClass} + '__header--inverted' : ''">
+    <header data-th-class="${baseClass} + '__header'"
+            data-th-classappend="(${headerColor} == 'dark' ? ${baseClass} + '__header--inverted' : '') + ' ' + ${headerClass}">
         <div data-th-class="${baseClass} + '__header-container'">
             <div data-th-class="${baseClass} + '__header-toolbar'">
                 <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(inverted=${headerColor == 'dark' ? 'true' : 'false'})"></div>
