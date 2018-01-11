@@ -64,7 +64,7 @@ function createDocModel(doc) {
     var versionContent = getNearestContentByType(doc, 'docversion');
     var versions = getVersions(rootDoc, versionContent);
     var menu = getMenu(versionContent);
-    var hasMenu = !!menu && !!menu.menuItems && menu.menuItems.length > 0;
+    var hasMenu = true;
 
     model.rootDocTitle = rootDoc.displayName;
     model.rootDocUrl = libs.portal.pageUrl({path: versionContent._path});
@@ -75,7 +75,8 @@ function createDocModel(doc) {
     model.hasMenu = hasMenu;
     model.sitePath = libs.portal.getSite()['_path'];
 
-    if (hasMenu) {
+    if (!!menu) {
+        model.hasNavigation = true;
         model.navigation = getNavigation(menu, versionContent);
     }
 
@@ -199,7 +200,7 @@ function getNavigation(menu, versionContent) {
         return activeMenuItem.nav;
     }
 
-    return null;
+    return [rootVersionNavItem];
 }
 
 function isDocpage(content) {

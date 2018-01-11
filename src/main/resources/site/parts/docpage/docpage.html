@@ -6,7 +6,7 @@
         <div class="docpage-menu-wrapper">
             <div class="docpage-menu__header-logo-small">
                 <a data-th-class="docpage-menu__header-logo-small-link" title="Frontpage"
-                   data-th-href="${portal.pageUrl({'_path=' + sitePath})}">
+                   data-th-href="${portal.pageUrl({'_path=' + sitePath})}"></a>
             </div>
             <div class="docpage-menu__header-logo">
                 <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(baseClass='docpage-menu')"></div>
@@ -26,13 +26,16 @@
                     <div class="live-search__no-results">No results</div>
                 </form>
             </div>
-            <div data-th-replace="/site/pages/fragments/fragments::doc-menu-fragment(menuItems=${menu.menuItems})"></div>
+            <div data-th-if="${menu != null}" data-th-remove="tag">
+                <div data-th-replace="/site/pages/fragments/fragments::doc-menu-fragment(menuItems=${menu.menuItems})"></div>
+            </div>
+
         </div>
     </div>
 
-    <div class="docpage-content" data-th-classappend="(${hasMenu} == false ? 'showVersions' : '')">
-        <div data-th-if="${hasMenu}" data-th-class="docpage-content-header">
-            <div class="docpage-content-header__navigation">
+    <div class="docpage-content">
+        <div data-th-if="${hasNavigation}" data-th-class="docpage-content__navigation">
+            <div class="docpage-content__navigation-breadcrumbs">
                 <div data-th-each="navItem : ${navigation}" data-th-remove="tag">
                     <span><a data-th-href="${navItem.url}" data-th-text="${navItem.title}">text</a></span>
                 </div>
@@ -40,23 +43,29 @@
             <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
         </div>
 
-        <div class="title">
+        <div class="docpage-content__title">
             <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
-            <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
+            <div data-th-unless="${hasNavigation}">
+                <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
+            </div>
         </div>
 
-        <div class="toc">
-            <h3 class="toc-title">Contents</h3>
-            <div id="js-toc">
+        <div class="docpage-toc docpage-toc_inner">
+            <h3 class="docpage-toc__title">Contents</h3>
+            <div class="docpage-toc__list">
             </div>
         </div>
 
         <div class="doc">
-            <div id="title">
-                <h2 style="margin-top: 5px" data-th-text="${title}">...</h2>
-                <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
-            </div>
+            <h2 style="display: none" data-th-text="${title}">To add doc name as first entry in toc</h2>
             <div data-th-remove="tag" data-th-utext="${content}">Content here...</div>
+        </div>
+    </div>
+
+    <div class="docpage-sticky-toc">
+        <div class="docpage-toc docpage-toc_outer">
+            <h3 class="docpage-toc__title">Contents</h3>
+            <div class="docpage-toc__list"></div>
         </div>
     </div>
 
@@ -66,7 +75,16 @@
 <script type="text/javascript">
     tocbot.init({
         // Where to render the table of contents.
-        tocSelector: '#js-toc',
+        tocSelector: '.docpage-toc_inner .docpage-toc__list',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.doc',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h2, h3, h4'
+    });
+
+    tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.docpage-toc_outer .docpage-toc__list',
         // Where to grab the headings to build the table of contents.
         contentSelector: '.doc',
         // Which headings to grab inside of the contentSelector element.

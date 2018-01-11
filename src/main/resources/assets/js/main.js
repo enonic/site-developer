@@ -13,7 +13,7 @@ $('.page-default__main-menu').enonicMenu({
 });
 
 require('./plugins/responsive.js');
-$('.docpage').responsive([[0, 768], [768, 1024], [1024, Infinity]]);
+$('.docpage').responsive([[0, 768], [768, 1024], [1024, 1280], [1280, 1440], [1440, Infinity]]);
 
 require('./vendor/prism.js');
 
