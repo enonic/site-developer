@@ -40,14 +40,10 @@
                     <span><a data-th-href="${navItem.url}" data-th-text="${navItem.title}">text</a></span>
                 </div>
             </div>
-            <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
         </div>
 
         <div class="docpage-content__title">
             <h2 data-th-text="${title}">...</h2>
-            <div data-th-unless="${hasNavigation}">
-                <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment"></div>
-            </div>
         </div>
 
         <div class="docpage-toc docpage-toc_inner">

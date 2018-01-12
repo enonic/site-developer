@@ -146,7 +146,35 @@
     }
 
     .docpage-versions {
-      display: none;
+      display: block;
+      text-align: center;
+      margin-bottom: 10px;
+      margin-top: -10px;
+
+      width: 120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0px;
+      overflow: hidden;
+      position: relative;
+
+      select {
+        width: 140px;
+        background: transparent;
+        border: none;
+        color: $color-black;
+
+        option {
+          color: $color-black;
+        }
+      }
+
+      svg {
+        position: absolute;
+        top: 5px;
+        right: 0px;
+        z-index: -1;
+      }
     }
 
     &__header-logo {
@@ -366,41 +394,17 @@
           }
 
           .docpage-versions {
-            display: block;
-            text-align: center;
-            margin-bottom: 10px;
-            margin-top: -10px;
-
-            width: 120px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0px;
-            overflow: hidden;
-            position: relative;
+            padding: 0;
 
             select {
-              width: 140px;
-              background: transparent;
-              border: none;
               color: $color-white;
-
-              option {
-                color: $color-black;
-              }
             }
 
-            &:after {
-              content: '';
-              position: absolute;
-              right: 0px;
-              top: 5px;
-              background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
-              height: 16px;
-              width: 16px;
-              background-size: 16px;
-              z-index: -1;
+            svg g {
+              fill: $color-white;
             }
           }
+
         }
 
         &__search {
