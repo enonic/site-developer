@@ -23,7 +23,6 @@ var getContentByKey = libs.c.get;
 var getSitePath     = libs.u.getSitePath;
 var group           = libs.q.group;
 var isSet           = libs.v.isSet;
-var join            = libs.q.join;
 var like            = libs.q.like;
 var ngram           = libs.q.ngram;
 var or              = libs.q.or;
@@ -90,7 +89,18 @@ exports.search = function (query, path, start, count) {
 
     path = '/content' + (!!path ? path : getSitePath());
 
-    var fields = 'displayName^1,data.raw';
+    var fields = [ // have not checked CT_DOCPAGE
+      'data.title^3', // CT_DOCPAGE and CT_DOCVERSION
+      'displayName^2', // All content
+      'data.shortdescription^1', // CT_GUIDE
+      'data.tags^1', // CT_GUIDE
+      'data.repository^1', // CT_GUIDE
+      'data.raw' // CT_DOCPAGE, CT_DOCVERSION and CT_GUIDE
+      //'data.html' // NOTE data.raw covers this.
+      //'data.menu' // NOTE We don't want to search this!
+      //'_alltext' // NOTE Nope there are things we don't want to search!
+    ].join(',');
+
     var expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
         like('_path', path + '/*'),
