@@ -17,25 +17,23 @@ $color-mine-shaft: #272727;
 $color-cod-gray: #1c1c1c;
 $color-silver-chalice: #aaa;
 $color-aqua-haze: #F4F7F9;
-$color-text-light: rgb(255,255,255);
-$color-highlight: rgb(252,93,75);
+$color-text-light: rgb(255, 255, 255);
+$color-highlight: rgb(252, 93, 75);
 $color-dark-highlight: #e23b28;
 $color-anchor: $color-pelorous;
 $color-headings: inherit;
 $color-form-input-border: $color-silver;
 $color-form-input-border-focus: $color-cornflower-blue;
 
-
 /********** Breakpoints *********/
 
 $breakpoints: (
-  'small':  320px,
-  'medium': 768px,
-  'large':  1024px,
+        'small': 320px,
+        'medium': 768px,
+        'large': 1024px,
         'xlarge': 1280px,
         'xxlarge': 1440px,
 );
-
 
 /*// Small screen / tablet
 $screen-sm-min:              0px !default;
@@ -52,24 +50,17 @@ $device-desktop: "(min-width: 1025px)";
 $device-tablet: "(min-width: 768px) and (max-width: 1024px)";
 $device-mobile: "(max-width: 767px)";*/
 
-$headings-font-family:    'gt_pressura', sans-serif;
-$headings-font-weight:    500;
-$headings-line-height:    1.1;
-
+$headings-font-family: 'gt_pressura', sans-serif;
+$headings-font-weight: 500;
+$headings-line-height: 1.1;
 
 $font-family-text: 'akkurat', Arial, sans-serif;
-
-
-
-
-
-
 
 //== Grid system
 //
 //## Define your custom responsive grid.
 
 //** Number of columns in the grid.
-$grid-columns:              12 !default;
+$grid-columns: 12 !default;
 //** Padding between columns. Gets divided in half for the left and right.
-$grid-gutter-width:         30px !default;
+$grid-gutter-width: 30px !default;

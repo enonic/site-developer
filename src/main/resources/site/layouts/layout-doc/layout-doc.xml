@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<layout>
+  <display-name>Doc layout</display-name>
+  <regions>
+    <region name="main"/>
+  </regions>
+</layout>

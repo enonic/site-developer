@@ -1,6 +1,8 @@
 .docpage {
 
+  background-color: $color-white;
   display: flex;
+  margin-bottom: 0px;
 
   a {
     text-decoration: none;
@@ -18,8 +20,8 @@
 
     &-wrapper {
       position: sticky;
-      top: 25px;
-      margin-top: 25px;
+      top: 18px;
+      margin-top: 18px;
 
       ol {
         padding: 0 20px;
@@ -110,7 +112,8 @@
     }
 
     &__title {
-      padding: 15px 0;
+      padding-bottom: 15px;
+      line-height: 1;
       text-align: center;
       font-weight: bold;
       @include font-size(18);
@@ -170,7 +173,7 @@
     flex-direction: column;
     align-items: baseline;
 
-    .doc {
+    &__doc {
       @import '_asciidoctor';
 
       a {
@@ -219,6 +222,12 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      margin: 15px 0px 24px 0px;
+
+      h2 {
+        margin: 0;
+        line-height: 1;
+      }
     }
 
     a {
@@ -323,146 +332,177 @@
     }
   }
 
-  &._0-768.hasMenu {
-    flex-direction: column;
-
-    .docpage-content__navigation {
-      display: none;
+  &._0-768 {
+    .docpage-content {
+      padding: 0 15px;
     }
 
-    .docpage-menu {
-      position: sticky;
-      top: 0px;
-      z-index: 1;
-      margin-right: 0px;
-      margin-bottom: 15px;
-      padding: 0;
-      background-color: $color-pelorous;
+    &.hasMenu {
+      flex-direction: column;
 
-      &-wrapper {
-        margin-top: 0px;
+      .docpage-content__navigation {
+        display: none;
+      }
 
-        > * {
-          padding-left: 30px;
-          padding-right: 30px;
+      .docpage-menu {
+        position: sticky;
+        top: 0px;
+        z-index: 1;
+        margin-right: 0px;
+        margin-bottom: 15px;
+        padding: 0;
+        background-color: $color-pelorous;
+
+        &-wrapper {
+          margin-top: 0px;
+
+          > * {
+            padding-left: 30px;
+            padding-right: 30px;
+          }
+
+          > ol {
+            padding-left: 50px;
+            background-color: $color-menu-gray;
+          }
+
+          .docpage-versions {
+            display: block;
+            text-align: center;
+            margin-bottom: 10px;
+            margin-top: -10px;
+
+            width: 120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0px;
+            overflow: hidden;
+            position: relative;
+
+            select {
+              width: 140px;
+              background: transparent;
+              border: none;
+              color: $color-white;
+
+              option {
+                color: $color-black;
+              }
+            }
+
+            &:after {
+              content: '';
+              position: absolute;
+              right: 0px;
+              top: 5px;
+              background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
+              height: 16px;
+              width: 16px;
+              background-size: 16px;
+              z-index: -1;
+            }
+          }
         }
 
-        > ol {
-          padding-left: 50px;
-          background-color: $color-menu-gray;
-        }
+        &__search {
+          padding-bottom: 15px;
 
-        .docpage-versions {
-          display: block;
-          text-align: center;
-          margin-bottom: 10px;
-          margin-top: -10px;
-
-          width: 120px;
-          margin-left: auto;
-          margin-right: auto;
-          padding: 0px;
-          overflow: hidden;
-          position: relative;
-
-          select {
-            width: 140px;
-            background: transparent;
+          input {
             border: none;
+          }
+        }
+
+        &__title {
+          padding-top: 15px;
+
+          a {
             color: $color-white;
+          }
+        }
 
-            option {
-              color: $color-black;
+        > input {
+          display: block;
+          position: absolute;
+          top: 15px;
+          left: 32px;
+          opacity: 0;
+          z-index: 2;
+          cursor: pointer;
+          height: 16px;
+          width: 16px;
+
+          &:checked + label {
+            background-color: transparent;
+
+            &:before, &:after {
+              background-color: #fff;
+              -webkit-transform-origin: 50% 50%;
+              transform-origin: 50% 50%;
+              top: 0;
+              width: 20px;
+            }
+
+            &:before {
+              -webkit-transform: rotate3d(0, 0, 1, 45deg);
+              transform: rotate3d(0, 0, 1, 45deg);
+            }
+            &:after {
+              -webkit-transform: rotate3d(0, 0, 1, -45deg);
+              transform: rotate3d(0, 0, 1, -45deg);
+            }
+
+            + .docpage-menu-wrapper {
+              .docpage-versions, .docpage-menu__search, ol {
+                display: block;
+              }
             }
           }
+        }
 
-          &:after {
-            content: '';
+        > label {
+          display: block;
+          position: absolute;
+          width: 20px;
+          height: 3px;
+          background: $color-white;
+          transition: 0.3s;
+          top: 21px;
+          left: 30px;
+
+          &:before, &:after {
+            display: inline-block;
+            width: 20px;
+            height: 3px;
+            background: $color-white;
+            transition: 0.3s;
             position: absolute;
-            right: 0px;
-            top: 5px;
-            background: url(../img/icons/arrow-down.svg) 0 0 no-repeat;
-            height: 16px;
-            width: 16px;
-            background-size: 16px;
-            z-index: -1;
-          }
-        }
-      }
-
-      &__search {
-        padding-bottom: 15px;
-
-        input {
-          border: none;
-        }
-      }
-
-      &__title {
-
-        a {
-          color: $color-white;
-        }
-      }
-
-      > input {
-        display: block;
-        position: absolute;
-        top: 20px;
-        left: 30px;
-        opacity: 0;
-        z-index: 2;
-        cursor: pointer;
-        height: 16px;
-        width: 16px;
-
-        &:checked + label {
-          + .docpage-menu-wrapper {
-            .docpage-versions, .docpage-menu__search, ol {
-              display: block;
-            }
+            left: 0;
+            content: '';
+            -webkit-transform-origin: 15px/14 center;
+            transform-origin: 15px/14 center;
           }
 
           &:before {
-            content: '';
-            position: absolute;
-            left: 30px;
-            top: 20px;
-            background: url('../img/icons/close.svg') 0 0 no-repeat;
-            height: 16px;
-            width: 16px;
-            background-size: 16px;
+            top: 6px;
+          }
+
+          &:after {
+            top: -6px;
+          }
+
+          + .docpage-menu-wrapper {
+            .docpage-versions, .docpage-menu__search, ol {
+              display: none;
+            }
           }
         }
+
       }
 
-      > label {
-        display: block;
-        position: absolute;
-
-        &:before {
-          content: '';
-          position: absolute;
-          left: 30px;
-          top: 20px;
-          background: url('../img/icons/menu.svg') 0 0 no-repeat;
-          height: 16px;
-          width: 16px;
-          background-size: 16px;
+      .docpage-content__title {
+        .docpage-versions {
+          display: none;
         }
-
-        + .docpage-menu-wrapper {
-          .docpage-versions, .docpage-menu__search, ol {
-            display: none;
-          }
-        }
-      }
-
-    }
-
-    .docpage-content__title {
-      .docpage-versions {
-        display: none;
       }
     }
   }
@@ -475,6 +515,7 @@
     &__header-logo {
       display: block;
       text-align: center;
+      margin-bottom: 15px;
 
       &-img {
         width: 120px;
@@ -494,22 +535,11 @@
       > input {
         right: 30px;
         left: auto;
-
-        &:checked + label {
-          &:before {
-            left: auto;
-            right: 30px;
-          }
-        }
       }
 
       > label {
-        right: 0px;
-
-        &:before {
-          right: 30px;
-          left: auto;
-        }
+        right: 28px;
+        left: auto;
       }
 
       &__header-logo {
@@ -520,7 +550,7 @@
         content: '';
         position: absolute;
         left: 30px;
-        top: 18px;
+        top: 12px;
         background: url('../img/icons/favicon-white.svg') 0 0 no-repeat;
         height: 23px;
         width: 20px;
