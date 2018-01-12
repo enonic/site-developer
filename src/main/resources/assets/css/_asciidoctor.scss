@@ -16,7 +16,10 @@ script { display: none !important; }
 
 /* ========================================================================== Base ========================================================================== */
 /** 1. Set default font family to sans-serif. 2. Prevent iOS text size adjust after orientation change, without disabling user zoom. */
-html { font-family: sans-serif; /* 1 */ -ms-text-size-adjust: 100%; /* 2 */ -webkit-text-size-adjust: 100%; /* 2 */ }
+html { /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
 
 /** Remove default margin. */
 body { margin: 0; }
@@ -131,7 +134,16 @@ meta.foundation-mq-large { font-family: "only screen and (min-width:1440px)"; wi
 
 html, body { font-size: 100%; }
 
-body { background: white; color: #02303A; padding: 0; margin: 0; font-family: "Lato", Arial, sans-serif; font-weight: normal; font-style: normal; line-height: 1; cursor: auto; }
+body {
+  background: white;
+  color: #02303A;
+  padding: 0;
+  margin: 0;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  cursor: auto;
+}
 
 a:hover { cursor: pointer; }
 
@@ -187,11 +199,26 @@ a:hover, a:focus { color: #1C7487; }
 a img { border: none; }
 
 /* Default paragraph styles */
-p { font-family: "Lato", Arial, sans-serif; font-weight: normal; font-size: 16px; line-height: 1.6; color: #02303A; margin-bottom: 1.25em; text-rendering: optimizeLegibility; }
+p {
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #02303A;
+  margin-bottom: 1.25em;
+  text-rendering: optimizeLegibility;
+}
 p aside { font-size: 0.875em; line-height: 1.35; font-style: italic; }
 
 /* Default header styles */
-h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 { font-family: "Lato", Arial, sans-serif; font-weight: bold; font-style: normal; color: #02303A; text-rendering: optimizeLegibility; margin-top: 1em; margin-bottom: 0.5em; line-height: 1.0125em; }
+h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
+  font-weight: bold;
+  font-style: normal;
+  color: #02303A;
+  text-rendering: optimizeLegibility;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.0125em;
+}
 h1 small, h2 small, h3 small, #toctitle small, .sidebarblock > .content > .title small, h4 small, h5 small, h6 small { font-size: 60%; color: #e99b8f; line-height: 0; }
 
 h1 { font-size: 2.125em; }
@@ -218,7 +245,12 @@ small { font-size: 60%; line-height: inherit; }
 code { font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; font-weight: normal; color: rgba(0, 0, 0, 0.9); }
 
 /* Lists */
-ul, ol, dl { font-size: 1.6rem; line-height: 1.6; margin-bottom: 2rem; list-style-position: outside; font-family: "Lato", Arial, sans-serif; }
+ul, ol, dl {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  list-style-position: outside;
+}
 
 ul, ol { margin-left: 1.5em; }
 ul.no-bullet, ol.no-bullet { margin-left: 1.5em; }
@@ -347,7 +379,6 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 #toc > ul { margin-left: 0.125em; }
 #toc ul.sectlevel0 > li > a { font-style: italic; }
 #toc ul.sectlevel0 ul.sectlevel1 { margin: 0.5em 0; }
-#toc ul { font-family: "Lato", Arial, sans-serif; list-style-type: none; }
 #toc li { line-height: 1.3334; margin-top: 0.3334em; }
 #toc a { color: #02303A; text-decoration: none; }
 #toc a:hover, #toc a:focus { color: #00C489; }
@@ -390,7 +421,12 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 
 .audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
 
-.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; font-family: "Lato", Arial, sans-serif; font-size: 1.6rem; font-style: italic; }
+.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title {
+  text-rendering: optimizeLegibility;
+  text-align: left;
+  font-size: 1.6rem;
+  font-style: italic;
+}
 
 table.tableblock > caption.title { white-space: nowrap; overflow: visible; max-width: 0; }
 
@@ -401,7 +437,11 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .admonitionblock > table { border-collapse: separate; border: 0; background: none; width: 100%; }
 .admonitionblock > table td.icon { text-align: center; width: 80px; }
 .admonitionblock > table td.icon img { max-width: initial; }
-.admonitionblock > table td.icon .title { font-weight: bold; font-family: "Lato", Arial, sans-serif; text-transform: uppercase; }
+
+.admonitionblock > table td.icon .title {
+  font-weight: bold;
+  text-transform: uppercase;
+}
 .admonitionblock > table td.content { padding-left: 1.125em; padding-right: 1.25em; border-left: 1px solid #ddddd8; color: rgba(0, 0, 0, 0.6); }
 .admonitionblock > table td.content > :last-child > :last-child { margin-bottom: 0; }
 
@@ -468,7 +508,13 @@ table.pyhltable .linenodiv { background: none !important; padding-right: 0 !impo
 .quoteblock .quoteblock blockquote:before { display: none; }
 
 .verseblock { margin: 0 1em 1.25em 1em; }
-.verseblock pre { font-family: "Lato", Arial, sans; font-size: 1.15rem; color: rgba(0, 0, 0, 0.85); font-weight: 300; text-rendering: optimizeLegibility; }
+
+.verseblock pre {
+  font-size: 1.15rem;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 300;
+  text-rendering: optimizeLegibility;
+}
 .verseblock pre strong { font-weight: 400; }
 .verseblock .attribution { margin-top: 1.25rem; margin-left: 0.5ex; }
 
@@ -694,7 +740,20 @@ span.icon > .fa { cursor: default; }
 .admonitionblock td.icon .icon-caution:before { content: "\f06d"; color: #bf3400; }
 .admonitionblock td.icon .icon-important:before { content: "\f06a"; color: #bf0000; }
 
-.conum[data-value] { display: inline-block; color: #fff !important; background-color: rgba(0, 0, 0, 0.8); -webkit-border-radius: 100px; border-radius: 100px; text-align: center; font-size: 0.75em; width: 1.67em; height: 1.67em; line-height: 1.67em; font-family: "Lato", Arial, sans-serif; font-style: normal; font-weight: bold; }
+.conum[data-value] {
+  display: inline-block;
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, 0.8);
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+  text-align: center;
+  font-size: 0.75em;
+  width: 1.67em;
+  height: 1.67em;
+  line-height: 1.67em;
+  font-style: normal;
+  font-weight: bold;
+}
 .conum[data-value] * { color: #fff !important; }
 .conum[data-value] + b { display: none; }
 .conum[data-value]:after { content: attr(data-value); }
@@ -709,8 +768,6 @@ dt, th.tableblock, td.content, div.footnote { text-rendering: optimizeLegibility
 h1, h2, p, td.content, span.alt { letter-spacing: -0.01em; }
 
 p strong, td.content strong, div.footnote strong { letter-spacing: -0.005em; }
-
-p, blockquote, dt, td.content, span.alt { font-size: 1.7rem; }
 
 p { margin-bottom: 1.25rem; }
 
