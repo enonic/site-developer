@@ -1,8 +1,47 @@
-// Includes.
-var contentLib = require('/lib/xp/content');
-var util = require('/lib/util');
-var portalLib = require('/lib/xp/portal');
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
+var libs = {
+  c: require('/lib/xp/content'),
+  ct: require('/content-types'),
+  q: require('/lib/query'),
+  p: require('/lib/xp/portal'),
+  u: require('/lib/util'),
+  eu: require('/lib/enonic/util'),
+  v: require('/lib/enonic/util/value')
+};
 
+// Imported Contstants
+var CT_DOCPAGE    = libs.ct.CT_DOCPAGE;
+var CT_DOCVERSION = libs.ct.CT_DOCVERSION;
+var CT_GUIDE      = libs.ct.CT_GUIDE;
+
+// Imported functions
+var and             = libs.q.and;
+var fulltext        = libs.q.fulltext;
+var getContentByKey = libs.c.get;
+var getSitePath     = libs.u.getSitePath;
+var group           = libs.q.group;
+var isSet           = libs.v.isSet;
+var like            = libs.q.like;
+var ngram           = libs.q.ngram;
+var or              = libs.q.or;
+var pageUrl         = libs.p.pageUrl;
+var propIn          = libs.q.propIn;
+var queryContent    = libs.c.query;
+var toStr           = libs.eu.toStr;
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Private Contstants
+//──────────────────────────────────────────────────────────────────────────────
+var DEBUG = true;
+var TRACE = false;
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
 function toSearchResultEntry(content) {
     if (!content) {
         return;
@@ -11,11 +50,12 @@ function toSearchResultEntry(content) {
     var result = {
         name: getSearchResultName(content),
         title: content.data.title || content.displayName,
-        url: portalLib.pageUrl({path: content._path})
+        url: pageUrl({path: content._path})
     };
 
     return result;
 }
+
 
 function getSearchResultName(content) {
     if (!isDocVersion(content)) {
@@ -26,27 +66,51 @@ function getSearchResultName(content) {
     return doc.displayName + ' : ' + content.displayName;
 }
 
+
 function getDocVersionParent(content) {
     var path = content._path;
     var parentPath = path.substr(0, path.lastIndexOf('/'));
 
-    return contentLib.get({key: parentPath});
+    return getContentByKey({key: parentPath});
 }
+
 
 function isDocVersion(content) {
-    return content.type === app.name + ':docversion';
+    return content.type === CT_DOCVERSION;
 }
 
-// Search entries.
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
 exports.search = function (query, path, start, count) {
+    TRACE && log.info('search('+query+', '+path+', '+start+', '+count+')');
+    if (!isSet(query)) { query = ''; }
 
-    path = '/content' + (!!path ? path : util.getSitePath());
+    path = '/content' + (!!path ? path : getSitePath());
 
-    var expr = "type IN ('" + app.name + ":docpage', '" + app.name + ":docversion', '" + app.name + ":guide') " +
-               "AND _path LIKE '" + path + "/*' " +
-               "AND (fulltext('data.raw', '" + (query || '') + "', 'AND') OR ngram('data.raw', '" + (query || '') + "', 'AND'))";
+    var fields = [ // have not checked CT_DOCPAGE
+      'data.title^3', // CT_DOCPAGE and CT_DOCVERSION
+      'displayName^2', // All content
+      'data.shortdescription^1', // CT_GUIDE
+      'data.tags^1', // CT_GUIDE
+      'data.repository^1', // CT_GUIDE
+      'data.raw' // CT_DOCPAGE, CT_DOCVERSION and CT_GUIDE
+      //'data.html' // NOTE data.raw covers this.
+      //'data.menu' // NOTE We don't want to search this!
+      //'_alltext' // NOTE Nope there are things we don't want to search!
+    ].join(',');
 
-    var result = contentLib.query({
+    var expr = and(
+        propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
+        like('_path', path + '/*'),
+        group(or(
+            fulltext(fields, query, 'AND'),
+            ngram(fields, query, 'AND')
+        )));
+    DEBUG && log.info('expr: ' + toStr(expr));
+
+    var result = queryContent({
         query: expr,
         start: start || 0,
         count: count || 100
@@ -67,4 +131,4 @@ exports.search = function (query, path, start, count) {
         count: entries.length,
         hits: entries
     };
-};
+}; // exports.search
