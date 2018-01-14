@@ -89,12 +89,12 @@ exports.and = function(str) {
 }
 
 
-exports.childrenOf = function(path) {
+exports.childOf = function(path) {
   return propEq('_parentPath', path);
 }
 
 
-exports.decendantsOf = function(path) {
+exports.decendantOf = function(path) {
   return like('_path', path + '/*');
 }
 

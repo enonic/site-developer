@@ -18,7 +18,7 @@ var RT_HTML       = libs.ct.RT_HTML;
 
 // Imported functions
 var and               = libs.q.and;
-var decendantsOf      = libs.q.decendantsOf;
+var decendantOf       = libs.q.decendantOf;
 var getContentByKey   = libs.content.get;
 var getCurrentContent = libs.portal.getContent;
 var getCurrentSite    = libs.portal.getSite;
@@ -105,7 +105,7 @@ function createDocModel(doc) {
 function getVersions(rootDoc, currentVersion) {
     var expr = and(
       propEq('type', CT_DOCVERSION),
-      decendantsOf('/content' + rootDoc._path)
+      decendantOf('/content' + rootDoc._path)
     );
 
     var result = queryContent({
