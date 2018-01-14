@@ -2,11 +2,15 @@
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
 var libs = {
+    ct:         require('/content-types'),
     portal :    require('/lib/xp/portal'),
     thymeleaf : require('/lib/xp/thymeleaf'),
     menu:       require('/lib/enonic/menu'),
     util:       require('/lib/util')
 };
+
+// Imported Constants
+var RT_HTML           = libs.ct.RT_HTML;
 
 // Imported functions
 var getCurrentContent = libs.portal.getContent;
@@ -52,6 +56,9 @@ exports.get = function(req) {
       showHeaderSearch: true
     }; // model
 
-    return { body: render(VIEW, model) };
+    return {
+      body: render(VIEW, model)
+      contentType: RT_HTML
+    };
 } // exports.get
 exports.post = exports.get;

@@ -1,31 +1,85 @@
-var C = ',';
-var DQ = '"';
-var SQ = "'";
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
+var libs = {
+  v: require('/lib/enonic/util/value')
+};
 
+// Imported functions
+var isSet = libs.v.isSet;
+
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+var C    = ','; // Comma
+var DQ   = '"'; // Double Quotationmark
+var S    = ' '; // Single space
+var SQ   = "'"; // Single Quotationmark
+var LIKE = 'LIKE';
+
+//──────────────────────────────────────────────────────────────────────────────
 // Functions used later
-exports.dq = function(str) {
-  return DQ + str + DQ;
+//──────────────────────────────────────────────────────────────────────────────
+function wrap(str, before, after) {
+  after = isSet(after) ? after : before;
+  return before + str + after;
 }
+exports.wrap = wrap;
 
 
-exports.group = function(str) {
-  return '(' + str + ')';
+function dq(str) {
+  return wrap(str, DQ);
 }
+exports.dq = dq;
 
 
-exports.sq = function(str) {
-  return SQ + str + SQ;
+function s(str) {
+  return wrap(str, S);
 }
+exports.s = s;
 
 
-exports.arr2List = function(array) {
-  return exports.group(array.map(function(item) {
-    return exports.sq(item);
+function group(str) {
+  return wrap(str, '(', ')');
+}
+exports.group = group;
+
+
+function like(prop, str) {
+  return prop + s(LIKE) + dq(str);
+}
+exports.like = like;
+
+
+function propOpValue(prop, operator, value) {
+  return prop + s(operator) + value;
+}
+exports.propOpValue = propOpValue;
+
+
+function propEq(prop, value) {
+  return propOpValue(prop, '=', value);
+}
+exports.propEq = propEq;
+
+
+function sq(str) {
+  return wrap(str, SQ);
+}
+exports.sq = sq;
+
+
+function arr2List(array) {
+  return group(array.map(function(item) {
+    return sq(item);
   }).join(C));
 }
+exports.arr2List = arr2List;
 
 
+//──────────────────────────────────────────────────────────────────────────────
 // Functions not used later
+//──────────────────────────────────────────────────────────────────────────────
 exports.and = function(str) {
   if (!arguments.length) {return '';}
   if (arguments.length === 1) {return 'AND' + str;}
@@ -35,11 +89,21 @@ exports.and = function(str) {
 }
 
 
+exports.childrenOf = function(path) {
+  return propEq('_parentPath', path);
+}
+
+
+exports.decendantsOf = function(path) {
+  return like('_path', path + '/*');
+}
+
+
 exports.fulltext = function(fields, searchString, operator) {
-  var o = operator ? C + exports.sq(operator) : '';
-  return 'fulltext' + exports.group(
-    exports.sq(fields) + C +
-    exports.sq(searchString) + o
+  var o = operator ? C + sq(operator) : '';
+  return 'fulltext' + group(
+    sq(fields) + C +
+    sq(searchString) + o
   );
 }
 
@@ -50,16 +114,11 @@ exports.join = function() {
 }
 
 
-exports.like = function(prop, str) {
-  return prop + ' LIKE ' + exports.dq(str);
-}
-
-
 exports.ngram = function(fields, searchString, operator) {
-  var o = operator ? C + exports.sq(operator) : '';
-  return 'ngram' + exports.group(
-    exports.sq(fields) + C +
-    exports.sq(searchString) + o
+  var o = operator ? C + sq(operator) : '';
+  return 'ngram' + group(
+    sq(fields) + C +
+    sq(searchString) + o
   );
 }
 
@@ -72,6 +131,21 @@ exports.or = function() {
 }
 
 
+exports.pathMatch = function(field, path, memm) { // minimum_elements_must_match
+  var arr = [field, path];
+  isSet(memm) && arr.push(memm);
+  return 'pathMatch' + arr2List(arr)
+}
+
+
+
+
+
 exports.propIn = function(prop, array) {
-  return prop + ' IN ' + exports.arr2List(array);
+  return propOpValue(prop, 'IN', arr2List(array));
+}
+
+
+exports.propNe = function(prop, value) {
+  return propOpValue(prop, '!=', value);
 }

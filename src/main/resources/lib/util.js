@@ -1,6 +1,7 @@
 var libs = {
+    c: require('/lib/xp/content'),
     p: require('/lib/xp/portal'),
-    c: require('/lib/xp/content')
+    q: require('/lib/query')
 };
 
 // Imported functions
@@ -8,16 +9,22 @@ var getSite = libs.p.getSite;
 var pageUrl = libs.p.pageUrl;
 var query = libs.c.query;
 
+// query functions
+var and       = libs.q.and;
+var pathMatch = libs.q.pathMatch;
+var propEq    = libs.q.propEq;
+
+
 exports.getSiteUrl = function() {
     var sitePath = getSite()._path;
     var baseUrl = pageUrl({
         path: sitePath
     });
-    
+
     if (baseUrl.slice(-1) != '/') {
         return baseUrl + '/';
     }
-    
+
     return baseUrl;
 };
 
@@ -31,17 +38,14 @@ exports.getSitePath = function () {
 
 exports.getNearestContentByType = function (content, type) {
     type = app.name + ':' + type;
-    var expr = "type = '" + type + "'" + " AND pathMatch('_path', '/content" + content._path + "') ";
-
+    var expr = and(
+      propEq('type', type),
+      pathMatch('_path', '/content' + content._path)
+    );
     var result = query({
         query: expr,
         start: 0,
-        count: 100
+        count: 1
     });
-
-    if (result.total > 0) {
-        return result.hits[0];
-    }
-
-    return null;
-}
+    return result.total > 0 ? result.hits[0] : null;
+} // exports.getNearestContentByType

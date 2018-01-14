@@ -1,59 +1,77 @@
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
 var libs = {
+    ct:        require('/content-types'),
     thymeleaf: require('/lib/xp/thymeleaf'),
-    portal: require('/lib/xp/portal'),
-    doc: require('/lib/doc'),
-    content: require('/lib/xp/content'),
-    util: require('/lib/util')
+    portal:    require('/lib/xp/portal'),
+    doc:       require('/lib/doc'),
+    content:   require('/lib/xp/content'),
+    q:         require('/lib/query'),
+    util:      require('/lib/util')
 }
 
-exports.get = function (req) {
-    var doc = getDoc();
+// Imported Constants
+var APP_NAME      = libs.ct.APP_NAME;
+var CT_DOCVERSION = libs.ct.CT_DOCVERSION;
+var RT_HTML       = libs.ct.RT_HTML;
 
+// Imported functions
+var and               = libs.q.and;
+var decendantsOf      = libs.q.decendantsOf;
+var getContentByKey   = libs.content.get;
+var getCurrentContent = libs.portal.getContent;
+var getCurrentSite    = libs.portal.getSite;
+var isDoc             = libs.ct.isDoc;
+var isDocpage         = libs.ct.isDocpage;
+var isDocVersion      = libs.ct.isDocVersion;
+var isGuide           = libs.ct.isGuide;
+var pageUrl           = libs.portal.pageUrl;
+var pathMatch         = libs.q.pathMatch;
+var processHtml       = libs.portal.processHtml;
+var propEq            = libs.q.propEq;
+var queryContent      = libs.content.query;
+var render            = libs.thymeleaf.render;
+var serviceUrl        = libs.portal.serviceUrl;
+
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+var VIEW_FILE = resolve('docpage.html');
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.get = function (req) {
+    var content = getCurrentContent();
+
+    var doc = isDoc(content) ? getContentByKey({key: content._path + '/index.html'}) : content;
     if (!doc) {
         return {
             body: '<div class="docpage-content"><h3 style="text-align: center">Your doc to be placed here</h3></div>',
-            contentType: 'text/html'
+            contentType: RT_HTML
         };
     }
 
-    var model = createModel(doc);
-    var view = resolve('docpage.html');
-
-    return {
-        body: libs.thymeleaf.render(view, model),
-        contentType: 'text/html; charset=UTF-8'
-    };
-};
-
-function getDoc() {
-    var content = libs.portal.getContent();
-
-    if (isDoc(content)) {
-        return libs.content.get({key: content._path + '/index.html'});
-    }
-
-    return content;
-};
-
-function createModel(doc) {
-    if (isGuide(doc)) {
-        return doCreateModel(doc);
-    }
-
-    return createDocModel(doc);
-}
-
-function doCreateModel(doc) {
-    return {
+    var model = {
         title: doc.data.title || doc.displayName,
-        content: libs.portal.processHtml({value: doc.data.html})
+        content: processHtml({value: doc.data.html})
     };
-}
+    if(!isGuide(doc)) { Object.assign(model, createDocModel(doc)); }
+
+    return {
+        body: render(VIEW_FILE, model),
+        contentType: RT_HTML
+    };
+}; // exports.get
+
+
 
 function createDocModel(doc) {
-    var model = doCreateModel(doc);
+    var model = {};
 
-    var serviceUrl = libs.portal.serviceUrl({
+    var serviceUrl = serviceUrl({
         service: 'search',
         params: {
             path: doc._path
@@ -67,13 +85,13 @@ function createDocModel(doc) {
     var hasMenu = true;
 
     model.rootDocTitle = rootDoc.displayName;
-    model.rootDocUrl = libs.portal.pageUrl({path: versionContent._path});
+    model.rootDocUrl = pageUrl({path: versionContent._path});
     model.service = 'search';
     model.serviceUrl = serviceUrl;
     model.versions = versions;
     model.menu = menu;
     model.hasMenu = hasMenu;
-    model.sitePath = libs.portal.getSite()['_path'];
+    model.sitePath = getCurrentSite()['_path'];
 
     if (!!menu) {
         model.hasNavigation = true;
@@ -81,12 +99,16 @@ function createDocModel(doc) {
     }
 
     return model;
-}
+} // function createDocModel
+
 
 function getVersions(rootDoc, currentVersion) {
-    var expr = "type = '" + app.name + ":docversion' AND _path LIKE '/content" + rootDoc._path + "/*' ";
+    var expr = and(
+      propEq('type', CT_DOCVERSION),
+      decendantsOf('/content' + rootDoc._path)
+    );
 
-    var result = libs.content.query({
+    var result = queryContent({
         query: expr,
         start: 0,
         count: 100
@@ -98,12 +120,13 @@ function getVersions(rootDoc, currentVersion) {
             label: version.displayName,
             isLatest: version._id == rootDoc.data.latest,
             isCurrent: version._id == currentVersion._id,
-            url: libs.portal.pageUrl({path: version._path})
+            url: pageUrl({path: version._path})
         })
     });
 
     return versions;
-}
+} // function getVersions
+
 
 function getMenu(versionContent) {
     if (!versionContent.data.menu) {
@@ -135,7 +158,8 @@ function getMenu(versionContent) {
     }
 
     return menu;
-}
+} // function getMenu
+
 
 function generateMenuItemUrl(menuItem) {
     if (!menuItem.contentId) {
@@ -143,27 +167,28 @@ function generateMenuItemUrl(menuItem) {
     }
 
     try {
-        var menuItemContent = libs.content.get({key: menuItem.contentId});
+        var menuItemContent = getContentByKey({key: menuItem.contentId});
     }
     catch (e) {
         log.error(e);
         return '';
     }
 
-    var currentContent = libs.portal.getContent();
+    var currentContent = getCurrentContent();
     var isActive = currentContent._id == menuItemContent._id ? true : false;
 
     menuItem.isActive = isActive;
-    menuItem.url = libs.portal.pageUrl({path: menuItemContent._path});
+    menuItem.url = pageUrl({path: menuItemContent._path});
 
     return isActive;
-}
+} // function generateMenuItemUrl
+
 
 function getNavigation(menu, versionContent) {
 
     var activeMenuItem = null;
 
-    var rootVersionNavItem = {title: 'Doc', url: libs.portal.pageUrl({path: versionContent._path})};
+    var rootVersionNavItem = {title: 'Doc', url: pageUrl({path: versionContent._path})};
 
     traverseMenuItems(menu.menuItems, [rootVersionNavItem]);
 
@@ -188,20 +213,4 @@ function getNavigation(menu, versionContent) {
     }
 
     return [rootVersionNavItem];
-}
-
-function isDocpage(content) {
-    return content.type === app.name + ':docpage';
-}
-
-function isDoc(content) {
-    return content.type === app.name + ':doc';
-}
-
-function isDocVersion(content) {
-    return content.type === app.name + ':docversion';
-}
-
-function isGuide(content) {
-    return content.type === app.name + ':guide';
-}
+} // function getNavigation
