@@ -1,96 +1,57 @@
+//──────────────────────────────────────────────────────────────────────────────
 // Imports
+//──────────────────────────────────────────────────────────────────────────────
 var libs = {
-    portal : require('/lib/xp/portal'),
+    portal :    require('/lib/xp/portal'),
     thymeleaf : require('/lib/xp/thymeleaf'),
-    menu: require('/lib/enonic/menu'),
-    util: require('/lib/util')
+    menu:       require('/lib/enonic/menu'),
+    util:       require('/lib/util')
 };
 
 // Imported functions
-var getSite = libs.portal.getSite;
-var getContent = libs.portal.getContent;
-var serviceUrl = libs.portal.serviceUrl;
-var render = libs.thymeleaf.render;
-var getMenuTree = libs.menu.getMenuTree;
-var getSiteUrl = libs.util.getSiteUrl;
+var getCurrentContent = libs.portal.getContent;
+var getCurrentSite    = libs.portal.getSite;
+var getMenuTree       = libs.menu.getMenuTree;
+var getSiteUrl        = libs.util.getSiteUrl;
+var render            = libs.thymeleaf.render;
+var serviceUrl        = libs.portal.serviceUrl;
 
-// Handle GET request
-exports.get = handleGet;
-exports.post = handleGet;
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+var VIEW = resolve('default.html'); // The view to render
 
-function handleGet(req) {
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.get = function(req) {
 
-    var site = getSite(); // Current site
-    var content = getContent(); // Current content
-    var view = resolve('default.html'); // The view to render
-    var model = createModel(); // The model to send to the view
-
-    function createModel() {
-        var model = {};
-
-        // Used directly in view
-        model.mainRegion = content.page.regions['main'];
-        model.pageColor = getPageColor();
-        model.bodyClass = getBodyClass();
-
-        // Used in fragments (not mentioned in view)
-        model.sitePath = site['_path'];
-        model.currentPath = content._path;
-        model.pageTitle = getPageTitle();
-        model.menuItems = getMenuTree(3);
-        model.searchResultPageUrl = getSiteUrl() + 'search';
-        model.serviceUrl = serviceUrl({
-            service: 'search'
-        });
-        model.headerClass = getHeaderClass(); // Defines whether page header is layered or not
-        model.headerColor = getHeaderColor(); // Header logo and menu button color
-        model.showHeaderSearch = true;
-
-        return model;
+    function getBodyClass(headerType) {
+        return !!headerType && (
+          headerType == 'hidden' ? 'no-header' :
+          headerType == 'layered' ? 'layered' : ''
+        ) || '';
     }
 
-    function getPageTitle() {
-        return content['displayName'];
-    }
+    var content = getCurrentContent();
+    var headerType = content.page.config['headerType'];
+    var model =  {
+      mainRegion: content.page.regions['main'],
+      sitePath: getCurrentSite()['_path'],
+      currentPath: content._path,
+      pageTitle: content['displayName'],
+      menuItems: getMenuTree(3),
+      searchResultPageUrl: getSiteUrl() + 'search',
+      serviceUrl: serviceUrl({ service: 'search' }),
 
-    function getHeaderClass() {
-        var headerType = getHeaderType();
+      headerClass: headerType ? 'header-' + headerType : 'header-default', // Defines whether page header is layered or not
+      headerColor: content.page.config['headerColor'], // Header logo and menu button color
+      bodyClass: getBodyClass(headerType),
+      pageColor: content.page.config['pageColor'],
 
-        if (!headerType) {
-            return 'header-default';
-        }
+      showHeaderSearch: true
+    }; // model
 
-        return 'header-' + headerType;
-    }
-
-    function getBodyClass() {
-        var headerType = getHeaderType();
-
-        if (!!headerType && headerType == 'hidden') {
-            return 'no-header';
-        }
-
-        if (!!headerType && headerType == 'layered') {
-            return 'layered';
-        }
-
-        return '';
-    }
-
-    function getHeaderType() {
-        return content.page.config['headerType'];
-    }
-
-    function getHeaderColor() {
-        return content.page.config['headerColor'];
-    }
-
-    function getPageColor() {
-        return content.page.config['pageColor'];
-    }
-
-    return {
-        body: render(view, model)
-    }
-
-}
+    return { body: render(VIEW, model) };
+} // exports.get
+exports.post = exports.get;
