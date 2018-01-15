@@ -23,8 +23,9 @@
         }
 
         .main-nav-toggled & {
-          g {
+          g, g text, #logo-small {
             fill: $color-white;
+
           }
         }
         width: 120px;

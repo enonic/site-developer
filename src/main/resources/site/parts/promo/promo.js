@@ -8,7 +8,7 @@ exports.get = function (req) {
 
     var model = {
         linkDocs: libs.util.getSiteUrl() + 'docs',
-        linkGuides: libs.util.getSiteUrl() + 'guides'
+        linkGuides: libs.util.getSiteUrl() + 'start'
     };
 
     var view = resolve('promo.html');
