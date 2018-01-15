@@ -31,13 +31,15 @@
 
                 <button data-th-class="${baseClass} + '__main-menu-trigger'" data-th-id="${baseClass} + '__main-menu-trigger'" aria-haspopup="true"
                         data-th-attr="aria-owns=|${baseClass}__main-menu|, aria-controls=|${baseClass}_main-menu|"
+                        data-th-classappend="main-menu-trigger"
                         aria-expanded="false">
                     <span data-th-class="${baseClass} + '__main-menu-trigger-label'" data-th-classappend="${headerColor} == 'dark' ? ${baseClass} + '__main-menu-trigger-label--inverted' : ''">Menu</span>
                     <span data-th-class="${baseClass} + '__main-menu-trigger-icon'" data-th-classappend="${headerColor} == 'dark' ? ${baseClass} + '__main-menu-trigger-icon--inverted' : ''"></span>
                 </button>
             </div>
 
-            <div data-th-class="${baseClass} + '__main-menu'" data-th-id="${baseClass} + '__main-menu'" aria-expanded="false" data-th-attr="aria-labelledby=${baseClass} + '__main-menu-trigger'">
+            <div data-th-class="${baseClass} + '__main-menu'" data-th-id="${baseClass} + '__main-menu'" data-th-classappend="main-menu"
+                 aria-expanded="false" data-th-attr="aria-labelledby=${baseClass} + '__main-menu-trigger'">
                 <nav data-th-class="${baseClass} + '__main-menu-nav'">
                     <ul data-th-class="${baseClass} + '__main-menu-nav-list'">
                         <li data-th-class="${baseClass} + '__main-menu-nav-item'" data-th-each="menuItem : ${menuItems}">

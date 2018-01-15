@@ -1,16 +1,27 @@
+// Imports
 var libs = {
     thymeleaf: require('/lib/xp/thymeleaf'),
-    portal: require('/lib/xp/portal')
+    portal: require('/lib/xp/portal'),
+    util: require('/lib/util')
 };
 
+// Functions
+var getSiteUrl = libs.util.getSiteUrl;
+var getSitePath = libs.util.getSitePath;
+
+// Exports
 exports.handle404 = function (err) {
     var view = resolve('page-not-found.html');
     var model = createModel();
 
     function createModel() {
         var model = {};
-        var site = libs.portal.getSite(); // Current site
-        model.sitePath = site['_path'];
+
+        // Used directly in view
+        model.frontPageUrl = getSiteUrl();
+
+        // Used in fragments (not mentioned in view)
+        model.sitePath = getSitePath();
 
         return model;
     }
@@ -31,8 +42,13 @@ exports.handleError = function (err) {
 
     function createModel() {
         var model = {};
+
+        // Used directly in view
         model.errorCode = err.status;
         model.errorMessage = err.message;
+
+        // Used in fragments (not mentioned in view)
+        model.sitePath = getSitePath();
 
         return model;
     }

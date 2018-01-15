@@ -8,8 +8,8 @@ require('./plugins/pagination.js');
 $('.pagination').pagination();
 
 require('./plugins/enonic-menu.js');
-$('.page-default__main-menu').enonicMenu({
-    toggleBtn: $('.page-default__main-menu-trigger')
+$('.main-menu').enonicMenu({
+    toggleBtn: $('.main-menu-trigger')
 });
 
 require('./plugins/responsive.js');
