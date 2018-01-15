@@ -194,6 +194,20 @@
 
 <footer data-th-fragment="footer-fragment" data-th-class="${footerClass}">
 
+    <div data-th-class="${footerClass} + '-navigation'">
+        <h2>Footer navigation</h2>
+
+        <nav id="footer-nav">
+            <ul>
+                <li data-th-each="menuItem : ${menuItems}">
+                    <a href="#" data-th-href="${portal.pageUrl({'_path=' + menuItem.path})}"
+                       data-th-text="${menuItem.menuName} ?: ${menuItem.displayName}"
+                       data-th-class="${menuItem.path == currentPath ? 'active' : ''}">Page title</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
     <section class="social">
         <div class="container">
             <h3>Follow us</h3>

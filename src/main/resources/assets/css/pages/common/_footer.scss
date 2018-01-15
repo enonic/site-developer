@@ -26,8 +26,8 @@
       ul {
         @include list-unstyled;
         @include container;
-        text-align: left;
-        display: table;
+        display: flex;
+        justify-content: center;
       }
 
       li {

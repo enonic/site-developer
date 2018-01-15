@@ -19,4 +19,10 @@
       }
     }
   }
+
+  &__footer {
+    &-navigation {
+      display: none;
+    }
+  }
 }
