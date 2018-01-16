@@ -3,13 +3,12 @@
 
   &__card {
     padding: 20px;
-    border-radius: 5px;
-    background: #fff;
+    border-radius: 2px;
 
     break-inside: avoid-column;
     page-break-inside: avoid;
     margin-bottom: 1rem;
-    box-shadow: inset 0 0px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
   }
 
   &__title {
