@@ -1,36 +1,32 @@
 .page-search-result {
   @include page-common;
 
-  .product-listing {
-    &__item {
-      text-align: left;
-      margin-bottom: 0px;
-    }
-
-    &__product-heading {
-      margin-bottom: 10px;
-    }
-  }
-
   &__content {
     @include container;
-  }
+    @include search-form;
 
-  &__result-header {
-    position: relative;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 50px;
-  }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  &__result-heading {
-    font-weight: 300;
-  }
+    .product-listing {
 
-  &__result-heading-count {
-    color: $color-pelorous;
-    font-style: italic;
-    padding-left: 10px;
+      &__product-heading {
+        margin-bottom: 10px;
+      }
+
+      &__product-path {
+        word-break: break-all;
+        font-weight: bold;
+        @include font-size(16);
+        margin: 10px 0;
+        color: $color-black;
+      }
+
+      &__product-extract {
+        color: $color-black;
+      }
+    }
   }
 
 }

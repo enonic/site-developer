@@ -39,7 +39,8 @@ exports.get = function(req) {
       serviceUrl: serviceUrl({service: 'search'}),
       showHeaderSearch: true,
       siteName: currentSite.displayName,
-      sitePath: currentSite['_path']
+        sitePath: currentSite['_path'],
+        searchQuery: req.params.q
 
     }; // model
     DEBUG && log.info('model:' + toStr(model));

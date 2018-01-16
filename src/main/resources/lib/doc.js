@@ -31,6 +31,7 @@ var propIn          = libs.q.propIn;
 var queryContent    = libs.c.query;
 var toStr           = libs.eu.toStr;
 var getNearestContentByType = libs.u.getNearestContentByType;
+var getCurrentSite = libs.p.getSite;
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -43,7 +44,7 @@ var TRACE = false;
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
 //──────────────────────────────────────────────────────────────────────────────
-function toSearchResultEntry(content) {
+function toSearchResultEntry(content, currentSite) {
     if (!content) {
         return;
     }
@@ -51,7 +52,9 @@ function toSearchResultEntry(content) {
     var result = {
         name: getSearchResultName(content),
         title: content.data.title || content.displayName,
-        url: pageUrl({path: content._path})
+        url: pageUrl({path: content._path}),
+        path: content._path.replace(currentSite._path + '/', ''),
+        extract: content.data.raw ? content.data.raw.substr(0, 64) + '...' : null
     };
 
     return result;
@@ -135,10 +138,11 @@ exports.search = function (query, path, start, count) {
         count: count || 100
     });
 
+    var currentSite = getCurrentSite();
     var entries = [];
     for (var i = 0; i < result.hits.length; i++) {
         var hit = result.hits[i];
-        var entry = toSearchResultEntry(hit);
+        var entry = toSearchResultEntry(hit, currentSite);
         if (entry) {
             entry.score = hit.score;
             entries.push(entry);

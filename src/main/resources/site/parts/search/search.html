@@ -1,10 +1,5 @@
 <div class="doc-search">
-    <form class="doc-search__form live-search__form" method="get" action="#" data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
-        <div class="doc-search__form-search-box live-search__search-box">
-            <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=doc-search__form-icon)"></svg>
-            <input class="doc-search__form-input live-search__input" type="text" name="q"  placeholder="search by tag or keyword" autocomplete="off"/>
-        </div>
-        <ul class="doc-search__form-search-result live-search__result"></ul>
-        <div class="live-search__no-results">No results</div>
-    </form>
+    <div class="doc-search__container">
+        <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=doc-search__container)"></div>
+    </div>
 </div>

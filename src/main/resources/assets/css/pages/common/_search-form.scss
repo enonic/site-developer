@@ -1,0 +1,23 @@
+@mixin search-form {
+  &-search-input {
+    display: block;
+    width: 100%;
+    color: #333;
+    height: 46px;
+    padding: 10px 40px;
+    @include font-size(16);
+    line-height: 1.333;
+
+    @extend .form-control;
+  }
+
+  &-search-icon {
+    position: absolute;
+    pointer-events: none;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    top: 11px;
+    left: 12px;
+  }
+}

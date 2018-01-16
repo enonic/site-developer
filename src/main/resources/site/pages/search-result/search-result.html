@@ -6,12 +6,8 @@
 <div th:replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-search-result')"></div>
 
 <div class="page-search-result__content">
-    <div class="page-search-result__result-header">
-        <h2 class="page-search-result__result-heading">
-            <span class="page-search-result__result-heading-text">Total</span>
-            <span class="page-search-result__result-heading-count">[[${searchResult.total}]]</span>
-        </h2>
-    </div>
+    <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=page-search-result__content)"></div>
+
     <div class="page-search-result__result-list">
         <th:block th:fragment="product-listing-fragment" th:if="${searchResult.hits}">
             <div class="product-listing">
@@ -22,7 +18,10 @@
                                 <article th:class="${classPrefix + '__product'}">
                                     <a th:class="${classPrefix + '__product-link'}" th:href="${product.url}">
                                         <h2 th:class="${classPrefix + '__product-heading'}">[[${product.name}]]</h2>
+                                        <div th:class="${classPrefix + '__product-path'}" th:text="${product.path}">path</div>
+                                        <div th:class="${classPrefix + '__product-extract'}" th:text="${product.extract}">path</div>
                                     </a>
+
                                 </article>
                             </li>
                         </th:block>

@@ -15,19 +15,9 @@
 
                 <div data-th-class="${baseClass} + '__header-spacebreaker'"></div>
 
-                <form data-th-class="${baseClass} + '__header-search-form'" data-th-classappend="live-search__form" method="get" action="#"
-                      data-th-if="${showHeaderSearch}"
-                      data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
-                    <div data-th-class="${baseClass} + '__header-search-box'" data-th-classappend="live-search__search-box" role="search">
-
-                        <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=${baseClass} + '__header-search-icon',extraclass=${headerColor == 'dark' ? 'inverted' : ''})"></svg>
-                        <input data-th-class="${baseClass} + '__header-search-input'" data-th-classappend="live-search__input" type="text" name="q"
-                               placeholder="search"
-                               autocomplete="off"/>
-                    </div>
-                    <ul data-th-class="${baseClass} + '__header-search-result'" data-th-classappend="live-search__result"></ul>
-                    <div class="live-search__no-results">No results</div>
-                </form>
+                <div data-th-if="${showHeaderSearch}" data-th-remove="tag">
+                    <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=${baseClass} + '__header')"></div>
+                </div>
 
                 <button data-th-class="${baseClass} + '__main-menu-trigger'" data-th-id="${baseClass} + '__main-menu-trigger'" aria-haspopup="true"
                         data-th-attr="aria-owns=|${baseClass}__main-menu|, aria-controls=|${baseClass}_main-menu|"
@@ -158,6 +148,22 @@
             </div>
         </li>
     </ol>
+</div>
+
+<div data-th-fragment="search-form-fragment" data-th-remove="tag">
+    <form data-th-class="${baseClass} + '-search-form'" data-th-classappend="live-search__form" method="get" action="#"
+          data-th-if="${showHeaderSearch}"
+          data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
+        <div data-th-class="${baseClass} + '-search-box'" data-th-classappend="live-search__search-box" role="search">
+
+            <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=${baseClass} + '-search-icon',extraclass=${headerColor == 'dark' ? 'inverted' : ''})"></svg>
+            <input data-th-class="${baseClass} + '-search-input'" data-th-classappend="live-search__input" type="text" name="q"
+                   placeholder="search" data-th-attr="value=${searchQuery}"
+                   autocomplete="off"/>
+        </div>
+        <ul data-th-class="${baseClass} + '-search-result'" data-th-classappend="live-search__result"></ul>
+        <div class="live-search__no-results">No results</div>
+    </form>
 </div>
 
 <div data-th-fragment="doc-versions-fragment" data-th-class="${baseClass} + '__versions'"
