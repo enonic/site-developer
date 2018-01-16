@@ -1,8 +1,16 @@
-var portal = require('/lib/xp/portal');
+var libs = {
+    p: require('/lib/xp/portal'),
+    c: require('/lib/xp/content')
+};
+
+// Imported functions
+var getSite = libs.p.getSite;
+var pageUrl = libs.p.pageUrl;
+var query = libs.c.query;
 
 exports.getSiteUrl = function() {
-    var sitePath = portal.getSite()._path;
-    var baseUrl = portal.pageUrl({
+    var sitePath = getSite()._path;
+    var baseUrl = pageUrl({
         path: sitePath
     });
     
@@ -14,9 +22,26 @@ exports.getSiteUrl = function() {
 };
 
 exports.getSiteDisplayName = function () {
-    return portal.getSite().displayName;
+    return getSite().displayName;
 };
 
 exports.getSitePath = function () {
-    return portal.getSite()._path;
+    return getSite()._path;
 };
+
+exports.getNearestContentByType = function (content, type) {
+    type = app.name + ':' + type;
+    var expr = "type = '" + type + "'" + " AND pathMatch('_path', '/content" + content._path + "') ";
+
+    var result = query({
+        query: expr,
+        start: 0,
+        count: 100
+    });
+
+    if (result.total > 0) {
+        return result.hits[0];
+    }
+
+    return null;
+}

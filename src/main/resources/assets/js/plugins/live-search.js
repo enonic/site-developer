@@ -27,6 +27,10 @@
 
             this.inputEl.on('blur', function(e) {
                 this.form.classList.remove('active');
+
+                if (e.relatedTarget && e.relatedTarget.href) { // in case clicked on result list link but blur
+                    window.location.href = e.relatedTarget.href;
+                }
             });
         };
 
@@ -75,7 +79,7 @@
          */
         this.processInput = function () {
             var searchTerm = that.inputEl.val().toLowerCase();
-            if (searchTerm.length > 1) {
+            if (searchTerm.length > 0) {
                 that.getHits(searchTerm);
             }
             else {

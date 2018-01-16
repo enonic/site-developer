@@ -30,6 +30,7 @@ var pageUrl         = libs.p.pageUrl;
 var propIn          = libs.q.propIn;
 var queryContent    = libs.c.query;
 var toStr           = libs.eu.toStr;
+var getNearestContentByType = libs.u.getNearestContentByType;
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -58,12 +59,22 @@ function toSearchResultEntry(content) {
 
 
 function getSearchResultName(content) {
-    if (!isDocVersion(content)) {
-        return content.displayName;
+    if (isDocPage(content)) {
+        var parentDocVersion = getNearestContentByType(content, 'docversion');
+
+        if (!parentDocVersion) {
+            return content.displayName;
+        }
+
+        return content.displayName + ' (' + parentDocVersion.displayName + ')';
     }
 
-    var doc = getDocVersionParent(content);
-    return doc.displayName + ' : ' + content.displayName;
+    if (isDocVersion(content)) {
+        var doc = getDocVersionParent(content);
+        return doc.displayName + ' (' + content.displayName + ')';
+    }
+
+    return content.displayName;
 }
 
 
@@ -77,6 +88,14 @@ function getDocVersionParent(content) {
 
 function isDocVersion(content) {
     return content.type === CT_DOCVERSION;
+}
+
+function isGuide(content) {
+    return content.type === CT_GUIDE;
+}
+
+function isDocPage(content) {
+    return content.type === CT_DOCPAGE;
 }
 
 

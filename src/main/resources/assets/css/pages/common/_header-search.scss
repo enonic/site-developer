@@ -35,7 +35,7 @@
       opacity: 0;
 
       &:focus {
-        width: 200px;
+        width: 300px;
         border-width: 1px;
         opacity: 1;
       }
@@ -47,7 +47,7 @@
       width: 20px;
       height: 20px;
       display: inline-block;
-      top: 7px;
+      top: 6px;
       left: 12px;
 
       &.inverted {

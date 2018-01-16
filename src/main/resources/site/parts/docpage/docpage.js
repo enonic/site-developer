@@ -60,8 +60,8 @@ function createDocModel(doc) {
         }
     });
 
-    var rootDoc = getNearestContentByType(doc, 'doc');
-    var versionContent = getNearestContentByType(doc, 'docversion');
+    var rootDoc = libs.util.getNearestContentByType(doc, 'doc');
+    var versionContent = libs.util.getNearestContentByType(doc, 'docversion');
     var versions = getVersions(rootDoc, versionContent);
     var menu = getMenu(versionContent);
     var hasMenu = true;
@@ -81,19 +81,6 @@ function createDocModel(doc) {
     }
 
     return model;
-}
-
-function getNearestContentByType(content, type) {
-    type = app.name + ':' + type;
-    var expr = "type = '" + type + "'" + " AND pathMatch('_path', '/content" + content._path + "') ";
-
-    var result = libs.content.query({
-        query: expr,
-        start: 0,
-        count: 100
-    });
-
-    return result.hits[0];
 }
 
 function getVersions(rootDoc, currentVersion) {
