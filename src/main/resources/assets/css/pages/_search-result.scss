@@ -9,6 +9,8 @@
     flex-direction: column;
     justify-content: center;
 
+    margin-top: 50px;
+
     .product-listing {
 
       &__product-heading {
@@ -25,6 +27,15 @@
 
       &__product-extract {
         color: $color-black;
+      }
+
+      &__list {
+        display: block;
+      }
+
+      &__item {
+        width: 100%;
+        margin-bottom: 0px;
       }
     }
   }

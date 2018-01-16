@@ -37,7 +37,7 @@ exports.get = function(req) {
       pageTitle: 'Search result',
       searchResultPageUrl: getSiteUrl() + 'search',
       serviceUrl: serviceUrl({service: 'search'}),
-      showHeaderSearch: true,
+        showHeaderSearch: false,
       siteName: currentSite.displayName,
         sitePath: currentSite['_path'],
         searchQuery: req.params.q
