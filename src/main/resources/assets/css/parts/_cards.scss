@@ -2,7 +2,6 @@
   columns: 4 250px;
 
   &__card {
-    padding: 20px;
     border-radius: 2px;
 
     break-inside: avoid-column;
@@ -10,34 +9,57 @@
     margin-bottom: 1rem;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
     background: $color-white;
-  }
 
-  &__title {
-    font-size: 2rem;
-    margin-top: 0px;
+    > *:not(.cards__card-teaser) {
+      margin: 0;
+      padding-left: 20px;
+      padding-right: 20px;
 
-    a {
-      text-decoration: none;
+      &:last-child {
+        padding-bottom: 15px;
+      }
     }
-  }
 
-  &__text {
-    margin-bottom: 10px;
-  }
+    &-teaser {
+      font-size: 0px;
 
-  .tags {
-    @extend .list-unstyled;
-    margin: 0;
-    font-size: 0; // to fix issue with spacing between inline-block elements when a line break and a few tabs counts as a space
+      img {
+        width: 100%;
+      }
+    }
 
-    li {
-      display: inline-block;
-      background: #F6F6F6;
-      border-radius: 3px;
-      color: #B8B8B8;
-      @include font-size(12);
-      margin: 2px;
-      padding: 4px 6px;
+    &-title {
+      font-size: 2rem;
+      padding-top: 10px;
+
+      &:first-child {
+        padding-top: 15px;
+      }
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    &-text {
+      padding-top: 5px;
+    }
+
+    &-tags {
+      @extend .list-unstyled;
+      margin: 0;
+      padding-top: 10px;
+      font-size: 0; // to fix issue with spacing between inline-block elements when a line break and a few tabs counts as a space
+
+      li {
+        display: inline-block;
+        background: #F6F6F6;
+        border-radius: 3px;
+        color: #B8B8B8;
+        @include font-size(12);
+        margin: 2px;
+        padding: 4px 6px;
+      }
     }
   }
 }

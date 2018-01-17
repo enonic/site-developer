@@ -40,7 +40,8 @@ function createCard(content) {
     return {
         title: content.displayName,
         text: content.data.shortdescription || 'Mock text', //content.data.raw.substr(0, 128) + '...',
-        tags: content.data.tags || [],
+        tags: content.data.tags,
+        image: content.data.image,
         url: libs.util.getSiteUrl() + content._path.replace(libs.util.getSitePath() + '/', '')
     }
 }

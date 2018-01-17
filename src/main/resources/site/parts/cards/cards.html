@@ -2,9 +2,12 @@
     <div data-th-if="${cards.size()} > 0" data-th-remove="tag">
         <div data-th-each="card : ${cards}" data-th-remove="tag">
             <article class="cards__card">
-                <h3 class="cards__title"><a data-th-href="${card.url}" data-th-text="${card.title}">Title</a></h3>
-                <p class="cards__text" data-th-text="${card.text}">Text</p>
-                <ul class="tags" data-th-if="${card.tags}">
+                <div data-th-class="cards__card-teaser" data-th-if="${card.image}">
+                    <img data-th-src="${portal.imageUrl({'_id=' + card.image, '_scale=block(400,226)'})}">
+                </div>
+                <h3 class="cards__card-title"><a data-th-href="${card.url}" data-th-text="${card.title}">Title</a></h3>
+                <p class="cards__card-text" data-th-text="${card.text}">Text</p>
+                <ul class="cards__card-tags" data-th-if="${card.tags}">
                     <li data-th-each="tag : ${card.tags}" data-th-text="${tag}"/>
                 </ul>
             </article>
