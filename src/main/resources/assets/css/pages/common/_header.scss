@@ -3,6 +3,10 @@
   &__header {
     padding-top: 30px;
 
+    @include media('<medium') {
+      padding-top: 20px;
+    }
+
     &-container {
       @include container;
       position: relative;
@@ -71,6 +75,12 @@
 
     &.header-hidden {
       display: none;
+    }
+
+    &.header-floating {
+      div[class$='__header-container'] {
+        max-width: none;
+      }
     }
   }
 

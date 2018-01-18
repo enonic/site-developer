@@ -8,10 +8,10 @@
 <body>
 <div data-th-fragment="header-fragment" data-th-class="${baseClass} + '__header-wrapper'">
     <header data-th-class="${baseClass} + '__header'"
-            data-th-classappend="(${headerColor} == 'dark' ? ${baseClass} + '__header--inverted' : '') + ' ' + ${headerClass}">
+            data-th-classappend="(${headerColor} == 'black' ? ${baseClass} + '__header--inverted' : '') + ' ' + ${headerClass}">
         <div data-th-class="${baseClass} + '__header-container'">
             <div data-th-class="${baseClass} + '__header-toolbar'">
-                <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(inverted=${headerColor == 'dark' ? 'true' : 'false'})"></div>
+                <div data-th-replace="/site/pages/fragments/fragments::page-header-logo-fragment(inverted=${headerColor == 'black' ? 'true' : 'false'})"></div>
 
                 <div data-th-class="${baseClass} + '__header-spacebreaker'"></div>
 
@@ -23,7 +23,8 @@
                         data-th-attr="aria-owns=|${baseClass}__main-menu|, aria-controls=|${baseClass}_main-menu|"
                         data-th-classappend="main-menu-trigger"
                         aria-expanded="false">
-                    <span data-th-class="${baseClass} + '__main-menu-trigger-icon'" data-th-classappend="${headerColor} == 'dark' ? ${baseClass} + '__main-menu-trigger-icon--inverted' : ''"></span>
+                    <span data-th-class="${baseClass} + '__main-menu-trigger-icon'"
+                          data-th-classappend="${headerColor} == 'black' ? ${baseClass} + '__main-menu-trigger-icon--inverted' : ''"></span>
                 </button>
             </div>
 
@@ -155,7 +156,7 @@
           data-th-action="${searchResultPageUrl}" data-th-attr="data-live-search-url=${serviceUrl}" role="search">
         <div data-th-class="${baseClass} + '-search-box'" data-th-classappend="live-search__search-box" role="search">
 
-            <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=${baseClass} + '-search-icon',extraclass=${headerColor == 'dark' ? 'inverted' : ''})"></svg>
+            <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=${baseClass} + '-search-icon',extraclass=${headerColor == 'black' ? 'inverted' : ''})"></svg>
             <input data-th-class="${baseClass} + '-search-input'" data-th-classappend="live-search__input" type="text" name="q"
                    placeholder="search" data-th-attr="value=${searchQuery}"
                    autocomplete="off"/>
