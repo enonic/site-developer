@@ -3,7 +3,8 @@
 //──────────────────────────────────────────────────────────────────────────────
 import {
     getContent as getCurrentContent,
-    getSite as getCurrentSite
+    getSite as getCurrentSite,
+    serviceUrl as getServiceUrl
 } from '/lib/xp/portal';
 import {getMenuTree} from '/lib/enonic/menu';
 import {render} from '/lib/xp/thymeleaf';
@@ -13,7 +14,7 @@ import {render} from '/lib/xp/thymeleaf';
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {RT_HTML} from '/content-types';
-import {getSiteUrl, serviceUrl as getServiceUrl} from '/lib/util';
+import {getSiteUrl} from '/lib/util';
 
 
 //──────────────────────────────────────────────────────────────────────────────

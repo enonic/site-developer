@@ -1,3 +1,5 @@
+import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
+
 var libs = {
     portal: require('/lib/xp/portal'),
     thymeleaf: require('/lib/xp/thymeleaf'),
@@ -15,7 +17,7 @@ function handleGet(req) {
 
         model.searchResultPageUrl = libs.util.getSiteUrl() + 'search';
 
-        model.serviceUrl = libs.portal.serviceUrl({
+        model.serviceUrl = getServiceUrl({
             service: 'search'
         });
 

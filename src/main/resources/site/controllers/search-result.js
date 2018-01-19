@@ -1,4 +1,6 @@
 // Imports
+import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
+
 var libs = {
     portal : require('/lib/xp/portal'),
     thymeleaf : require('/lib/xp/thymeleaf'),
@@ -14,7 +16,6 @@ var getMenuTree = libs.menu.getMenuTree;
 var getSiteUrl = libs.util.getSiteUrl;
 var render = libs.thymeleaf.render;
 var searchDocs = libs.doc.search;
-var getServiceUrl = libs.portal.serviceUrl;
 var toStr = libs.eutil.toStr;
 
 // Constants
