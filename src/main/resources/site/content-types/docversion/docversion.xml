@@ -10,5 +10,8 @@
     <input name="menu" type="TextArea">
       <label>Menu</label>
     </input>
+    <input name="checkout" type="TextLine">
+      <label>Commit ID</label>
+    </input>
   </form>
 </content-type>
