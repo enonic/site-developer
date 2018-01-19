@@ -13,7 +13,7 @@ import {render} from '/lib/xp/thymeleaf';
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {RT_HTML} from '/content-types';
-import {getSiteUrl, serviceUrl} from '/lib/util';
+import {getSiteUrl, serviceUrl as getServiceUrl} from '/lib/util';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ export function get() {
         pageTitle: content.displayName,
         menuItems: getMenuTree(3),
         searchResultPageUrl: `${getSiteUrl()}search`,
-        serviceUrl: serviceUrl({ service: 'search' }),
+        serviceUrl: getServiceUrl({ service: 'search' }),
 
         headerClass: headerType ? `header-${headerType}` : 'header-default', // Defines whether page header is layered or not
         headerColor, // Header logo and menu button color

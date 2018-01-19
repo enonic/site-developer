@@ -14,7 +14,7 @@ var getMenuTree = libs.menu.getMenuTree;
 var getSiteUrl = libs.util.getSiteUrl;
 var render = libs.thymeleaf.render;
 var searchDocs = libs.doc.search;
-var serviceUrl = libs.portal.serviceUrl;
+var getServiceUrl = libs.portal.serviceUrl;
 var toStr = libs.eutil.toStr;
 
 // Constants
@@ -36,7 +36,7 @@ exports.get = function(req) {
       menuItems: getMenuTree(3),
       pageTitle: 'Search result',
       searchResultPageUrl: getSiteUrl() + 'search',
-      serviceUrl: serviceUrl({service: 'search'}),
+      serviceUrl: getServiceUrl({service: 'search'}),
         showHeaderSearch: false,
       siteName: currentSite.displayName,
         sitePath: currentSite['_path'],
