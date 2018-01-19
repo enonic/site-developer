@@ -97,38 +97,109 @@ I'm using babel-preset-env in the build enrionment.
 
 == Webpack
 
+Make sure you have webpack 3.
+
 [source, console]
 ----
-npm install --save-dev webpack path
+npm install --save-dev webpack babel-loader glob path
 ----
 
-=== webpack.config.babel.js
+=== webpack.3.config.babel.js
 
-// TODO url to example config.
+// TODO urls to live and updated example configs?
 
 [source, js]
 ----
-module: {
-  rules: [{
-    test: /\.(es6?|js)$/,
-    use: [{
-      loader: 'babel-loader',
-      options: {
-        babelrc: false, // The .babelrc file should only be used to transpile *.babel.js files.
-        comments: false,
-        compact: false,
-        minified: false,
-        plugins: [
-          'array-includes',
-          'optimize-starts-with',
-          'transform-object-assign',
-          'transform-object-rest-spread'
-        ],
-        presets: ['es2015']
-      } // options
-    }] // use
-  }] // rules
-}, // module
+/* eslint-disable no-console */
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
+import glob from 'glob';
+import path from 'path';
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Functions
+//──────────────────────────────────────────────────────────────────────────────
+//const toStr = v => JSON.stringify(v, null, 4);
+const dict = arr => Object.assign(...arr.map(([k, v]) => ({ [k]: v })));
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+const SRC_DIR = 'src/main/resources';
+const SRC_DIR_ABS = path.resolve(__dirname, SRC_DIR);
+const DST_DIR = 'build/resources/main';
+const DST_DIR_ABS = path.join(__dirname, DST_DIR);
+
+const ASSETS_GLOB = `${SRC_DIR}/{site/assets,assets}/**/*.es`;
+//console.log(`ASSETS_GLOB:${JSON.stringify(ASSETS_GLOB, null, 4)}`);
+//console.log(`ASSET_FILES:${JSON.stringify(glob.sync(ASSETS_GLOB), null, 4)}`);
+
+const FILES = glob.sync(`${SRC_DIR}/**/*.es`, {ignore: ASSETS_GLOB});
+//console.log(`FILES:${toStr(FILES)}`);
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+const WEBPACK_CONFIG = {
+    context: SRC_DIR_ABS,
+    entry: dict(FILES.map(k => [
+        k.replace(`${SRC_DIR}/`, '').replace(/\.[^.]*$/, ''), // name
+        `.${k.replace(`${SRC_DIR}`, '')}` // source relative to context
+    ])),
+    externals: [
+        /\/lib\/(enonic|xp)/
+    ],
+    devtool: false, // Don't waste time generating sourceMaps
+    module: {
+        rules: [{
+            test: /\.(es6?|js)$/, // Will need js for node module depenencies
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    babelrc: false, // The .babelrc file should only be used to transpile config files.
+                    comments: false,
+                    compact: false,
+                    minified: false,
+                    plugins: [
+                        'array-includes',
+                        'optimize-starts-with',
+                        'transform-object-assign',
+                        'transform-object-rest-spread'
+                    ],
+                    presets: ['es2015']
+                } // options
+            }] // use
+        }] // rules
+    }, // module
+    output: {
+        path: DST_DIR_ABS,
+        filename: '[name].js',
+        libraryTarget: 'commonjs'
+    }, // output
+    resolve: {
+        alias: {
+            '/lib': path.resolve(__dirname, SRC_DIR, 'lib')
+        }
+    }, // resolve
+    stats: {
+        colors: true,
+        hash: false,
+        maxModules: 0,
+        modules: false,
+        moduleTrace: false,
+        timings: false,
+        version: false
+    } // stats
+};
+
+//console.log(`WEBPACK_CONFIG:${JSON.stringify(WEBPACK_CONFIG, null, 4)}`);
+//process.exit();
+
+export { WEBPACK_CONFIG as default };
 ----
 
 = Gradle
@@ -163,7 +234,7 @@ sourceSets {
 task webpack(type:NodeTask) {
     script = file('node_modules/.bin/webpack')
     args = [
-        '--config', 'webpack.3.server.config.es'
+        '--config', 'webpack.3.server.config.babel.js'
     ]
 }
 webpack.dependsOn npmInstall
