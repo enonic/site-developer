@@ -59,7 +59,7 @@ function sq(str) {
 // Exports used later in this file
 //──────────────────────────────────────────────────────────────────────────────
 export function propEq(prop, value) {
-    return propOpValue(prop, '=', value);
+    return propOpValue(prop, '=', sq(value));
 }
 
 

@@ -2,7 +2,11 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+//import {toStr} from '/lib/enonic/util';
+import {
+    get as getContentByKey,
+    query as queryContent
+} from '/lib/xp/content';
 import {
     getContent as getCurrentContent,
     getSite as getCurrentSite,
@@ -10,25 +14,18 @@ import {
     processHtml,
     serviceUrl as getServiceUrl
 } from '/lib/xp/portal';
-import {
-    get as getContentByKey,
-    query as queryContent
-} from '/lib/xp/content';
-import {getNearestContentByType} from '/lib/util';
+import {render} from '/lib/xp/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {
-    //APP_NAME,
     CT_DOCVERSION,
     RT_HTML,
     isDoc,
-    //isDocpage,
-    //isDocVersion,
     isGuide
 } from '/content-types';
-//import {} from '/lib/doc';
 import {and, decendantOf, propEq} from '/lib/query';
+import {getNearestContentByType} from '/lib/util';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -43,7 +40,7 @@ function getVersions(rootDoc, currentVersion) {
     const expr = and(
         propEq('type', CT_DOCVERSION),
         decendantOf(`/content${rootDoc._path}`)
-    );
+    ); //log.info(`expr:${toStr(expr)}`);
 
     const result = queryContent({
         query: expr,
@@ -146,6 +143,7 @@ function getNavigation(menu, versionContent) {
 
 
 function createDocModel(doc) {
+    //log.info(`createDocModel()`);
     const model = {};
 
     const serviceUrl = getServiceUrl({
@@ -153,13 +151,13 @@ function createDocModel(doc) {
         params: {
             path: doc._path
         }
-    });
+    }); //log.info(`serviceUrl:${toStr(serviceUrl)}`);
 
-    const rootDoc = getNearestContentByType(doc, 'doc');
-    const versionContent = getNearestContentByType(doc, 'docversion');
-    const versions = getVersions(rootDoc, versionContent);
-    const menu = getMenu(versionContent);
-    const hasMenu = true;
+    const rootDoc = getNearestContentByType(doc, 'doc'); //log.info(`rootDoc:${toStr(rootDoc)}`);
+    const versionContent = getNearestContentByType(doc, 'docversion'); //log.info(`versionContent:${toStr(versionContent)}`);
+    const versions = getVersions(rootDoc, versionContent); //log.info(`versions:${toStr(versions)}`);
+    const menu = getMenu(versionContent); //log.info(`menu:${toStr(menu)}`);
+    const hasMenu = true; // TODO Hardcode???
 
     model.rootDocTitle = rootDoc.displayName;
     model.rootDocUrl = pageUrl({path: versionContent._path});
@@ -183,9 +181,9 @@ function createDocModel(doc) {
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
 export function get() {
-    const content = getCurrentContent();
+    const content = getCurrentContent(); //log.info(`content:${toStr(content)}`);
 
-    const doc = isDoc(content) ? getContentByKey({key: `${content._path}/index.html`}) : content;
+    const doc = isDoc(content) ? getContentByKey({key: `${content._path}/index.html`}) : content; //log.info(`doc:${toStr(doc)}`);
     if (!doc) {
         return {
             body: '<div class="docpage-content"><h3 style="text-align: center">Your doc to be placed here</h3></div>',
@@ -193,11 +191,12 @@ export function get() {
         };
     }
 
-    const model = {
+    let model = {
         title: doc.data.title || doc.displayName,
         content: processHtml({value: doc.data.html})
-    };
-    if (!isGuide(doc)) { Object.assign(model, createDocModel(doc)); }
+    }; //log.info(`model:${toStr(model)}`);
+    if (!isGuide(doc)) { model = Object.assign({}, model, createDocModel(doc)); }
+    //log.info(`model modified:${toStr(model)}`);
 
     return {
         body: render(VIEW_FILE, model),
