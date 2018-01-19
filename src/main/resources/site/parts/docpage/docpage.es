@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
@@ -7,7 +8,7 @@ import {
     getSite as getCurrentSite,
     pageUrl,
     processHtml,
-    serviceUrl
+    serviceUrl as getServiceUrl
 } from '/lib/xp/portal';
 import {
     get as getContentByKey,
@@ -69,10 +70,9 @@ function generateMenuItemUrl(menuItem) {
 
     try {
         const menuItemContent = getContentByKey({key: menuItem.contentId});
-        return getCurrentContent()._id === menuItemContent._id;
-        /*menuItem.isActive = getCurrentContent()._id === menuItemContent._id;
+        menuItem.isActive = getCurrentContent()._id === menuItemContent._id;
         menuItem.url = pageUrl({path: menuItemContent._path});
-        return menuItem.isActive;*/
+        return menuItem.isActive;
     } catch (e) {
         log.error(e);
         return '';
@@ -86,7 +86,7 @@ function getMenu(versionContent) {
             return false;
         }
 
-        const hasActiveItem = false;
+        let hasActiveItem = false;
 
         menuItems.forEach((menuItem) => {
             generateMenuItemUrl(menuItem);
@@ -113,10 +113,42 @@ function getMenu(versionContent) {
 } // function getMenu
 
 
+function getNavigation(menu, versionContent) {
+    let activeMenuItem = null;
+
+    function traverseMenuItems(menuItems, navPaths) {
+        if (!menuItems) {
+            return;
+        }
+
+        menuItems.forEach((menuItem) => {
+            menuItem.nav = navPaths.slice(0);
+            menuItem.nav.push({title: menuItem.title, url: menuItem.url});
+            if (menuItem.isActive) {
+                activeMenuItem = menuItem;
+            }
+            menuItem.hasChildren = !!menuItem.menuItems && menuItem.menuItems.length > 0;
+            traverseMenuItems(menuItem.menuItems, menuItem.nav);
+        });
+    }
+
+
+    const rootVersionNavItem = {title: 'Doc', url: pageUrl({path: versionContent._path})};
+
+    traverseMenuItems(menu.menuItems, [rootVersionNavItem]);
+
+    if (activeMenuItem) {
+        return activeMenuItem.nav;
+    }
+
+    return [rootVersionNavItem];
+} // function getNavigation
+
+
 function createDocModel(doc) {
     const model = {};
 
-    const serviceUrl = serviceUrl({
+    const serviceUrl = getServiceUrl({
         service: 'search',
         params: {
             path: doc._path
@@ -136,9 +168,9 @@ function createDocModel(doc) {
     model.versions = versions;
     model.menu = menu;
     model.hasMenu = hasMenu;
-    model.sitePath = getCurrentSite()['_path'];
+    model.sitePath = getCurrentSite()._path;
 
-    if (!!menu) {
+    if (menu) {
         model.hasNavigation = true;
         model.navigation = getNavigation(menu, versionContent);
     }
@@ -147,45 +179,13 @@ function createDocModel(doc) {
 } // function createDocModel
 
 
-function getNavigation(menu, versionContent) {
-
-    const activeMenuItem = null;
-
-    const rootVersionNavItem = {title: 'Doc', url: pageUrl({path: versionContent._path})};
-
-    traverseMenuItems(menu.menuItems, [rootVersionNavItem]);
-
-    function traverseMenuItems(menuItems, navPaths) {
-        if (!menuItems) {
-            return;
-        }
-
-        menuItems.forEach(function (menuItem) {
-            menuItem.nav = navPaths.slice(0);
-            menuItem.nav.push({title: menuItem.title, url: menuItem.url});
-            if (menuItem.isActive) {
-                activeMenuItem = menuItem;
-            }
-            menuItem.hasChildren = !!menuItem.menuItems && menuItem.menuItems.length > 0;
-            traverseMenuItems(menuItem.menuItems, menuItem.nav);
-        });
-    }
-
-    if (activeMenuItem) {
-        return activeMenuItem.nav;
-    }
-
-    return [rootVersionNavItem];
-} // function getNavigation
-
-
 //──────────────────────────────────────────────────────────────────────────────
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
-export function get(req) {
+export function get() {
     const content = getCurrentContent();
 
-    const doc = isDoc(content) ? getContentByKey({key: content._path + '/index.html'}) : content;
+    const doc = isDoc(content) ? getContentByKey({key: `${content._path}/index.html`}) : content;
     if (!doc) {
         return {
             body: '<div class="docpage-content"><h3 style="text-align: center">Your doc to be placed here</h3></div>',
