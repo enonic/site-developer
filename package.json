@@ -38,5 +38,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/enonic/site-developer"
+  },
+  "scripts": {
+    "webpack": "./node_modules/.bin/webpack",
+    "webpack:server": "./node_modules/.bin/webpack --config webpack.3.server.config.babel.js"
   }
 }
