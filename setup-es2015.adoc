@@ -1,0 +1,126 @@
+If you already have an Enonic XP app and you want to start programming controllers in ECMAScript 2015, which steps are required to get there?
+
+= Transpilation
+
+Java 8's JavaScript engine "Nashorn", which is what Enonic 6.x is using, doesn't support ECMAScript 2015, so you have to transpile your controller code into commonjs. We will use babel to do that.
+
+== Polyfill
+
+Babel comes with a polyfill which will add (monkey patch) the new ECMAScript 2015 methods onto global objects/built-ins. Babel-polyfill works fine in most modern browsers, but is known to fail in Nashorn.
+
+As Node already supports ECMAScript 2015 a lot of Node modules have started using the new functionality. So you will quickly find yourself in a situation where polyfills are needed.
+
+Since the babel-polyfill fails in Nashorn you will typically have to add single purpose polyfills one at a time. Often the polyfills are intended and tested only in browsers. As such they often use global objects that doesn't exist in Nashorn. So you will have to be careful about which polyfills you use, and even how you use them. I've found that adding polyfills via webpack works well. I will try to put together a list of polyfills known to work in Nashorn.
+
+== Ponyfill
+
+Ponyfills are inobtrusive polyfills. They allow you to use new ECMAScript 2015 methods without modifying global objects/built-ins.
+
+So for example a polyfill will allow you to do:
+[source, js]
+----
+Object.assign()
+----
+
+While a ponyfill will require you to do this:
+[source, js]
+----
+import objectAssign from 'object-assign';
+objectAssign()
+----
+
+= Transforms
+
+In many instanses there is an alternative to polyfills. Instead of adding stuff at runtime, you can't transform your code during build time. There are many such transforms available as Babel plugins. The most common ones are grouped together in presets.
+
+When building for the browser babel-preset-env is typically used as it will provide all the newest functionality (when paired with babel-polyfill).
+
+When building for Nashorn however, I believe babel-preset-es2015 is the current way to go.
+
+Here are some transforms I typically use in addition to babel-preset-es2015:
+* array-includes
+* optimize-starts-with
+* transform-object-assign
+* transform-object-rest-spread
+
+= Node
+
+In order to install needed build tools you need Node.
+How to install Node I will not explain here.
+I will however suggest you use nvm and avn (Auto version switching).
+
+== pacakage.json
+
+[source, json]
+----
+"private": "true"
+----
+
+== Babel
+
+npm install --save-dev babel-core babel-preset-es2015
+
+You can setup a .babelrc file, but I typically let that file only control what syntax should be allowed in build config files. So I will explicitly define presets and plugins for server and client-side in their respective webpack config.
+
+== Webpack
+
+npm install --save-dev webpack
+
+=== webpack.config.babel.js
+
+// TODO url to example config.
+
+[source, js]
+----
+module: {
+  rules: [{
+    test: /\.(es6?|js)$/,
+    use: [{
+      loader: 'babel-loader',
+      options: {
+        babelrc: false, // The .babelrc file should only be used to transpile *.babel.js files.
+        comments: false,
+        compact: false,
+        minified: false,
+        plugins: [
+          'array-includes',
+          'optimize-starts-with',
+          'transform-object-assign',
+          'transform-object-rest-spread'
+        ],
+        presets: ['es2015']
+      } // options
+    }] // use
+  }] // rules
+}, // module
+----
+
+= Gradle
+
+You want to continue to use gradle to build and that is now possible using the
+https://github.com/srs/gradle-node-plugin
+
+Add this to build.gradle
+
+[source, groovy]
+----
+plugins {
+  id 'com.moowork.node' version "1.2.0"
+}
+
+node {
+    version '8.9.4'
+    download true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            exclude '*'
+        }
+    }
+}
+----
