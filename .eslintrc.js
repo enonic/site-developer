@@ -5,6 +5,7 @@ module.exports = {
 
     globals: {
       app: false,
+      log: false,
       resolve: false,
       __: false
     },
@@ -28,6 +29,16 @@ module.exports = {
             ignoreRegExpLiterals: true,
             ignoreStrings: true,
             ignoreTemplateLiterals: true,
+        }],
+        'no-multi-spaces': ['off'],
+        'no-underscore-dangle': ['error', {
+            allow: [
+                '_path',
+                '_id'
+            ],
+            allowAfterThis: false,
+            allowAfterSuper: false,
+            enforceInMethodNames: false,
         }],
         'object-curly-spacing': ['off'],
         'spaced-comment': ['off']

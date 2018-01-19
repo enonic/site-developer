@@ -71,7 +71,8 @@ const WEBPACK_CONFIG = {
     resolve: {
         alias: {
             '/lib': path.resolve(__dirname, SRC_DIR, 'lib')
-        }
+        },
+        extensions: ['.es', '.js', '.json']
     }, // resolve
     stats: {
         colors: true,
