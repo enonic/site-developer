@@ -51,20 +51,56 @@ I will however suggest you use nvm and avn (Auto version switching).
 
 == pacakage.json
 
+The first time you run npm install, the package.json file will be generated, with the following warnings which you might want to resolve:
+
+[source, console]
+----
+npm WARN a No description
+npm WARN a No repository field.
+npm WARN a No README data
+npm WARN a No license field.
+----
+
+Typically you don't want to publish your Enonic XP app on npmjs.com,
+so you should add this:
+
 [source, json]
 ----
-"private": "true"
+  "private": "true",
 ----
 
 == Babel
 
-npm install --save-dev babel-core babel-preset-es2015
+[source, console]
+----
+npm install --save-dev babel-core babel-preset-env babel-preset-es2015 babel-plugin-array-includes babel-plugin-optimize-starts-with babel-plugin-transform-object-assign babel-plugin-transform-object-rest-spread
+----
 
-You can setup a .babelrc file, but I typically let that file only control what syntax should be allowed in build config files. So I will explicitly define presets and plugins for server and client-side in their respective webpack config.
+=== .babelrc
+
+If you want to write build config files, like webpack.config, in ECMAScript 2015 you need to setup a .babelrc file. To avoid conflicts between environments (build, server and client) I only use the .babelrc file in the build environment, and will explicitly define presets and plugins for server and client-side in their respective webpack config files.
+
+I'm using babel-preset-env in the build enrionment.
+
+[source, json]
+----
+{
+  "plugins": [
+    "array-includes",
+    "optimize-starts-with",
+    "transform-object-assign",
+    "transform-object-rest-spread"
+  ],
+  "presets": ["env"]
+}
+----
 
 == Webpack
 
-npm install --save-dev webpack
+[source, console]
+----
+npm install --save-dev webpack path
+----
 
 === webpack.config.babel.js
 
@@ -118,9 +154,19 @@ sourceSets {
         java {
             srcDir 'src/main/java'
         }
-        resources {
-            exclude '*'
+        resources { // Paths relative to src/main/resources
+            exclude '**/*.es' // Avoid having your es files copied into ./build
         }
     }
 }
+
+task webpack(type:NodeTask) {
+    script = file('node_modules/.bin/webpack')
+    args = [
+        '--config', 'webpack.3.server.config.es'
+    ]
+}
+webpack.dependsOn npmInstall
+assemble.dependsOn webpack
+assemble.mustRunAfter webpack
 ----
