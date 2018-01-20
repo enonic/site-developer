@@ -7,6 +7,7 @@ var libs = {
 var getSite = libs.p.getSite;
 var pageUrl = libs.p.pageUrl;
 var query = libs.c.query;
+var getContentByKey = libs.c.get;
 
 exports.getSiteUrl = function() {
     var sitePath = getSite()._path;
@@ -44,4 +45,11 @@ exports.getNearestContentByType = function (content, type) {
     }
 
     return null;
+}
+
+exports.getContentParent = function (content) {
+    var path = content._path;
+    var parentPath = path.substr(0, path.lastIndexOf('/'));
+
+    return getContentByKey({key: parentPath});
 }

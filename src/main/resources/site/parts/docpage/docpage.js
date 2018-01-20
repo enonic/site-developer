@@ -1,7 +1,6 @@
 var libs = {
     thymeleaf: require('/lib/xp/thymeleaf'),
     portal: require('/lib/xp/portal'),
-    doc: require('/lib/doc'),
     content: require('/lib/xp/content'),
     util: require('/lib/util')
 }
@@ -52,20 +51,21 @@ function doCreateModel(doc) {
 
 function createDocModel(doc) {
     var model = doCreateModel(doc);
-
-    var serviceUrl = libs.portal.serviceUrl({
-        service: 'search',
-        params: {
-            path: doc._path
-        }
-    });
-
     var rootDoc = libs.util.getNearestContentByType(doc, 'doc');
     var versionContent = libs.util.getNearestContentByType(doc, 'docversion');
     var versions = getVersions(rootDoc, versionContent);
     var menu = getMenu(versionContent);
     var hasMenu = true;
 
+    var serviceUrl = libs.portal.serviceUrl({
+        service: 'search',
+        params: {
+            path: versionContent._path
+        }
+    });
+
+    model.searchResultPageUrl = libs.util.getSiteUrl() + 'search';
+    model.searchDocId = versionContent._id;
     model.rootDocTitle = rootDoc.displayName;
     model.rootDocUrl = libs.portal.pageUrl({path: versionContent._path});
     model.service = 'search';

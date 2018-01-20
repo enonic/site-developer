@@ -25,6 +25,7 @@ require('./vendor/jquery.form.min.js');
 
 // Pages
 require('./pages/default.js');
+require('./pages/search-result.js');
 
 // Parts
 require('./parts/docpage.js');

@@ -16,19 +16,8 @@
             </div>
             <div data-th-replace="/site/pages/fragments/fragments::doc-versions-fragment(baseClass='docpage-menu')"></div>
             <div data-th-if="${menu != null}" data-th-remove="tag">
-                <div data-th-class="docpage-menu__search">
-                    <form class="docpage-menu__search-form live-search__form" method="get" action="#"
-                          data-th-action="${searchResultPageUrl}"
-                          data-th-attr="data-live-search-url=${serviceUrl}" role="search">
-                        <div class="live-search__search-box">
-                            <svg data-th-replace="/lib/enonic/market/fragments::icon-fragment(icon=search,class=docpage-menu__search-icon)"></svg>
-                            <input class="docpage-menu__search-input live-search__input" type="text" name="q"
-                                   placeholder="Search this document"
-                                   autocomplete="off"/>
-                        </div>
-                        <ul class=" live-search__result"></ul>
-                        <div class="live-search__no-results">No results</div>
-                    </form>
+                <div data-th-class="docpage-menu-search">
+                    <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=docpage-menu)"></div>
                 </div>
             </div>
 
