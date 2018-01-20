@@ -28,7 +28,6 @@ var EMPTY_RESULT = {count: 0, total: 0, hits: []};
 
 // Exports
 exports.get = function (req) {
-    log.info('Search result req:' + toStr(req));
     var currentSite = getCurrentSite();
     var docToSearchIn = getDocToSearchIn(req);
     var searchPath = getSearchPath(docToSearchIn);
