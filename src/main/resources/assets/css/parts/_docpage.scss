@@ -203,7 +203,6 @@
   }
 
   &-content {
-    width: 100%;
     margin-right: 20px;
     margin-left: 20px;
     display: flex;
@@ -379,8 +378,10 @@
       @include font-size(16);
     }
 
+/* Override default margin */
     .docpage-content {
-      padding: 0 15px;
+      margin-left: 10px;
+      margin-right: 10px;
     }
 
     &.hasMenu {
