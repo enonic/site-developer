@@ -50,13 +50,6 @@ a {
   color: $color-anchor;
 }
 
-main {
-  padding-top: 60px;
-
-  @include media('<medium') {
-    padding-top: 10px;
-  }
-}
 
 .visually-hidden {
   @extend %visually-hidden;

@@ -2,6 +2,7 @@
 
   &__header {
     padding-top: 30px;
+    padding-bottom:20px;
 
     @include media('<medium') {
       padding-top: 20px;

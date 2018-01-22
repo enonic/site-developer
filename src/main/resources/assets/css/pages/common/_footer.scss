@@ -20,7 +20,7 @@
     }
 
     #footer-nav {
-      border-bottom: 1px solid #272727;
+      border-bottom: 1px solid $color-mine-shaft;
       padding: 35px 0;
 
       ul {
@@ -73,7 +73,7 @@
 
     .social {
       text-align: center;
-      border-bottom: 1px solid #272727;
+      border-bottom: 1px solid $color-mine-shaft;
       padding-bottom: 37px;
       margin-bottom: 29px;
       padding-top: 35px;
@@ -104,7 +104,7 @@
 
       a {
         display: block;
-        background-color: #272727;
+        background-color: $color-mine-shaft;
         color: $color-text-light;
         background-position: center;
         background-repeat: no-repeat;
@@ -216,7 +216,7 @@
     }
 
     .copyright {
-      background: #272727;
+      background: $color-mine-shaft;
       color: #aaa;
       @include font-size(14);
       padding: 20px 0;
