@@ -18,7 +18,6 @@
 
   &-menu {
     background-color: $color-menu-gray;
-    margin-right: 20px;
     padding: 0 20px;
     min-width: 270px;
 
@@ -205,6 +204,8 @@
 
   &-content {
     width: 100%;
+    margin-right: 20px;
+    margin-left: 20px;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -285,7 +286,6 @@
     padding: 5px 2.9rem 5px 1rem;
     border-left: 4px solid $color-toc-red;
     flex-shrink: 0;
-    margin-left: 20px;
     margin-bottom: 20px;
     min-width: 200px;
 
@@ -342,7 +342,7 @@
 
   &-sticky-toc .docpage-toc {
     position: sticky;
-    top: 5px;
+    margin-top: 20px;
   }
 
   &.hasMenu .docpage-menu {
