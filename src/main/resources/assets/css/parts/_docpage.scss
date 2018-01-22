@@ -378,12 +378,6 @@
       @include font-size(16);
     }
 
-/* Override default margin */
-    .docpage-content {
-      margin-left: 10px;
-      margin-right: 10px;
-    }
-
     &.hasMenu {
       flex-direction: column;
 
