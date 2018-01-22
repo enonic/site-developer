@@ -73,6 +73,10 @@ function getSearchResultName(content, hideVersion) {
     }
 
     if (isDocVersion(content)) {
+        if (hideVersion) {
+            return content.displayName;
+        }
+
         var doc = getContentParent(content);
         return doc.displayName + ' (' + content.displayName + ')';
     }
@@ -117,7 +121,10 @@ exports.search = function (query, path, start, count) {
 
     var expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
-        like('_path', path + '/*'),
+        group(or(
+            like('_path', path + '/*'),
+            like('_path', path)
+        )),
         group(or(
             fulltext(fields, query, 'AND'),
             ngram(fields, query, 'AND')
