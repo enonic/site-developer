@@ -17,7 +17,9 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.bean.BeanContext;
 
@@ -84,10 +86,11 @@ public class ImportDocCommandTest
         Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
         Mockito.verify( contentService, Mockito.times( 4 ) ).create( createMediaParamsArgumentCaptor.capture() );
 
-        assertTrue( createContentParamsArgumentCaptor.getAllValues().stream().map( params -> params.getParent() + "/" + params.getDisplayName() ).collect(
-            Collectors.toList() ).containsAll( contentPaths ) );
-        assertTrue( createMediaParamsArgumentCaptor.getAllValues().stream().map( params -> params.getParent() + "/" + params.getName() ).collect(
-            Collectors.toList() ).containsAll( mediaPaths ) );
+        assertTrue( createContentParamsArgumentCaptor.getAllValues().stream().map(
+            params -> params.getParent() + "/" + params.getDisplayName() ).collect( Collectors.toList() ).containsAll( contentPaths ) );
+        assertTrue(
+            createMediaParamsArgumentCaptor.getAllValues().stream().map( params -> params.getParent() + "/" + params.getName() ).collect(
+                Collectors.toList() ).containsAll( mediaPaths ) );
     }
 
     @Test
@@ -96,17 +99,23 @@ public class ImportDocCommandTest
     {
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
-            Media.create().id( ContentId.from( "testid" ) ).name( "name" ).type( ContentTypeName.imageMedia() ).parentPath( ContentPath.ROOT ).build() );
-        final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
+            Media.create().id( ContentId.from( "testid" ) ).name( "name" ).type( ContentTypeName.imageMedia() ).parentPath(
+                ContentPath.ROOT ).build() );
+        final ArgumentCaptor<UpdateContentParams> updateContentParamsArgumentCaptor = ArgumentCaptor.forClass( UpdateContentParams.class );
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 5 ) ).update( updateContentParamsArgumentCaptor.capture() );
 
-        final CreateContentParams docpageContentParams = createContentParamsArgumentCaptor.getAllValues().stream().filter(
-            params -> params.getName().toString().equals( "linked_at_root" ) ).findFirst().get();
+        final EditableContent content = updateContentParamsArgumentCaptor.getAllValues().stream().map( params -> {
+            final EditableContent editableContent =
+                new EditableContent( Content.create().name( "beta" ).parentPath( ContentPath.ROOT ).build() );
+            params.getEditor().edit( editableContent );
+            return editableContent;
+        } ).filter( editableContent -> editableContent.displayName != null &&
+            editableContent.displayName.equals( "Linked doc at root level" ) ).findFirst().get();
 
-        assertTrue( docpageContentParams.getData().getString( "html" ).contains( "image://testid" ) );
+        assertTrue( content.data.getString( "html" ).contains( "image://testid" ) );
     }
 
     private String makeRepoPath( final String path )

@@ -2,9 +2,19 @@
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
 //import {toStr} from '/lib/enonic/util';
-import {query as queryContent} from '/lib/xp/content';
+import {
+    query as queryContent,
+    get as getContentByKey
+} from '/lib/xp/content';
 import {getSite, pageUrl} from '/lib/xp/portal';
 import {and, pathMatch, propEq} from '/lib/query';
+
+
+export function getContentParent(content) {
+    const path = content._path;
+    const parentPath = path.substr(0, path.lastIndexOf('/'));
+    return getContentByKey({key: parentPath});
+}
 
 
 export function getSiteUrl() {

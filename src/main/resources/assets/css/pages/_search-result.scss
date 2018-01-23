@@ -1,13 +1,14 @@
 .page-search-result {
   @include page-common;
 
-  &__content {
+  &-content {
     @include container;
     @include search-form;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-grow: 1;
 
     margin-top: 50px;
 
@@ -40,4 +41,47 @@
     }
   }
 
+  &-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    line-height: 1;
+    font-weight: 300;
+    margin-top: 30px;
+    margin-bottom: 0px;
+
+    &__hits {
+      @include font-size(30);
+    }
+
+    &__count {
+      @include font-size(30);
+      color: $color-pelorous;
+      padding-left: 10px;
+      flex-grow: 1;
+    }
+
+    &__filter-caption {
+      padding: 0px 10px;
+      text-align: center;
+    }
+
+    &__filter-value {
+      color: $color-white;
+      background-color: $color-pelorous;
+      padding: 5px 8px 5px 15px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    &__filter-reset {
+      margin-left: 5px;
+      font-weight: bold;
+      padding: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+  }
 }

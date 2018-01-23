@@ -19,7 +19,6 @@ var CT_GUIDE      = libs.ct.CT_GUIDE;
 // Imported functions
 var and             = libs.q.and;
 var fulltext        = libs.q.fulltext;
-var getContentByKey = libs.c.get;
 var getSitePath     = libs.u.getSitePath;
 var group           = libs.q.group;
 var isSet           = libs.v.isSet;
@@ -31,6 +30,7 @@ var propIn          = libs.q.propIn;
 var queryContent    = libs.c.query;
 var toStr           = libs.eu.toStr;
 var getNearestContentByType = libs.u.getNearestContentByType;
+var getContentParent = libs.u.getContentParent;
 var getCurrentSite = libs.p.getSite;
 
 
@@ -44,13 +44,13 @@ var TRACE = false;
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
 //──────────────────────────────────────────────────────────────────────────────
-function toSearchResultEntry(content, currentSite) {
+function toSearchResultEntry(content, currentSite, hideVersion) {
     if (!content) {
         return;
     }
 
     var result = {
-        name: getSearchResultName(content),
+        name: getSearchResultName(content, hideVersion),
         title: content.data.title || content.displayName,
         url: pageUrl({path: content._path}),
         path: content._path.replace(currentSite._path + '/', ''),
@@ -61,11 +61,11 @@ function toSearchResultEntry(content, currentSite) {
 }
 
 
-function getSearchResultName(content) {
+function getSearchResultName(content, hideVersion) {
     if (isDocPage(content)) {
         var parentDocVersion = getNearestContentByType(content, 'docversion');
 
-        if (!parentDocVersion) {
+        if (!parentDocVersion || hideVersion) {
             return content.displayName;
         }
 
@@ -73,21 +73,16 @@ function getSearchResultName(content) {
     }
 
     if (isDocVersion(content)) {
-        var doc = getDocVersionParent(content);
+        if (hideVersion) {
+            return content.displayName;
+        }
+
+        var doc = getContentParent(content);
         return doc.displayName + ' (' + content.displayName + ')';
     }
 
     return content.displayName;
 }
-
-
-function getDocVersionParent(content) {
-    var path = content._path;
-    var parentPath = path.substr(0, path.lastIndexOf('/'));
-
-    return getContentByKey({key: parentPath});
-}
-
 
 function isDocVersion(content) {
     return content.type === CT_DOCVERSION;
@@ -109,6 +104,7 @@ exports.search = function (query, path, start, count) {
     TRACE && log.info('search('+query+', '+path+', '+start+', '+count+')');
     if (!isSet(query)) { query = ''; }
 
+    var hideVersion = !!path;
     path = '/content' + (!!path ? path : getSitePath());
 
     var fields = [ // have not checked CT_DOCPAGE
@@ -125,7 +121,10 @@ exports.search = function (query, path, start, count) {
 
     var expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
-        like('_path', path + '/*'),
+        group(or(
+            like('_path', path + '/*'),
+            like('_path', path)
+        )),
         group(or(
             fulltext(fields, query, 'AND'),
             ngram(fields, query, 'AND')
@@ -142,7 +141,7 @@ exports.search = function (query, path, start, count) {
     var entries = [];
     for (var i = 0; i < result.hits.length; i++) {
         var hit = result.hits[i];
-        var entry = toSearchResultEntry(hit, currentSite);
+        var entry = toSearchResultEntry(hit, currentSite, hideVersion);
         if (entry) {
             entry.score = hit.score;
             entries.push(entry);

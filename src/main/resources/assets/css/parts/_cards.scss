@@ -7,8 +7,9 @@
     break-inside: avoid-column;
     page-break-inside: avoid;
     margin-bottom: 1rem;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
     background: $color-white;
+    border: 1px solid #eaeaea;
+    overflow: hidden;
 
     > *:not(.cards__card-teaser) {
       margin: 0;

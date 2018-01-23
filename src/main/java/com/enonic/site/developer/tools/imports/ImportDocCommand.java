@@ -31,6 +31,8 @@ public final class ImportDocCommand
 
     private String label;
 
+    private String checkout;
+
     private boolean isLatest;
 
     protected void initRootContent()
@@ -53,8 +55,15 @@ public final class ImportDocCommand
     {
         LOGGER.info( "Creating docversion content [" + label + "]" );
 
+        final PropertyTree data = new PropertyTree();
+
+        if ( checkout != null )
+        {
+            data.addString( "checkout", checkout );
+        }
+
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
+            contentData( data ).
             name( label ).
             displayName( label ).
             parent( ContentPath.from( importPath ) ).
@@ -155,6 +164,11 @@ public final class ImportDocCommand
     public void setIsLatest( final boolean isLatest )
     {
         this.isLatest = isLatest;
+    }
+
+    public void setCheckout( final String checkout )
+    {
+        this.checkout = checkout;
     }
 
     private static final class MenuItem

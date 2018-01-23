@@ -23,7 +23,7 @@ import com.enonic.site.developer.tools.asciidoc.ExtractedDoc;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
@@ -88,15 +88,14 @@ public abstract class ImportCommand
     private void importData()
         throws Exception
     {
-        importFoldersAndMedia();
+        createContents();
         importAsciiDocs();
     }
 
-    private void importFoldersAndMedia()
+    private void createContents()
         throws IOException
     {
-        Files.walk( sourceDir ).filter( path -> !isForbidden( path ) && !isCompiledAsciiDoc( path ) ).forEach(
-            path -> createContent( path ) );
+        Files.walk( sourceDir ).filter( path -> !isForbidden( path ) ).forEach( path -> createContent( path ) );
     }
 
     private boolean isForbidden( final Path path )
@@ -121,11 +120,6 @@ public abstract class ImportCommand
         }
     }
 
-    private boolean isCompiledAsciiDoc( final Path path )
-    {
-        return path.getFileName().toString().endsWith( ".html" );
-    }
-
     private void createContent( final Path path )
     {
         if ( Files.isDirectory( path ) )
@@ -139,10 +133,19 @@ public abstract class ImportCommand
                 createFolder( path );
             }
         }
+        else if ( isCompiledAsciiDoc( path ) )
+        {
+            createEmptyDocpage( path );
+        }
         else
         {
             createMedia( path );
         }
+    }
+
+    private boolean isCompiledAsciiDoc( final Path path )
+    {
+        return path.getFileName().toString().endsWith( ".html" );
     }
 
     private boolean isAsciiDocNameSakePresent( final Path path )
@@ -152,7 +155,17 @@ public abstract class ImportCommand
 
     private void createEmptyDocpage( final Path path )
     {
+        if ( isRootAsciiDoc( path ) )
+        {
+            return;
+        }
+
         final ContentPath repoPath = makeRepoPath( path );
+
+        if ( contentService.contentExists( repoPath ) )
+        {
+            return;
+        }
 
         LOGGER.info( "Creating empty docpage " + repoPath );
 
@@ -177,7 +190,6 @@ public abstract class ImportCommand
         {
             return;
         }
-
 
         LOGGER.info( "Creating folder " + repoPath );
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -232,30 +244,25 @@ public abstract class ImportCommand
         Files.walk( sourceDir ).filter( this::isCompiledAsciiDoc ).forEach( this::importAsciiDoc );
     }
 
-    private void importAsciiDoc( final Path path )
-    {
-        if ( isRootAsciiDoc( path ) && rootContent.isPresent() )
-        {
-            updateContentWithAsciiDoc( path, rootContent.get().getId() );
-        }
-        else
-        {
-            createOrUpdateDocpage( path );
-        }
-    }
-
     protected final boolean isRootAsciiDoc( final Path path )
     {
-        return path.getParent().equals( sourceDir ) && path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
+        return rootContent.isPresent() && path.getParent().equals( sourceDir ) &&
+            path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
     }
 
-    private void updateContentWithAsciiDoc( final Path asciiDocPath, final ContentId contentId )
+    private void importAsciiDoc( final Path asciiDocPath )
     {
+        final Content content = getContentToImportAsciiDocTo( asciiDocPath );
         final ExtractedDoc asciiDoc = getAsciiDoc( asciiDocPath );
+        final String displayName = ( StringUtils.isEmpty( asciiDoc.getTitle() ) || isRootAsciiDoc( asciiDocPath ) )
+            ? content.getDisplayName()
+            : asciiDoc.getTitle();
 
+        LOGGER.info( "Imorting asciidoc into " + content.getPath() );
         final UpdateContentParams updateContentParams = new UpdateContentParams().
-            contentId( contentId ).
+            contentId( content.getId() ).
             editor( edit -> {
+                edit.displayName = displayName;
                 edit.data.setString( "html", asciiDoc.getHtml() );
                 edit.data.setString( "title", asciiDoc.getTitle() );
                 edit.data.setString( "raw", asciiDoc.getText() );
@@ -264,53 +271,28 @@ public abstract class ImportCommand
         contentService.update( updateContentParams );
     }
 
+    private Content getContentToImportAsciiDocTo( final Path path )
+    {
+        if ( isRootAsciiDoc( path ) )
+        {
+            return rootContent.get();
+        }
+
+        return contentService.getByPath( makeRepoPath( path ) );
+    }
+
     private ExtractedDoc getAsciiDoc( final Path path )
     {
         final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
         extractAsciiDocHtmlCommand.setPath( path.toString() );
         final ExtractedDoc extractedDoc = extractAsciiDocHtmlCommand.execute();
 
-        new UrlRewriter( "img", "src" ).rewrite( extractedDoc.getContent() );
-        new UrlRewriter( "audio", "src" ).rewrite( extractedDoc.getContent() );
-        new UrlRewriter( "video", "src" ).rewrite( extractedDoc.getContent() );
-        new DocpageUrlRewriter( "a", "href", isRootAsciiDoc( path ) ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( path, "img", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( path, "audio", "src" ).rewrite( extractedDoc.getContent() );
+        new UrlRewriter( path, "video", "src" ).rewrite( extractedDoc.getContent() );
+        new DocpageUrlRewriter( path, "a", "href" ).rewrite( extractedDoc.getContent() );
 
         return extractedDoc;
-    }
-
-    private void createOrUpdateDocpage( final Path path )
-    {
-        final ContentPath repoPath = makeRepoPath( path );
-
-        if ( contentService.contentExists( repoPath ) )
-        {
-            LOGGER.info( "Updating docpage " + repoPath );
-            final Content docpage = contentService.getByPath( repoPath );
-            updateContentWithAsciiDoc( path, docpage.getId() );
-            return;
-        }
-
-        LOGGER.info( "Creating docpage " + repoPath );
-
-        final ExtractedDoc asciiDoc = getAsciiDoc( path );
-
-        final PropertyTree data = new PropertyTree();
-        data.addString( "html", asciiDoc.getHtml() );
-        data.addString( "title", asciiDoc.getTitle() );
-        data.addString( "raw", asciiDoc.getText() );
-
-        final String name = FilenameUtils.getBaseName( path.getFileName().toString() );
-        final String displayName = StringUtils.isEmpty( asciiDoc.getTitle() ) ? name : asciiDoc.getTitle();
-
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
-            name( name ).
-            displayName( displayName ).
-            parent( repoPath.getParentPath() ).
-            type( ContentTypeName.from( applicationKey + ":docpage" ) ).
-            requireValid( false ).
-            build();
-        contentService.create( createContentParams );
     }
 
     protected void postProcess()
@@ -336,7 +318,7 @@ public abstract class ImportCommand
 
     public void setSourceDir( final String sourceDir )
     {
-        this.sourceDir = new File( sourceDir ).toPath();
+        this.sourceDir = new File( sourceDir ).toPath().normalize().toAbsolutePath();
     }
 
     public void setImportPath( final String importPath )
@@ -353,14 +335,21 @@ public abstract class ImportCommand
 
     private class UrlRewriter
     {
+        private static final String MEDIA_LINK = "media://";
+
+        private static final String IMAGE_LINK = "image://";
+
         protected final Pattern URL_PATTERN = Pattern.compile( "(.+):(.+)" );
 
         protected final String tag;
 
         protected final String attr;
 
-        private UrlRewriter( final String tag, final String attr )
+        protected final Path path;
+
+        private UrlRewriter( final Path path, final String tag, final String attr )
         {
+            this.path = path;
             this.tag = tag;
             this.attr = attr;
         }
@@ -389,21 +378,40 @@ public abstract class ImportCommand
 
         protected String rewriteUrl( final String href )
         {
-            final Content media = contentService.getByPath( ContentPath.from( importPath + "/" + href ) );
+            try
+            {
+                final Path resolvedPath = resolveLink( href );
+                final Content content = getContentByPath( resolvedPath );
+                return getPrefix( content.getType() ) + content.getId();
+            }
+            catch ( final ContentNotFoundException e )
+            {
+                LOGGER.warn( "Unable to resolve link '" + href + "'" );
+            }
 
-            return getMediaPrefix( media.getType() ) + media.getId();
+            return href;
         }
 
-        private String getMediaPrefix( final ContentTypeName contentTypeName )
+        protected Path resolveLink( final String href )
+        {
+            return path.getParent().resolve( href ).normalize();
+        }
+
+        protected Content getContentByPath( final Path path )
+        {
+            return contentService.getByPath( makeRepoPath( path ) );
+        }
+
+        protected String getPrefix( final ContentTypeName contentTypeName )
         {
             if ( contentTypeName.isImageMedia() )
             {
-                return "image://";
+                return IMAGE_LINK;
             }
 
             if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
             {
-                return "media://";
+                return MEDIA_LINK;
             }
 
             return "";
@@ -413,12 +421,11 @@ public abstract class ImportCommand
     private final class DocpageUrlRewriter
         extends UrlRewriter
     {
-        private final boolean isRootDoc;
+        private static final String CONTENT_LINK = "content://";
 
-        private DocpageUrlRewriter( final String tag, final String attr, final boolean isRootDoc )
+        private DocpageUrlRewriter( final Path path, final String tag, final String attr )
         {
-            super( tag, attr );
-            this.isRootDoc = isRootDoc;
+            super( path, tag, attr );
         }
 
         protected boolean shouldRewriteUrl( final String url )
@@ -426,14 +433,19 @@ public abstract class ImportCommand
             return super.shouldRewriteUrl( url ) && url.endsWith( ".html" );
         }
 
-        protected String rewriteUrl( final String href )
+        protected Content getContentByPath( final Path path )
         {
-            if ( isRootDoc )
+            if ( isRootAsciiDoc( path ) )
             {
-                return rootContent.get().getName() + "/" + href.replace( ".html", "" );
+                return rootContent.get();
             }
 
-            return href.replace( DEFAULT_ASCIIDOC_NAME, "." ).replace( ".html", "" );
+            return super.getContentByPath( path );
+        }
+
+        protected String getPrefix( final ContentTypeName contentTypeName )
+        {
+            return CONTENT_LINK;
         }
     }
 }

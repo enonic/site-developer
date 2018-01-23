@@ -160,6 +160,7 @@
             <input data-th-class="${baseClass} + '-search-input'" data-th-classappend="live-search__input" type="text" name="q"
                    placeholder="search" data-th-attr="value=${searchQuery}"
                    autocomplete="off"/>
+            <input type="hidden" name="doc" data-th-value="${searchDocId}" data-th-if="${searchDocId}"/>
         </div>
         <ul data-th-class="${baseClass} + '-search-result'" data-th-classappend="live-search__result"></ul>
         <div class="live-search__no-results">No results</div>

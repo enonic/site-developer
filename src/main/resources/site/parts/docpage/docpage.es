@@ -144,33 +144,27 @@ function getNavigation(menu, versionContent) {
 
 function createDocModel(doc) {
     //log.info(`createDocModel()`);
-    const model = {};
-
-    const serviceUrl = getServiceUrl({
-        service: 'search',
-        params: {
-            path: doc._path
-        }
-    }); //log.info(`serviceUrl:${toStr(serviceUrl)}`);
-
     const rootDoc = getNearestContentByType(doc, 'doc'); //log.info(`rootDoc:${toStr(rootDoc)}`);
     const versionContent = getNearestContentByType(doc, 'docversion'); //log.info(`versionContent:${toStr(versionContent)}`);
-    const versions = getVersions(rootDoc, versionContent); //log.info(`versions:${toStr(versions)}`);
-    const menu = getMenu(versionContent); //log.info(`menu:${toStr(menu)}`);
-    const hasMenu = true; // TODO Hardcode???
+    const model = {
+        rootDocTitle: rootDoc.displayName,
+        rootDocUrl: pageUrl({path: versionContent._path}),
+        service: 'search',
+        serviceUrl: getServiceUrl({
+            service: 'search',
+            params: {
+                path: versionContent._path
+            }
+        }),
+        versions: getVersions(rootDoc, versionContent),
+        menu: getMenu(versionContent),
+        hasMenu: true, // TODO Hardcode???,
+        sitePath: getCurrentSite()._path
+    };
 
-    model.rootDocTitle = rootDoc.displayName;
-    model.rootDocUrl = pageUrl({path: versionContent._path});
-    model.service = 'search';
-    model.serviceUrl = serviceUrl;
-    model.versions = versions;
-    model.menu = menu;
-    model.hasMenu = hasMenu;
-    model.sitePath = getCurrentSite()._path;
-
-    if (menu) {
+    if (model.menu) {
         model.hasNavigation = true;
-        model.navigation = getNavigation(menu, versionContent);
+        model.navigation = getNavigation(model.menu, versionContent);
     }
 
     return model;

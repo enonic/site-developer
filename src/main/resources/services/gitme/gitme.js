@@ -19,6 +19,10 @@ function queryContent(params) {
     return sudo(contentLib.query.bind(null, params));
 }
 
+function removeContent(params) {
+    return sudo(contentLib.delete.bind(null, params));
+}
+
 exports.post = function (req) {
     callExecuteAsync(req);
     return;
@@ -33,6 +37,7 @@ function callExecuteAsync(req) {
 function execute(req) {
     try {
         doExecute(req);
+        log.info('Import done!');
     }
     catch (e) {
         log.error(e);
@@ -46,7 +51,8 @@ function doExecute(req) {
         return;
     }
 
-    cloneAndBuildMaster(repo);
+    cloneMaster(repo);
+    buildMaster(repo);
     importGuides(repo);
     importDocs(repo);
 }
@@ -82,14 +88,16 @@ function findContentsLinkedToRepo(repoUrl, contentType) {
     var keys = [];
     for (var i = 0; i < result.hits.length; i++) {
         keys.push(result.hits[i]);
-        log.info(result.hits[i]._id);
     }
 
     return keys;
 };
 
-function cloneAndBuildMaster(repo) {
+function cloneMaster(repo) {
     cloneRepo(repo);
+}
+
+function buildMaster(repo) {
     buildAsciiDoc(repo);
 }
 
@@ -114,35 +122,86 @@ function importDocs(repo) {
 
     var versions = getDocVersions(repo);
 
-    importMasterVersion(repo, docs, versions);
-    buildAndImportOtherVersions(repo, docs, versions);
+    removeUnusedVersions(docs, versions);
+
+    if (versions.length == 0) {
+        importMaster(repo, docs);
+    }
+    else {
+        buildAndImportVersions(repo, docs, versions);
+    }
 }
 
-function importMasterVersion(repo, docs, versions) {
-    var isMultiVersioned = !!versions && versions.length > 0;
-    var label = isMultiVersioned ? 'beta' : 'latest';
-    var isLatest = isMultiVersioned ? false : true;
-
+function removeUnusedVersions(docs, versions) {
     docs.forEach(function (doc) {
-        importDoc(repo, doc, label, isLatest);
+        doRemoveUnusedVersions(doc, versions);
     });
 }
 
-function buildAndImportOtherVersions(repo, docs, versions) {
-    if (!versions || versions.length == 0) {
-        return;
-    }
+function doRemoveUnusedVersions(doc, versions) {
+    var docVersions = findVersions(doc);
+    docVersions.forEach(function (docVersion) {
+        var isUsed = versions.some(function (version) {
+            return version.checkout == docVersion.data.checkout;
+        });
 
+        if (!isUsed) {
+            log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName)
+            removeContent({key: docVersion._id});
+        }
+    });
+}
+
+function findVersions(doc) {
+    var expr = "type = '" + app.name + ":docversion' AND _path LIKE '/content" + doc._path + "/*' ";
+
+    var result = queryContent({
+        query: expr,
+        start: 0,
+        count: 100
+    });
+
+    return result.hits;
+}
+
+function buildAndImportVersions(repo, docs, versions) {
     defineLatestVersion(versions);
 
-    versions.forEach(function (v) {
-        cloneRepo(repo, v.checkout);
-        buildAsciiDoc(repo);
+    versions.forEach(function (version) {
+        var docsToImportVersionTo = getDocsToImportVersionTo(docs, version);
 
-        docs.forEach(function (doc) {
-            importDoc(repo, doc, v.label, v.latest);
-        });
+        if (docsToImportVersionTo.length > 0) {
+            cloneRepo(repo, version.checkout);
+            buildAsciiDoc(repo);
+
+            docsToImportVersionTo.forEach(function (doc) {
+                importDoc(repo, doc, version.checkout, version.label, version.latest);
+            });
+        }
     });
+}
+
+function importMaster(repo, docs) {
+    docs.forEach(function (doc) {
+        importDoc(repo, doc, null, 'latest', true);
+    });
+}
+
+function getDocsToImportVersionTo(docs, version) {
+    var docsToImport = [];
+
+    docs.forEach(function (doc) {
+        var docVersions = findVersions(doc);
+        var isUsed = docVersions.some(function (docVersion) {
+            return version.checkout == docVersion.data.checkout;
+        });
+
+        if (!isUsed) {
+            docsToImport.push(doc);
+        }
+    });
+
+    return docsToImport;
 }
 
 function defineLatestVersion(versions) {
@@ -187,10 +246,11 @@ function importGuide(repo, guide) {
     bean.execute();
 }
 
-function importDoc(repo, doc, label, isLatest) {
+function importDoc(repo, doc, checkout, label, isLatest) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
+    bean.checkout = !!checkout ? checkout : null;
     if (!!label) {
         bean.label = label;
         bean.isLatest = isLatest;
@@ -201,5 +261,11 @@ function importDoc(repo, doc, label, isLatest) {
 function getDocVersions(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.GetVersionsCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
-    return JSON.parse(__.toNativeObject(bean.execute()));
+    var versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
+
+    if (!versionsJson || !versionsJson.versions || versionsJson.versions.length == 0) {
+        return [];
+    }
+
+    return versionsJson.versions;
 }

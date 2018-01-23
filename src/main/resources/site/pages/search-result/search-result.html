@@ -5,8 +5,20 @@
 <body class="page-search-result__body">
 <div th:replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-search-result')"></div>
 
-<div class="page-search-result__content">
-    <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=page-search-result__content)"></div>
+<div class="page-search-result-content">
+    <div data-th-replace="/site/pages/fragments/fragments::search-form-fragment(baseClass=page-search-result-content)"></div>
+
+    <div class="page-search-result-header">
+        <span class="page-search-result-header__hits">Hits</span>
+        <span class="page-search-result-header__count">[[${searchResult.total}]]</span>
+        <span data-th-if="${searchDocId}" data-th-remove="tag">
+            <span class="page-search-result-header__filter-caption">active filter</span>
+            <span class="page-search-result-header__filter-value">
+                <span class="page-search-result-header__filter-text" data-th-text="${filterText}">text</span>
+                <span class="page-search-result-header__filter-reset">x</span>
+            </span>
+        </span>
+    </div>
 
     <div class="page-search-result__result-list">
         <th:block th:fragment="product-listing-fragment" th:if="${searchResult.hits}">
