@@ -3,6 +3,7 @@
 var nashornUtil = require('/lib/nashornUtil');
 var contextLib = require('/lib/xp/context');
 var contentLib = require('/lib/xp/content');
+var docLib = require('/lib/doc');
 
 var repoDest = './docs-repos/';
 
@@ -21,6 +22,14 @@ function queryContent(params) {
 
 function removeContent(params) {
     return sudo(contentLib.delete.bind(null, params));
+}
+
+function unmarkLatest(params) {
+    return sudo(docLib.unmarkLatest.bind(null, params));
+}
+
+function markLatest(doc, checkout) {
+    return sudo(docLib.markLatest.bind(null, doc, checkout));
 }
 
 exports.post = function (req) {
@@ -123,6 +132,7 @@ function importDocs(repo) {
     var versions = getDocVersions(repo);
 
     removeUnusedVersions(docs, versions);
+    unmarkLatestDocs(docs);
 
     if (versions.length == 0) {
         importMaster(repo, docs);
@@ -164,6 +174,12 @@ function findVersions(doc) {
     return result.hits;
 }
 
+function unmarkLatestDocs(docs) {
+    docs.forEach(function (doc) {
+        unmarkLatest(doc);
+    });
+}
+
 function buildAndImportVersions(repo, docs, versions) {
     defineLatestVersion(versions);
 
@@ -175,7 +191,10 @@ function buildAndImportVersions(repo, docs, versions) {
             buildAsciiDoc(repo);
 
             docsToImportVersionTo.forEach(function (doc) {
-                importDoc(repo, doc, version.checkout, version.label, version.latest);
+                importDoc(repo, doc, version.checkout, version.label);
+                if (version.latest) {
+                    markLatest(doc, version.checkout);
+                }
             });
         }
     });
@@ -183,7 +202,8 @@ function buildAndImportVersions(repo, docs, versions) {
 
 function importMaster(repo, docs) {
     docs.forEach(function (doc) {
-        importDoc(repo, doc, null, 'latest', true);
+        importDoc(repo, doc, 'master', 'latest');
+        markLatest(doc, 'master');
     });
 }
 
@@ -246,14 +266,13 @@ function importGuide(repo, guide) {
     bean.execute();
 }
 
-function importDoc(repo, doc, checkout, label, isLatest) {
+function importDoc(repo, doc, checkout, label) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = repoDest + repo.full_name + '/docs';
     bean.importPath = doc._path.replace('/content', '');
     bean.checkout = !!checkout ? checkout : null;
     if (!!label) {
         bean.label = label;
-        bean.isLatest = isLatest;
     }
     bean.execute();
 }

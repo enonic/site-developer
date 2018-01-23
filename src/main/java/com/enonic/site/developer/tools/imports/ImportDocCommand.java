@@ -14,13 +14,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.util.Reference;
 
 public final class ImportDocCommand
     extends ImportCommand
@@ -33,8 +31,6 @@ public final class ImportDocCommand
 
     private String checkout;
 
-    private boolean isLatest;
-
     protected void initRootContent()
     {
         if ( label == null || label.isEmpty() )
@@ -44,11 +40,6 @@ public final class ImportDocCommand
         }
 
         createDocversion();
-
-        if ( isLatest )
-        {
-            updateLatestInRootDoc();
-        }
     }
 
     private void createDocversion()
@@ -73,18 +64,6 @@ public final class ImportDocCommand
         rootContent = Optional.of( contentService.create( createContentParams ) );
 
         importPath = importPath + "/" + label;
-    }
-
-    private void updateLatestInRootDoc()
-    {
-        final Content rootDoc = contentService.getByPath( rootContent.get().getParentPath() );
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams().
-            contentId( rootDoc.getId() ).
-            requireValid( false ).
-            editor( edit -> edit.data.setReference( "latest", Reference.from( rootContent.get().getId().toString() ) ) );
-
-        contentService.update( updateContentParams );
     }
 
     @Override
@@ -159,11 +138,6 @@ public final class ImportDocCommand
     public void setLabel( final String label )
     {
         this.label = label;
-    }
-
-    public void setIsLatest( final boolean isLatest )
-    {
-        this.isLatest = isLatest;
     }
 
     public void setCheckout( final String checkout )
