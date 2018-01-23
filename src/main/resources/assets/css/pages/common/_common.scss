@@ -4,12 +4,12 @@
   @include page-header;
   @include page-footer;
 
-  &__body {
+  @at-root #{&}__body {
     display: flex;
     flex-direction: column;
   }
 
-  &__content {
+  @at-root #{&}__content {
     flex-grow: 1;
   }
 }

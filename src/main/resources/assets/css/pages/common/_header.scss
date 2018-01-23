@@ -1,6 +1,6 @@
 @mixin page-header {
 
-  &__header {
+  @at-root #{&}__header {
     padding-top: 30px;
     padding-bottom:20px;
 
@@ -86,7 +86,7 @@
     }
   }
 
-  &__header-wrapper {
+  @at-root #{&}__header-wrapper {
 
     .main-nav-toggled & {
       position: static;

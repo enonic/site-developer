@@ -1,6 +1,6 @@
 @mixin page-menu {
 
-  &__main-menu {
+  @at-root #{&}__main-menu {
 
     width: 100%;
     height: 100%;
