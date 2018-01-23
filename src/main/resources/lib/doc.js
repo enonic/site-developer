@@ -74,11 +74,11 @@ function getSearchResultName(content, hideVersion) {
     }
 
     if (isDocVersion(content)) {
+        var doc = getContentParent(content);
         if (hideVersion) {
-            return content.displayName;
+            return doc.displayName;
         }
 
-        var doc = getContentParent(content);
         return doc.displayName + ' (' + content.displayName + ')';
     }
 
