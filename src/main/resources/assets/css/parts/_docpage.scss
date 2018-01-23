@@ -342,6 +342,7 @@
   &-sticky-toc .docpage-toc {
     position: sticky;
     margin-top: 20px;
+    top: 5px; // top is required for sticky position to work
   }
 
   &.hasMenu .docpage-menu {
