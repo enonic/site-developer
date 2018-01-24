@@ -213,6 +213,7 @@
 
     &__doc {
       @import '_asciidoctor';
+      @import '_font-awesome';
 
       a {
         color: $color-anchor;
