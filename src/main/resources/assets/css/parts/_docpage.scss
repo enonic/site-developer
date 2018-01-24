@@ -19,7 +19,7 @@
   &-menu {
     background-color: $color-menu-gray;
     padding: 0 20px;
-    min-width: 270px;
+    min-width: 250px;
 
     &-wrapper {
       position: sticky;
@@ -203,13 +203,17 @@
   }
 
   &-content {
-    margin-right: 20px;
-    margin-left: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: baseline;
     padding-bottom: 30px;
+    position: relative;
+    top: -15px;
+    background-color: white;
+    width: 100%;
 
     &__doc {
       @import '_asciidoctor';
@@ -287,7 +291,7 @@
     border-left: 4px solid $color-toc-red;
     flex-shrink: 0;
     margin-bottom: 20px;
-    min-width: 200px;
+    min-width: 230px;
 
     &__list {
       .toc-list {
@@ -340,10 +344,15 @@
 
   }
 
+    &-sticky-toc {
+      background-color: $color-menu-gray;
+    }
+
+
   &-sticky-toc .docpage-toc {
     position: sticky;
     margin-top: 20px;
-    top: 5px; // top is required for sticky position to work
+    top: 20px; // top is required for sticky position to work
   }
 
   &.hasMenu .docpage-menu {
