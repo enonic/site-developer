@@ -422,7 +422,7 @@
           }
         }
 
-        &__search {
+        &-search {
           padding-bottom: 15px;
 
           input {
@@ -470,7 +470,7 @@
             }
 
             + .docpage-menu-wrapper {
-              .docpage-menu__versions, .docpage-menu__search, ol {
+              .docpage-menu__versions, .docpage-menu-search, ol {
                 display: block;
               }
             }
@@ -509,7 +509,7 @@
           }
 
           + .docpage-menu-wrapper {
-            .docpage-menu__versions, .docpage-menu__search, ol {
+            .docpage-menu__versions, .docpage-menu-search, ol {
               display: none;
             }
           }
