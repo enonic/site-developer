@@ -1,8 +1,8 @@
 @mixin page-header {
 
   &__header {
-    padding-top: 30px;
-    padding-bottom:30px;
+    padding-top: 40px;
+    padding-bottom:40px;
 
     @include media('<medium') {
       padding-top: 20px;

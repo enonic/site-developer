@@ -174,7 +174,7 @@
 </div>
 
 <div data-th-fragment="doc-versions-fragment" data-th-class="${baseClass} + '__versions'"
-     data-th-if="${versions != null} AND ${versions.size() > 1}">
+     data-th-if="${versions != null}">
     <select data-th-class="${baseClass} + '__versions-select'">
         <div data-th-each="version : ${versions}" data-th-remove="tag">
             <option data-th-text="${version.isLatest} ? 'Latest (' + ${version.label} +')' : ${version.label}"

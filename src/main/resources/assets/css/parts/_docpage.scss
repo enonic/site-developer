@@ -109,7 +109,7 @@
 
       > ol {
         margin: 0;
-        padding: 15px 0 15px 20px;
+        padding: 15px 0 30px 20px;
       }
 
     }
@@ -409,13 +409,12 @@
           margin-top: 0px;
 
           > * {
-            padding-left: 30px;
-            padding-right: 30px;
+            padding-left: 20px;
+            padding-right: 20px;
           }
 
           > ol {
-            padding-left: 50px;
-            background-color: $color-menu-gray;
+            padding-left: 40px;
           }
 
         }
