@@ -111,8 +111,8 @@
 
 
 <div data-th-fragment="page-header-logo-fragment" data-th-if="${sitePath and baseClass}" data-th-remove="tag">
-    <a data-th-class="${baseClass} + '__header-logo-link'" data-th-classappend="${inverted ? baseClass + '__header-logo-img--inverted' : ''}" title="Frontpage" data-th-href="${portal.pageUrl({'_path=' + sitePath})}">
-
+    <!--a data-th-class="${baseClass} + '__header-logo-link'" data-th-classappend="${inverted ? baseClass + '__header-logo-img--inverted' : ''}" title="Frontpage" data-th-href="${portal.pageUrl({'_path=' + sitePath})}"-->
+    <a data-th-class="${baseClass} + '__header-logo-img'" title="Frontpage" data-th-href="${portal.pageUrl({'_path=' + sitePath})}">
         <svg data-th-class="${baseClass} + '__header-logo-img'" data-th-classappend="${inverted ? baseClass + '__header-logo-img--inverted' : ''}" width="1420px" height="432px" viewBox="0 0 1420 432" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <title>Docs</title>
             <g fill="#000" fill-rule="evenodd" transform="translate(-1.000000, -121.000000)">
