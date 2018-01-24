@@ -32,6 +32,10 @@ function markLatest(doc, checkout) {
     return sudo(docLib.markLatest.bind(null, doc, checkout));
 }
 
+function setLatestOnContent(content, latest) {
+    return sudo(docLib.setLatestOnContent.bind(null, content, latest));
+}
+
 exports.post = function (req) {
     callExecuteAsync(req);
     return;
@@ -119,6 +123,7 @@ function importGuides(repo) {
 
     guides.forEach(function (guide) {
         importGuide(repo, guide);
+        setLatestOnContent(guide, true);
     });
 }
 
@@ -140,6 +145,8 @@ function importDocs(repo) {
     else {
         buildAndImportVersions(repo, docs, versions);
     }
+
+    markLatestDocs(docs, versions);
 }
 
 function removeUnusedVersions(docs, versions) {
@@ -180,6 +187,24 @@ function unmarkLatestDocs(docs) {
     });
 }
 
+function markLatestDocs(docs, versions) {
+    docs.forEach(function (doc) {
+        markLatest(doc, getLatestCheckout(versions));
+    });
+}
+
+function getLatestCheckout(versions) {
+    var checkout = 'master';
+    versions.some(function (version) {
+        if (version.latest) {
+            checkout = version.checkout;
+        }
+        return version.latest;
+    });
+
+    return checkout;
+}
+
 function buildAndImportVersions(repo, docs, versions) {
     defineLatestVersion(versions);
 
@@ -192,9 +217,6 @@ function buildAndImportVersions(repo, docs, versions) {
 
             docsToImportVersionTo.forEach(function (doc) {
                 importDoc(repo, doc, version.checkout, version.label);
-                if (version.latest) {
-                    markLatest(doc, version.checkout);
-                }
             });
         }
     });
@@ -203,7 +225,6 @@ function buildAndImportVersions(repo, docs, versions) {
 function importMaster(repo, docs) {
     docs.forEach(function (doc) {
         importDoc(repo, doc, 'master', 'latest');
-        markLatest(doc, 'master');
     });
 }
 

@@ -233,6 +233,10 @@ exports.markLatest = function (doc, checkout) {
     });
 };
 
+exports.setLatestOnContent = function (content, latest) {
+    setLatestOnContent(content, latest);
+};
+
 exports.findDocVersions = function (doc) {
     var expr = and(
         propIn('type', [CT_DOCVERSION]),
