@@ -66,7 +66,7 @@ public final class BuildAsciiDocCommand
             attribute( "toclevels", 2 ).
             tableOfContents( Placement.RIGHT ).get();
 
-        return options().backend( "html5" ).safe( SafeMode.SAFE ).attributes( attributes ).get();
+        return options().backend( "html5" ).safe( SafeMode.UNSAFE ).attributes( attributes ).get();
     }
 
     public void setSourceDir( String sourceDir )
