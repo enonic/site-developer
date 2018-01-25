@@ -45,7 +45,7 @@ function handleGet(req) {
 }
 
 function isPreviewMode(req) {
-    return req.path.indexOf('preview') != 0;
+    return req.mode === 'preview';
 }
 
 function getAvailableVersions(doc) {
