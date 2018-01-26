@@ -283,16 +283,27 @@ public abstract class ImportCommand
 
     private ExtractedDoc getAsciiDoc( final Path path )
     {
+        final ExtractedDoc extractedDoc = extractAsciiDoc( path );
+
+        processAsciiDocContent( extractedDoc, path );
+
+        return extractedDoc;
+    }
+
+    private ExtractedDoc extractAsciiDoc( final Path path )
+    {
         final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
         extractAsciiDocHtmlCommand.setPath( path.toString() );
-        final ExtractedDoc extractedDoc = extractAsciiDocHtmlCommand.execute();
+        return extractAsciiDocHtmlCommand.execute();
+    }
 
+    private void processAsciiDocContent( final ExtractedDoc extractedDoc, final Path path )
+    {
         new UrlRewriter( path, "img", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( path, "audio", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( path, "video", "src" ).rewrite( extractedDoc.getContent() );
         new DocpageUrlRewriter( path, "a", "href" ).rewrite( extractedDoc.getContent() );
-
-        return extractedDoc;
+        new YoutubeWrapper().wrap( extractedDoc.getContent() );
     }
 
     protected void postProcess()
@@ -447,5 +458,48 @@ public abstract class ImportCommand
         {
             return CONTENT_LINK;
         }
+    }
+
+    private final class YoutubeWrapper
+    {
+        private static final String IFRAME_TAG = "iframe";
+
+        private static final String SRC_ATTR = "src";
+
+        public void wrap( final Element root )
+        {
+            for ( final Element e : root.select( IFRAME_TAG ) )
+            {
+                final String src = e.attr( SRC_ATTR );
+
+                if ( isLinkToYoutube( src ) )
+                {
+                    updateParent( e );
+                }
+            }
+        }
+
+        private boolean isLinkToYoutube( final String link )
+        {
+            if ( link == null )
+            {
+                return false;
+            }
+
+            return link.contains( "www.youtube." );
+        }
+
+        private void updateParent( final Element e )
+        {
+            final Element parent = e.parent();
+
+            if ( parent == null )
+            {
+                return;
+            }
+
+            parent.addClass( "youtube-wrapper" );
+        }
+
     }
 }
