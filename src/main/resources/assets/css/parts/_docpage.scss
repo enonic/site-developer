@@ -371,10 +371,15 @@
     top: 20px; // top is required for sticky position to work
   }
 
-  &.hasMenu .docpage-menu {
+  &.type-doc .docpage-menu {
     > input, > label {
       display: none;
     }
+  }
+
+  &.type-guide .docpage-content {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   &._0-768, &._768-1024, &._1024-1280 {
@@ -405,7 +410,7 @@
       @include font-size(16);
     }
 
-    &.hasMenu {
+    &.type-doc {
       flex-direction: column;
 
       .docpage-content__navigation {
@@ -566,7 +571,7 @@
 
   }
 
-  .docpage._0-768.hasMenu {
+  .docpage._0-768.type-doc {
     .docpage-menu {
 
       > input {

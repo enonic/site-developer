@@ -36,26 +36,26 @@ function getDoc() {
 
 function createModel(doc) {
     if (isGuide(doc)) {
-        return doCreateModel(doc);
+        return doCreateModel(doc, 'guide');
     }
 
     return createDocModel(doc);
 }
 
-function doCreateModel(doc) {
+function doCreateModel(doc, type) {
     return {
         title: doc.data.title || doc.displayName,
-        content: libs.portal.processHtml({value: doc.data.html})
+        content: libs.portal.processHtml({value: doc.data.html}),
+        type: type
     };
 }
 
 function createDocModel(doc) {
-    var model = doCreateModel(doc);
+    var model = doCreateModel(doc, 'doc');
     var rootDoc = libs.util.getNearestContentByType(doc, 'doc');
     var versionContent = libs.util.getNearestContentByType(doc, 'docversion');
     var versions = getVersions(rootDoc, versionContent);
     var menu = getMenu(versionContent);
-    var hasMenu = true;
 
     var serviceUrl = libs.portal.serviceUrl({
         service: 'search',
@@ -72,7 +72,6 @@ function createDocModel(doc) {
     model.serviceUrl = serviceUrl;
     model.versions = versions;
     model.menu = menu;
-    model.hasMenu = hasMenu;
     model.sitePath = libs.portal.getSite()['_path'];
 
     if (!!menu) {
