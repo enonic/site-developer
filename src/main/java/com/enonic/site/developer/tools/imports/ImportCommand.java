@@ -31,6 +31,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -61,6 +62,8 @@ public abstract class ImportCommand
     protected ApplicationKey applicationKey;
 
     protected ContentService contentService;
+
+    protected PortalUrlService portalUrlService;
 
     public final void execute()
         throws Exception
@@ -393,7 +396,7 @@ public abstract class ImportCommand
             {
                 final Path resolvedPath = resolveLink( href );
                 final Content content = getContentByPath( resolvedPath );
-                return getPrefix( content.getType() ) + content.getId();
+                return makeUrl( content );
             }
             catch ( final ContentNotFoundException e )
             {
@@ -413,16 +416,19 @@ public abstract class ImportCommand
             return contentService.getByPath( makeRepoPath( path ) );
         }
 
-        protected String getPrefix( final ContentTypeName contentTypeName )
+        protected String makeUrl( final Content content )
         {
+            final ContentTypeName contentTypeName = content.getType();
+
             if ( contentTypeName.isImageMedia() )
             {
-                return IMAGE_LINK;
+                return IMAGE_LINK + content.getId();
             }
 
-            if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
+            if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() ||
+                contentTypeName.isVectorMedia() )
             {
-                return MEDIA_LINK;
+                return MEDIA_LINK + content.getId();
             }
 
             return "";
@@ -454,9 +460,9 @@ public abstract class ImportCommand
             return super.getContentByPath( path );
         }
 
-        protected String getPrefix( final ContentTypeName contentTypeName )
+        protected String makeUrl( final Content content )
         {
-            return CONTENT_LINK;
+            return CONTENT_LINK + content.getId();
         }
     }
 
