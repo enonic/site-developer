@@ -217,6 +217,8 @@
       @import '_asciidoctor';
       @import '_font-awesome';
 
+      width: 100%;
+
       a {
         color: $color-anchor;
       }
@@ -278,8 +280,8 @@
     #content {
       margin-top: 0;
 
-      video {
-        max-width: 100%;
+      video, audio {
+        width: 100%;
       }
     }
 
