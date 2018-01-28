@@ -17,9 +17,9 @@
   }
 
   &-menu {
-    background-color: $color-menu-gray;
+    background-color: $color-mine-shaft;
     padding: 0 20px;
-    min-width: 250px;
+    min-width: 230px;
 
     &-wrapper {
       position: sticky;
@@ -122,7 +122,7 @@
       @include font-size(18);
 
       a {
-        color: $color-black;
+        color: $color-white;
       }
     }
 
@@ -174,10 +174,10 @@
         width: 140px;
         background: transparent;
         border: none;
-        color: $color-dove-gray;
+        color: $color-gallery;
 
         option {
-          color: $color-dove-gray;;
+          color: $color-dove-gray;
         }
 
         &:focus {
@@ -203,13 +203,11 @@
   }
 
   &-content {
-    padding-right: 20px;
-    padding-left: 20px;
+    padding: 30px;
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: baseline;
-    padding-bottom: 30px;
     position: relative;
     top: -15px;
     background-color: white;
@@ -265,7 +263,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      margin: 15px 0px 24px 0px;
+      margin: 0px 0px 24px 0px;
 
       h2 {
         margin: 0;
@@ -362,7 +360,7 @@
   }
 
   &-sticky-toc {
-    background-color: $color-menu-gray;
+    background-color: $color-mine-shaft;
   }
 
   &-sticky-toc .docpage-toc {
