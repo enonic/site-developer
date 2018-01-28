@@ -79,19 +79,19 @@
           }
 
           a {
-            color: $color-cod-gray;
+            color: $color-menu-gray;
 
             &:hover {
-              color: $color-black;
+              color: $color-white;
             }
           }
 
           li a {
-            color: $color-dove-gray;
+            color: $color-silver;
             @include font-size(15);
 
             &:hover {
-              color: $color-black;
+              color: $color-aqua-haze;
             }
           }
 
@@ -174,7 +174,7 @@
         width: 140px;
         background: transparent;
         border: none;
-        color: $color-gallery;
+        color: $color-dove-gray;
 
         option {
           color: $color-dove-gray;
@@ -225,8 +225,8 @@
     &__navigation {
       display: flex;
       justify-content: space-between;
-      margin-top: 15px !important;
       width: 100%;
+      margin-bottom: 10px;
 
       &-breadcrumbs {
         span {
@@ -235,7 +235,7 @@
           }
 
           a {
-            padding: 5px;
+            padding: 0px 5px 0px 5px;
           }
 
           &:last-child {
