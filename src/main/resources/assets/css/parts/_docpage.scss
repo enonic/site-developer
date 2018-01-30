@@ -301,6 +301,17 @@
         }
       }
     }
+
+    .quoteblock {
+      blockquote {
+        font-size: 1.8rem;
+
+        &:before {
+          font-size: 3rem;
+          line-height: 2.5rem;
+        }
+      }
+    }
   }
 
   &-toc {
