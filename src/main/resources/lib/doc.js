@@ -103,7 +103,7 @@ function findDocVersionByCheckout(doc, checkout) {
     var expr = and(
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'),
-        like('data.checkout', checkout));
+        like('data.commit', checkout));
 
     var result = queryContent({
         query: expr,

@@ -36,11 +36,11 @@ public final class CloneRepoCommand
 
     private String checkout; // Branch or commit to checkout
 
-    public void execute()
+    public String execute()
     {
         try
         {
-            doExecute();
+            return doExecute();
         }
         catch ( Throwable t )
         {
@@ -49,10 +49,11 @@ public final class CloneRepoCommand
         }
     }
 
-    private void doExecute() throws Exception
+    private String doExecute()
+        throws Exception
     {
         final String gitRepositoryUri = resolveGitRepositoryUri();
-        cloneGitRepository( gitRepositoryUri );
+        return cloneGitRepository( gitRepositoryUri );
     }
 
     private String resolveGitRepositoryUri()
@@ -68,10 +69,10 @@ public final class CloneRepoCommand
         return GITHUB_URL + ENONIC_REPOSITORY_PREFIX + repository + GIT_REPOSITORY_SUFFIX;
     }
 
-    private void cloneGitRepository( final String gitRepositoryUri )
+    private String cloneGitRepository( final String gitRepositoryUri )
         throws GitAPIException, IOException
     {
-        LOGGER.info( "Retrieving Git repository from \"" + gitRepositoryUri + "\" ..." );
+        LOGGER.info( "Retrieving Git repository from [ " + makeUriWithCommit( gitRepositoryUri ) + " ] ..." );
 
         // Creates the destination directory if it does not exist and cleans it
         final File destinationDirectory = new File( destination );
@@ -94,6 +95,8 @@ public final class CloneRepoCommand
                 git.checkout().setName( checkout ).call();
             }
 
+            final String currentCommitId = git.log().call().iterator().next().getId().getName();
+
             //Closes the repository
             git.getRepository().close();
 
@@ -103,14 +106,16 @@ public final class CloneRepoCommand
             // Copies the content from the temporary folder
             final CopyFileVisitor copyFileVisitor = new CopyFileVisitor( temporaryDirectory.toPath(), destinationDirectory.toPath() );
             Files.walkFileTree( temporaryDirectory.toPath(), copyFileVisitor );
+
+            LOGGER.info( "Git repository retrieved." );
+
+            return currentCommitId;
         }
         finally
         {
             // Removes the temporary folder
             FileUtils.deleteDirectory( temporaryDirectory );
         }
-
-        LOGGER.info( "Git repository retrieved." );
     }
 
     private void removeFixGitContent( File directory )
@@ -119,6 +124,16 @@ public final class CloneRepoCommand
         // Removes the .git directory and README.md file
         FileUtils.deleteDirectory( new File( directory, ".git" ) );
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
+    }
+
+    private String makeUriWithCommit( final String gitRepositoryUri )
+    {
+        if ( checkout != null )
+        {
+            return gitRepositoryUri + " : " + checkout;
+        }
+
+        return gitRepositoryUri;
     }
 
     private class CopyFileVisitor

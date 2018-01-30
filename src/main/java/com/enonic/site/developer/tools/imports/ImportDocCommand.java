@@ -29,7 +29,7 @@ public final class ImportDocCommand
 
     private String label;
 
-    private String checkout;
+    private String commit;
 
     protected void initRootContent()
     {
@@ -48,9 +48,9 @@ public final class ImportDocCommand
 
         final PropertyTree data = new PropertyTree();
 
-        if ( checkout != null )
+        if ( commit != null )
         {
-            data.addString( "checkout", checkout );
+            data.addString( "commit", commit );
         }
 
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -140,9 +140,9 @@ public final class ImportDocCommand
         this.label = label;
     }
 
-    public void setCheckout( final String checkout )
+    public void setCommit( final String commit )
     {
-        this.checkout = checkout;
+        this.commit = commit;
     }
 
     private static final class MenuItem
