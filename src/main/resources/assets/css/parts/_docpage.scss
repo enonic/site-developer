@@ -472,7 +472,7 @@
           display: block;
           position: absolute;
           top: 15px;
-          left: 32px;
+          left: 22px;
           opacity: 0;
           z-index: 2;
           cursor: pointer;
@@ -515,7 +515,7 @@
           background: $color-white;
           transition: 0.3s;
           top: 21px;
-          left: 30px;
+          left: 20px;
 
           &:before, &:after {
             display: inline-block;
@@ -545,6 +545,10 @@
           }
         }
 
+      }
+
+      .docpage-content {
+        padding: 20px;
       }
     }
   }
@@ -580,7 +584,7 @@
       }
 
       > label {
-        right: 28px;
+        right: 21px;
         left: auto;
       }
 
@@ -591,7 +595,7 @@
       &__header-logo-small-link:before {
         content: '';
         position: absolute;
-        left: 30px;
+        left: 20px;
         top: 12px;
         background: url('../img/icons/favicon-white.svg') 0 0 no-repeat;
         height: 23px;
