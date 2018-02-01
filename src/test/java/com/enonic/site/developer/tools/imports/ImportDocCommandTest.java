@@ -105,7 +105,7 @@ public class ImportDocCommandTest
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 5 ) ).update( updateContentParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 9 ) ).update( updateContentParamsArgumentCaptor.capture() );
 
         final EditableContent content = updateContentParamsArgumentCaptor.getAllValues().stream().map( params -> {
             final EditableContent editableContent =
