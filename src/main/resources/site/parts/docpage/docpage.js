@@ -27,6 +27,7 @@ import {
 import {and, decendantOf, propEq} from '/lib/query';
 import {getNearestContentByType} from '/lib/util';
 
+
 //──────────────────────────────────────────────────────────────────────────────
 // Constants
 //──────────────────────────────────────────────────────────────────────────────
@@ -52,7 +53,7 @@ function getVersions(rootDoc, currentVersion) {
     result.hits.forEach((version) => {
         versions.push({
             label: version.displayName,
-            isLatest: version._id === rootDoc.data.latest,
+            isLatest: version.data.latest,
             isCurrent: version._id === currentVersion._id,
             url: pageUrl({path: version._path})
         });
@@ -185,9 +186,11 @@ export function get() {
         };
     }
 
+    let type = isGuide(doc) ? 'guide' : 'doc';
     let model = {
         title: doc.data.title || doc.displayName,
-        content: processHtml({value: doc.data.html})
+        content: processHtml({value: doc.data.html}),
+        type
     }; //log.info(`model:${toStr(model)}`);
     if (!isGuide(doc)) { model = Object.assign({}, model, createDocModel(doc)); }
     //log.info(`model modified:${toStr(model)}`);

@@ -10,6 +10,7 @@
     background: $color-white;
     border: 1px solid #eaeaea;
     overflow: hidden;
+    margin-bottom: 15px;
 
     > *:not(.cards__card-teaser) {
       margin: 0;
@@ -44,6 +45,7 @@
 
     &-text {
       padding-top: 5px;
+      color: $color-cod-gray;
     }
 
     &-tags {
@@ -54,9 +56,9 @@
 
       li {
         display: inline-block;
-        background: #F6F6F6;
+        background: $color-menu-gray;
         border-radius: 3px;
-        color: #B8B8B8;
+        color: $color-dark-gray;
         @include font-size(12);
         margin: 2px;
         padding: 4px 6px;

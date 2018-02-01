@@ -2,6 +2,7 @@ var libs = {
     portal: require('/lib/xp/portal'),
     content: require('/lib/xp/content'),
     thymeleaf: require('/lib/xp/thymeleaf'),
+    doc: require('/lib/doc')
 };
 
 exports.get = handleGet;
@@ -13,8 +14,9 @@ function handleGet(req) {
 
     if (isPreview) {
         var view = resolve('/site/pages/available-versions/available-versions.html');
+
         var model = {
-            versions: getVersions(doc)
+            versions: getAvailableVersions(doc)
         };
 
         return {
@@ -23,11 +25,11 @@ function handleGet(req) {
         }
     }
     else {
-        var latestDocVersionId = doc.data.latest;
+        var latestDocVersion = libs.doc.findLatestDocVersion(doc);
 
-        if (!!latestDocVersionId) {
+        if (!!latestDocVersion) {
             var docVersionUrl = libs.portal.pageUrl({
-                id: latestDocVersionId,
+                id: latestDocVersion._id,
             });
 
             return {
@@ -43,26 +45,21 @@ function handleGet(req) {
 }
 
 function isPreviewMode(req) {
-    return req.path.indexOf('preview') != 0;
+    return req.mode === 'preview';
 }
 
-function getVersions(doc) {
-    var expr = "type = '" + app.name + ":docversion' AND _path LIKE '/content" + doc._path + "/*' ";
+function getAvailableVersions(doc) {
+    var availableVersions = [];
+    var docVersions = libs.doc.findDocVersions(doc);
 
-    var result = libs.content.query({
-        query: expr,
-        start: 0,
-        count: 100
-    });
-
-    var versions = [];
-    result.hits.forEach(function (version) {
-        versions.push({
-            label: version.displayName,
-            isLatest: version._id == doc.data.latest,
-            url: libs.portal.pageUrl({path: version._path})
+    docVersions.forEach(function (docVersion) {
+        availableVersions.push({
+            label: docVersion.displayName,
+            isLatest: docVersion.data.latest,
+            url: libs.portal.pageUrl({path: docVersion._path})
         })
     });
 
-    return versions;
+    return availableVersions;
 }
+

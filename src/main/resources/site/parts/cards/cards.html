@@ -1,17 +1,17 @@
 <div class="cards">
     <div data-th-if="${cards.size()} > 0" data-th-remove="tag">
-        <div data-th-each="card : ${cards}" data-th-remove="tag">
-            <article class="cards__card">
+        <a data-th-each="card : ${cards}" data-th-href="${card.url}" >
+              <article data-th-class="cards__card">
                 <div data-th-class="cards__card-teaser" data-th-if="${card.image}">
                     <img data-th-src="${portal.imageUrl({'_id=' + card.image, '_scale=block(400,226)'})}">
                 </div>
-                <h3 class="cards__card-title"><a data-th-href="${card.url}" data-th-text="${card.title}">Title</a></h3>
-                <p class="cards__card-text" data-th-text="${card.text}">Text</p>
+                <h3 class="cards__card-title" data-th-text="${card.title}">Cool article</h3>
+                <p class="cards__card-text" data-th-text="${card.text}">A pitch you cannot resist</p>
                 <ul class="cards__card-tags" data-th-if="${card.tags}">
                     <li data-th-each="tag : ${card.tags}" data-th-text="${tag}"/>
                 </ul>
-            </article>
-        </div>
+              </article>
+        </a>
     </div>
     <div data-th-unless="${cards.size()} > 0" data-th-remove="tag">
         <div class=""><h3 style="text-align: center">Add some docs!</h3></div>

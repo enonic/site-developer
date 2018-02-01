@@ -31,6 +31,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -61,6 +62,8 @@ public abstract class ImportCommand
     protected ApplicationKey applicationKey;
 
     protected ContentService contentService;
+
+    protected PortalUrlService portalUrlService;
 
     public final void execute()
         throws Exception
@@ -283,16 +286,27 @@ public abstract class ImportCommand
 
     private ExtractedDoc getAsciiDoc( final Path path )
     {
+        final ExtractedDoc extractedDoc = extractAsciiDoc( path );
+
+        processAsciiDocContent( extractedDoc, path );
+
+        return extractedDoc;
+    }
+
+    private ExtractedDoc extractAsciiDoc( final Path path )
+    {
         final ExtractAsciiDocHtmlCommand extractAsciiDocHtmlCommand = new ExtractAsciiDocHtmlCommand();
         extractAsciiDocHtmlCommand.setPath( path.toString() );
-        final ExtractedDoc extractedDoc = extractAsciiDocHtmlCommand.execute();
+        return extractAsciiDocHtmlCommand.execute();
+    }
 
+    private void processAsciiDocContent( final ExtractedDoc extractedDoc, final Path path )
+    {
         new UrlRewriter( path, "img", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( path, "audio", "src" ).rewrite( extractedDoc.getContent() );
         new UrlRewriter( path, "video", "src" ).rewrite( extractedDoc.getContent() );
         new DocpageUrlRewriter( path, "a", "href" ).rewrite( extractedDoc.getContent() );
-
-        return extractedDoc;
+        new YoutubeWrapper().wrap( extractedDoc.getContent() );
     }
 
     protected void postProcess()
@@ -382,7 +396,7 @@ public abstract class ImportCommand
             {
                 final Path resolvedPath = resolveLink( href );
                 final Content content = getContentByPath( resolvedPath );
-                return getPrefix( content.getType() ) + content.getId();
+                return makeUrl( content );
             }
             catch ( final ContentNotFoundException e )
             {
@@ -402,16 +416,19 @@ public abstract class ImportCommand
             return contentService.getByPath( makeRepoPath( path ) );
         }
 
-        protected String getPrefix( final ContentTypeName contentTypeName )
+        protected String makeUrl( final Content content )
         {
+            final ContentTypeName contentTypeName = content.getType();
+
             if ( contentTypeName.isImageMedia() )
             {
-                return IMAGE_LINK;
+                return IMAGE_LINK + content.getId();
             }
 
-            if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() )
+            if ( contentTypeName.isAudioMedia() || contentTypeName.isVideoMedia() || contentTypeName.isUnknownMedia() ||
+                contentTypeName.isVectorMedia() )
             {
-                return MEDIA_LINK;
+                return MEDIA_LINK + content.getId();
             }
 
             return "";
@@ -443,9 +460,52 @@ public abstract class ImportCommand
             return super.getContentByPath( path );
         }
 
-        protected String getPrefix( final ContentTypeName contentTypeName )
+        protected String makeUrl( final Content content )
         {
-            return CONTENT_LINK;
+            return CONTENT_LINK + content.getId();
         }
+    }
+
+    private final class YoutubeWrapper
+    {
+        private static final String IFRAME_TAG = "iframe";
+
+        private static final String SRC_ATTR = "src";
+
+        public void wrap( final Element root )
+        {
+            for ( final Element e : root.select( IFRAME_TAG ) )
+            {
+                final String src = e.attr( SRC_ATTR );
+
+                if ( isLinkToYoutube( src ) )
+                {
+                    updateParent( e );
+                }
+            }
+        }
+
+        private boolean isLinkToYoutube( final String link )
+        {
+            if ( link == null )
+            {
+                return false;
+            }
+
+            return link.contains( "www.youtube." );
+        }
+
+        private void updateParent( final Element e )
+        {
+            final Element parent = e.parent();
+
+            if ( parent == null )
+            {
+                return;
+            }
+
+            parent.addClass( "youtube-wrapper" );
+        }
+
     }
 }
