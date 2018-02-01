@@ -72,7 +72,7 @@ const WEBPACK_CONFIG = {
     }, // output
     resolve: {
         alias: {
-            '/content-types': path.resolve(__dirname, SRC_DIR, 'site/content-types/index.es'),
+            '/content-types': path.resolve(__dirname, SRC_DIR, 'site', 'content-types', 'index.js'),
             '/lib': path.resolve(__dirname, SRC_DIR, 'lib')
         },
         extensions: ['.es', '.js', '.json']
