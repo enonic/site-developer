@@ -29,9 +29,9 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -57,13 +57,13 @@ public abstract class ImportCommand
 
     protected String importPath;
 
+    protected String commit;
+
     protected Optional<Content> rootContent;
 
     protected ApplicationKey applicationKey;
 
     protected ContentService contentService;
-
-    protected PortalUrlService portalUrlService;
 
     public final void execute()
         throws Exception
@@ -129,20 +129,20 @@ public abstract class ImportCommand
         {
             if ( isAsciiDocNameSakePresent( path ) )
             {
-                createEmptyDocpage( path );
+                createOrUpdateDocpage( path );
             }
             else
             {
-                createFolder( path );
+                createOrUpdateFolder( path );
             }
         }
         else if ( isCompiledAsciiDoc( path ) )
         {
-            createEmptyDocpage( path );
+            createOrUpdateDocpage( path );
         }
         else
         {
-            createMedia( path );
+            createOrUpdateMedia( path );
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class ImportCommand
         return new File( path.toString() + ".html" ).exists();
     }
 
-    private void createEmptyDocpage( final Path path )
+    private void createOrUpdateDocpage( final Path path )
     {
         if ( isRootAsciiDoc( path ) )
         {
@@ -167,15 +167,39 @@ public abstract class ImportCommand
 
         if ( contentService.contentExists( repoPath ) )
         {
-            return;
+            updateContentWithCommitId( repoPath );
         }
+        else
+        {
+            createDocpage( repoPath );
+        }
+    }
 
+    protected Content updateContentWithCommitId( final ContentPath repoPath )
+    {
+        LOGGER.info( "Setting commit id [" + commit + "] in [" + repoPath + "]" );
+
+        final Content content = contentService.getByPath( repoPath );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams().
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.data.setString( "commit", commit );
+            } );
+
+        return contentService.update( updateContentParams );
+    }
+
+    private void createDocpage( final ContentPath repoPath )
+    {
         LOGGER.info( "Creating empty docpage " + repoPath );
 
-        final String name = FilenameUtils.getBaseName( path.getFileName().toString() );
+        final String name = FilenameUtils.getBaseName( repoPath.getName().toString() );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "commit", commit );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
+            contentData( data ).
             name( name ).
             displayName( name ).
             parent( repoPath.getParentPath() ).
@@ -185,23 +209,38 @@ public abstract class ImportCommand
         contentService.create( createContentParams );
     }
 
-    private void createFolder( final Path path )
+    private void createOrUpdateFolder( final Path path )
     {
         final ContentPath repoPath = makeRepoPath( path );
 
         if ( contentService.contentExists( repoPath ) )
         {
-            return;
+            updateContentWithCommitId( repoPath );
+        }
+        else
+        {
+            createFolder( repoPath );
         }
 
-        LOGGER.info( "Creating folder " + repoPath );
+    }
+
+    private void createFolder( final ContentPath repoPath )
+    {
+        LOGGER.info( "Creating folder [" + repoPath + "]" );
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "commit", commit );
+
+        final String name = repoPath.getName();
+
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            name( path.getFileName().toString() ).
-            displayName( path.getFileName().toString() ).
+            contentData( data ).
+            name( name ).
+            displayName( name ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.folder() ).
             build();
+
         contentService.create( createContentParams );
     }
 
@@ -211,22 +250,51 @@ public abstract class ImportCommand
                                      sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
     }
 
-    private void createMedia( final Path path )
+    private void createOrUpdateMedia( final Path path )
     {
         final ContentPath repoPath = makeRepoPath( path );
 
         if ( contentService.contentExists( repoPath ) )
         {
-            return;
+            updateMedia( path, repoPath );
         }
+        else
+        {
+            createMedia( path, repoPath );
+        }
+    }
 
+    private void updateMedia( final Path path, final ContentPath repoPath )
+    {
+        LOGGER.info( "Updating media " + repoPath );
+
+        final Content media = contentService.getByPath( repoPath );
+
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().name( path.getFileName().toString() ).content( media.getId() ).byteSource( loadMedia( path ) );
+
+        contentService.update( updateMediaParams );
+
+        // unable to set data in updateMedia, have to update it after
+        updateContentWithCommitId( repoPath );
+    }
+
+    private void createMedia( final Path path, final ContentPath repoPath )
+    {
         LOGGER.info( "Creating media " + repoPath );
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "commit", commit );
+
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadMedia( path ) ).
             name( path.getFileName().toString() ).
             parent( repoPath.getParentPath() );
 
         contentService.create( createMediaParams );
+
+        // unable to set data in createMedia, have to update it after
+        updateContentWithCommitId( repoPath );
     }
 
     private ByteSource loadMedia( final Path filePath )
@@ -261,7 +329,7 @@ public abstract class ImportCommand
             ? content.getDisplayName()
             : asciiDoc.getTitle();
 
-        LOGGER.info( "Imorting asciidoc into " + content.getPath() );
+        LOGGER.info( "Importing asciidoc into " + content.getPath() );
         final UpdateContentParams updateContentParams = new UpdateContentParams().
             contentId( content.getId() ).
             editor( edit -> {
@@ -338,6 +406,11 @@ public abstract class ImportCommand
     public void setImportPath( final String importPath )
     {
         this.importPath = importPath;
+    }
+
+    public void setCommit( final String commit )
+    {
+        this.commit = commit;
     }
 
     @Override

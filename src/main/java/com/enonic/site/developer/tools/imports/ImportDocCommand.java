@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -29,8 +30,6 @@ public final class ImportDocCommand
 
     private String label;
 
-    private String commit;
-
     protected void initRootContent()
     {
         if ( label == null || label.isEmpty() )
@@ -39,7 +38,29 @@ public final class ImportDocCommand
             return;
         }
 
-        createDocversion();
+        createOrUpdateDocversion();
+    }
+
+    private void createOrUpdateDocversion()
+    {
+        final ContentPath docversionContentPath = ContentPath.from( importPath + "/" + label );
+
+        if ( contentService.contentExists( docversionContentPath ) )
+        {
+            updateDocversion( docversionContentPath );
+        }
+        else
+        {
+            createDocversion();
+        }
+
+        importPath = importPath + "/" + label;
+    }
+
+    private void updateDocversion( final ContentPath docversionContentPath )
+    {
+        final Content docVersion = updateContentWithCommitId( docversionContentPath );
+        rootContent = Optional.of( docVersion );
     }
 
     private void createDocversion()
@@ -47,11 +68,7 @@ public final class ImportDocCommand
         LOGGER.info( "Creating docversion content [" + label + "]" );
 
         final PropertyTree data = new PropertyTree();
-
-        if ( commit != null )
-        {
-            data.addString( "commit", commit );
-        }
+        data.addString( "commit", commit );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( data ).
@@ -62,8 +79,6 @@ public final class ImportDocCommand
             build();
 
         rootContent = Optional.of( contentService.create( createContentParams ) );
-
-        importPath = importPath + "/" + label;
     }
 
     @Override
@@ -77,15 +92,15 @@ public final class ImportDocCommand
 
     private void importMenu()
     {
-        final Path filePath = sourceDir.resolve( MENU_FILE_NAME );
+        final Path menuFilePath = sourceDir.resolve( MENU_FILE_NAME );
 
-        if ( !filePath.toFile().exists() )
+        if ( !menuFilePath.toFile().exists() )
         {
             LOGGER.info( "No [" + MENU_FILE_NAME + "] found." );
             return;
         }
 
-        try (final FileInputStream menuInputStream = new FileInputStream( filePath.toFile() ))
+        try (final FileInputStream menuInputStream = new FileInputStream( menuFilePath.toFile() ))
         {
             final ObjectMapper mapper = new ObjectMapper();
             final MenuItem menuRoot = mapper.readValue( menuInputStream, MenuItem.class );
@@ -138,11 +153,6 @@ public final class ImportDocCommand
     public void setLabel( final String label )
     {
         this.label = label;
-    }
-
-    public void setCommit( final String commit )
-    {
-        this.commit = commit;
     }
 
     private static final class MenuItem

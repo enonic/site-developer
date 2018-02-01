@@ -5,7 +5,10 @@ var contextLib = require('/lib/xp/context');
 var contentLib = require('/lib/xp/content');
 var docLib = require('/lib/doc');
 
-var repoDest = './docs-repos/';
+var REPO_DEST = './docs-repos/';
+var DOCS_PATH = '/docs';
+var MASTER_BRANCH = 'master';
+var DRAFT_BRANCH = 'draft';
 
 function sudo(callback) {
     return contextLib.run({
@@ -24,12 +27,24 @@ function removeContent(params) {
     return sudo(contentLib.delete.bind(null, params));
 }
 
+function getContent(params) {
+    return sudo(contentLib.get.bind(null, params));
+}
+
+function publish(params) {
+    return sudo(contentLib.publish.bind(null, params));
+}
+
 function unmarkLatest(params) {
     return sudo(docLib.unmarkLatest.bind(null, params));
 }
 
 function markLatest(doc, checkout) {
     return sudo(docLib.markLatest.bind(null, doc, checkout));
+}
+
+function findContentsNotMarkedWithCommitId(doc, label, commitId) {
+    return sudo(docLib.findContentsNotMarkedWithCommitId.bind(null, doc, label, commitId));
 }
 
 function setLatestOnContent(content, latest) {
@@ -64,8 +79,6 @@ function doExecute(req) {
         return;
     }
 
-    cloneMaster(repo);
-    buildMaster(repo);
     importGuides(repo);
     importDocs(repo);
 }
@@ -84,7 +97,7 @@ function isRepoReferencedByAnyContent(repoUrl) {
         count: 0
     });
 
-    log.info('Docs found from repo "' + repoUrl + '" - ' + result.total);
+    log.info('Docs and guides referencing repo "' + repoUrl + '" - ' + result.total);
 
     return result.total > 0;
 };
@@ -121,6 +134,9 @@ function importGuides(repo) {
         return;
     }
 
+    cloneMaster(repo);
+    buildMaster(repo);
+
     guides.forEach(function (guide) {
         importGuide(repo, guide);
         setLatestOnContent(guide, true);
@@ -137,6 +153,7 @@ function importDocs(repo) {
     var versions = getDocVersions(repo);
 
     unmarkLatestDocs(docs);
+    defineLatestVersion(versions);
     buildAndImportVersions(repo, docs, versions);
     removeUnusedVersions(docs, versions);
     markLatestDocs(docs, versions);
@@ -149,29 +166,21 @@ function removeUnusedVersions(docs, versions) {
 }
 
 function doRemoveUnusedVersions(doc, versions) {
-    var docVersions = findDocVersions(doc);
+    var docVersions = docLib.findDocVersions(doc);
     docVersions.forEach(function (docVersion) {
-        var isUsed = versions.some(function (version) {
+        var isInVersionsJson = versions.some(function (version) {
             return version.commit == docVersion.data.commit;
         });
 
-        if (!isUsed) {
-            log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName)
+        if (!isInVersionsJson) {
+            log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName);
+            var isDocVersionPublished = isContentPublished(docVersion);
             removeContent({key: docVersion._id});
+            if (isDocVersionPublished) {
+                publishTree(docVersion);
+            }
         }
     });
-}
-
-function findDocVersions(doc) {
-    var expr = "type = '" + app.name + ":docversion' AND _path LIKE '/content" + doc._path + "/*' ";
-
-    var result = queryContent({
-        query: expr,
-        start: 0,
-        count: 100
-    });
-
-    return result.hits;
 }
 
 function unmarkLatestDocs(docs) {
@@ -181,8 +190,10 @@ function unmarkLatestDocs(docs) {
 }
 
 function markLatestDocs(docs, versions) {
+    var latestCheckout = getLatestCheckout(versions);
+
     docs.forEach(function (doc) {
-        markLatest(doc, getLatestCheckout(versions));
+        markLatest(doc, latestCheckout);
     });
 }
 
@@ -200,10 +211,10 @@ function getLatestCheckout(versions) {
 }
 
 function buildAndImportVersions(repo, docs, versions) {
-    defineLatestVersion(versions);
+    var branches = getBranches(repo);
 
     versions.forEach(function (version) {
-        var commitId = cloneRepo(repo, version.checkout);
+        var commitId = getCommitId(version.checkout, branches);
         version.commit = commitId;
 
         var docsToImportVersionTo = getDocsToImportVersionTo(docs, commitId);
@@ -212,17 +223,39 @@ function buildAndImportVersions(repo, docs, versions) {
             buildAsciiDoc(repo);
         }
 
-            docsToImportVersionTo.forEach(function (doc) {
-                importDoc(repo, doc, commitId, version.label);
-            });
+        docsToImportVersionTo.forEach(function (doc) {
+            importDoc(repo, doc, commitId, version.label);
+            removeOldContentsFromDoc(doc, version.label, commitId);
+            var docVersion = docLib.findDocVersionByCheckout(doc, commitId);
+            if (isContentPublished(docVersion)) {
+                publishTree(docVersion);
+            }
+        });
     });
+}
+
+// idea is that checkout is rather branch name or commit id, checking if checkout is in branches list
+function getCommitId(checkout, branches) {
+    var result = checkout;
+
+    branches.some(function (branch) {
+        if (branch.name == checkout) {
+            result = branch.id;
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    return result;
 }
 
 function getDocsToImportVersionTo(docs, commitId) {
     var docsToImport = [];
 
     docs.forEach(function (doc) {
-        var docVersions = findDocVersions(doc);
+        var docVersions = docLib.findDocVersions(doc);
         var isUpToDate = docVersions.some(function (docVersion) {
             return commitId == docVersion.data.commit;
         });
@@ -252,6 +285,32 @@ function defineLatestVersion(versions) {
     }
 }
 
+function removeOldContentsFromDoc(doc, label, commitId) {
+    var contents = findContentsNotMarkedWithCommitId(doc, label, commitId);
+
+    contents.forEach(function (content) {
+        log.info('Removing ' + content._path);
+        removeContent({key: content._id});
+    });
+}
+
+function isContentPublished(content) {
+    return !!getContent({
+        key: content._id,
+        branch: MASTER_BRANCH
+    })
+}
+
+function publishTree(content) {
+    log.info('Publishing ' + content._path);
+
+    publish({
+        keys: [content._id],
+        sourceBranch: DRAFT_BRANCH,
+        targetBranch: MASTER_BRANCH
+    })
+}
+
 function makeVersionsJsonWithMaster() {
     return [
         {
@@ -262,10 +321,29 @@ function makeVersionsJsonWithMaster() {
     ];
 }
 
+function getBranches(repo) {
+    var bean = __.newBean('com.enonic.site.developer.tools.repo.GetBranchesCommand');
+    bean.repository = repo.html_url;
+
+    var branches = __.toNativeObject(bean.execute());
+
+    var result = [];
+
+    branches.forEach(function (branchStr) {
+        var branchArr = branchStr.split('=');
+        result.push({
+            name: branchArr[0],
+            id: branchArr[1]
+        });
+    });
+
+    return result;
+}
+
 function cloneRepo(repo, checkout) {
     var bean = __.newBean('com.enonic.site.developer.tools.repo.CloneRepoCommand');
     bean.repository = repo.html_url;
-    bean.destination = repoDest + repo.full_name;
+    bean.destination = REPO_DEST + repo.full_name;
     bean.repoName = repo.full_name;
     if (!!checkout) {
         bean.checkout = checkout;
@@ -276,23 +354,23 @@ function cloneRepo(repo, checkout) {
 
 function buildAsciiDoc(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.asciidoc.BuildAsciiDocCommand');
-    bean.sourceDir = repoDest + repo.full_name + '/docs';
+    bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.repoName = repo.full_name;
     bean.execute();
 }
 
 function importGuide(repo, guide) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
-    bean.sourceDir = repoDest + repo.full_name + '/docs';
+    bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = guide._path.replace('/content', '');
     bean.execute();
 }
 
 function importDoc(repo, doc, commit, label) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
-    bean.sourceDir = repoDest + repo.full_name + '/docs';
+    bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = doc._path.replace('/content', '');
-    bean.commit = !!commit ? commit : null;
+    bean.commit = commit;
     if (!!label) {
         bean.label = label;
     }
@@ -300,8 +378,8 @@ function importDoc(repo, doc, commit, label) {
 }
 
 function getDocVersions(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.imports.GetVersionsCommand');
-    bean.sourceDir = repoDest + repo.full_name + '/docs';
+    var bean = __.newBean('com.enonic.site.developer.tools.repo.GetVersionsCommand');
+    bean.repository = repo.full_name;
     var versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
 
     if (!versionsJson || !versionsJson.versions || versionsJson.versions.length == 0) {

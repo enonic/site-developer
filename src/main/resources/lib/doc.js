@@ -269,3 +269,23 @@ exports.findLatestDocVersion = function (doc) {
 
     return null;
 };
+
+exports.findContentsNotMarkedWithCommitId = function (doc, label, commitId) {
+    var expr = and(
+        like('_path', '/content' + doc._path + '/' + label + '/*'),
+        "data.commit NOT LIKE '" + commitId + "'");
+
+    var result = queryContent({
+        query: expr,
+        start: 0,
+        count: 1000
+    });
+
+    return result.hits.filter(function (hit) { // by some reason query returns contents with right commit ids, have to filter those
+        return hit.data.commit != commitId;
+    });
+};
+
+exports.findDocVersionByCheckout = function (doc, checkout) {
+    return findDocVersionByCheckout(doc, checkout);
+};
