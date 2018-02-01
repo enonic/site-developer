@@ -40,11 +40,6 @@ function group(str) {
 }
 
 
-function like(prop, str) {
-    return prop + s(LIKE) + dq(str);
-}
-
-
 function propOpValue(prop, operator, value) {
     return prop + s(operator) + value;
 }
@@ -58,13 +53,18 @@ function sq(str) {
 //──────────────────────────────────────────────────────────────────────────────
 // Exports used later in this file
 //──────────────────────────────────────────────────────────────────────────────
-export function propEq(prop, value) {
-    return propOpValue(prop, '=', sq(value));
+export function arr2List(array) {
+    return group(array.map(item => sq(item)).join(C));
 }
 
 
-export function arr2List(array) {
-    return group(array.map(item => sq(item)).join(C));
+export function like(prop, str) {
+    return prop + s(LIKE) + dq(str);
+}
+
+
+export function propEq(prop, value) {
+    return propOpValue(prop, '=', sq(value));
 }
 
 
