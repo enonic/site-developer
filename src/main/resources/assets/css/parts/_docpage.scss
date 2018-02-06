@@ -303,8 +303,12 @@
     }
 
     .quoteblock {
+      padding: 32px;
+      display: table;
+
       blockquote {
-        font-size: 1.8rem;
+        font-size: 2rem;
+        line-height: 1.2;
 
         &:before {
           font-size: 3rem;
