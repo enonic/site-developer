@@ -75,8 +75,8 @@ function createDocModel(doc) {
     model.sitePath = libs.portal.getSite()['_path'];
 
     if (!!menu) {
-        model.hasNavigation = true;
         model.navigation = getNavigation(menu, versionContent);
+        model.hasNavigation = model.navigation.length > 1;
     }
 
     return model;
