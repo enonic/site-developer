@@ -127,14 +127,7 @@ public abstract class ImportCommand
     {
         if ( Files.isDirectory( path ) )
         {
-            if ( isAsciiDocNameSakePresent( path ) )
-            {
-                createOrUpdateDocpage( path );
-            }
-            else
-            {
-                createOrUpdateFolder( path );
-            }
+            createDirectory( path );
         }
         else if ( isCompiledAsciiDoc( path ) )
         {
@@ -143,6 +136,18 @@ public abstract class ImportCommand
         else
         {
             createOrUpdateMedia( path );
+        }
+    }
+
+    private void createDirectory( final Path path )
+    {
+        if ( isAsciiDocNameSakePresent( path ) )
+        {
+            createOrUpdateDocpage( path );
+        }
+        else
+        {
+            createOrUpdateFolder( path );
         }
     }
 

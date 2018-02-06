@@ -1,0 +1,84 @@
+= XSLT Library
+
+image::https://img.shields.io/badge/xp-6.+-blue.svg[role="right"]
+
+This library provides basic XSLT rendering functionality to create pages and parts using XSLT as the templating language.
+
+[quote, Albert Einstein]
+A person who never made a mistake never tried anything new.
+
+Small minor change
+
+[source,groovy]
+----
+dependencies {
+  include 'com.enonic.lib:lib-xslt:1.+'
+}
+----
+
+****
+[CAUTION]
+====
+In order to complete this tutorial, the Enonic development environment must be installed on your computer.
+LINK TO INSTALL ENONIC DEV ENV COMING HERE
+====
+****
+
+[NOTE]
+====
+The other files and folders in the project structure are not relevant for this tutorial.
+====
+
+== Usage
+
+To use this library in your JavaScript code, you first need to require it:
+
+[source,js]
+----
+var xsltLib = require('/lib/xslt');
+----
+
+Then, you will need to find the view.  For instance, if you have a part, Fruit, you resolve the part with:
+
+[source,js]
+----
+var view = resolve('view/fruit.xslt');
+----
+
+All the variables used in the view must be gathered, from request objects, back-end storage or whatever source you want to use.  These should be put into a JSon object that is sent to the render function:
+
+[source,js]
+----
+var model = {
+    fruits: [
+        {
+            name: 'Apple',
+            color: 'Red'
+        },
+        {
+            name: 'Pear',
+            color: 'Green'
+        }
+    ]
+};
+var result = xsltLib.render(view, model);
+----
+
+
+== API
+
+This lib have only one method:
+
+=== `render`
+
+This will create a document, based on the template in the view, and the content in the model.  Normally this is an HTML-document, but XSL may be used to create text-documents of any type.
+
+*Parameters*
+
+* `view` (_object_) Location of the view. Use resolve(..) to resolve a view.
+* `model` (_object_) Model that is passed to the view.
+
+
+== Compatibility
+
+This library is a drop-in replacement for the library in Enonic XP released before 6.11.0. It can be used directly since it will work by using `/lib/xslt`, `/lib/xp/xslt` and `/site/lib/xp/xslt`.

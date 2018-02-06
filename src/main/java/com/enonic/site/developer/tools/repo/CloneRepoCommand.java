@@ -18,6 +18,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 public final class CloneRepoCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( CloneRepoCommand.class );
@@ -27,6 +29,10 @@ public final class CloneRepoCommand
     private static final String ENONIC_REPOSITORY_PREFIX = "enonic/";
 
     private static final String GIT_REPOSITORY_SUFFIX = ".git";
+
+    protected static final String NO_REPO_MSG = "No repository set to clone from!";
+
+    protected static final String NO_DEST_MSG = "No destination set to clone repo to!";
 
     private String destination;
 
@@ -52,6 +58,9 @@ public final class CloneRepoCommand
     private String doExecute()
         throws Exception
     {
+        Preconditions.checkNotNull( repository, NO_REPO_MSG );
+        Preconditions.checkNotNull( destination, NO_DEST_MSG );
+
         final String gitRepositoryUri = resolveGitRepositoryUri();
         return cloneGitRepository( gitRepositoryUri );
     }
@@ -165,7 +174,6 @@ public final class CloneRepoCommand
         public FileVisitResult preVisitDirectory( final Path sourceFilePath, final BasicFileAttributes attrs )
             throws IOException
         {
-
             if ( rootFile )
             {
                 rootFile = false;
@@ -180,6 +188,7 @@ public final class CloneRepoCommand
                     Files.copy( sourceFilePath, targetFilePath, StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS );
                 }
             }
+
             return FileVisitResult.CONTINUE;
         }
     }

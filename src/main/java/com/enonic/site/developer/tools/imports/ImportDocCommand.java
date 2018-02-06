@@ -1,7 +1,7 @@
 package com.enonic.site.developer.tools.imports;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +43,11 @@ public final class ImportDocCommand
 
     private void createOrUpdateDocversion()
     {
-        final ContentPath docversionContentPath = ContentPath.from( importPath + "/" + label );
+        final ContentPath docVersionContentPath = ContentPath.from( importPath + "/" + label );
 
-        if ( contentService.contentExists( docversionContentPath ) )
+        if ( contentService.contentExists( docVersionContentPath ) )
         {
-            updateDocversion( docversionContentPath );
+            updateDocversion( docVersionContentPath );
         }
         else
         {
@@ -57,9 +57,9 @@ public final class ImportDocCommand
         importPath = importPath + "/" + label;
     }
 
-    private void updateDocversion( final ContentPath docversionContentPath )
+    private void updateDocversion( final ContentPath docVersionContentPath )
     {
-        final Content docVersion = updateContentWithCommitId( docversionContentPath );
+        final Content docVersion = updateContentWithCommitId( docVersionContentPath );
         rootContent = Optional.of( docVersion );
     }
 
@@ -86,62 +86,34 @@ public final class ImportDocCommand
     {
         if ( rootContent.isPresent() )
         {
-            importMenu();
+            try
+            {
+                importMenu();
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to import [" + MENU_FILE_NAME + "] : ", e );
+            }
         }
     }
 
     private void importMenu()
+        throws Exception
     {
-        final Path menuFilePath = sourceDir.resolve( MENU_FILE_NAME );
+        final File menuFile = sourceDir.resolve( MENU_FILE_NAME ).toFile();
 
-        if ( !menuFilePath.toFile().exists() )
+        if ( !menuFile.exists() )
         {
             LOGGER.info( "No [" + MENU_FILE_NAME + "] found." );
             return;
         }
 
-        try (final FileInputStream menuInputStream = new FileInputStream( menuFilePath.toFile() ))
-        {
-            final ObjectMapper mapper = new ObjectMapper();
-            final MenuItem menuRoot = mapper.readValue( menuInputStream, MenuItem.class );
-            processMenuUrls( menuRoot.getMenuItems() );
-            addMenuDataToRootContent( mapper.writeValueAsString( menuRoot ) );
-        }
-        catch ( final IOException e )
-        {
-            LOGGER.error( "Failed to import [" + MENU_FILE_NAME + "] : ", e );
-        }
+        final String menu = new MenuHandler().getMenu( menuFile );
+
+        addMenuToRootContent( menu );
     }
 
-    private void processMenuUrls( final List<MenuItem> menuItems )
-    {
-        for ( final MenuItem menuItem : menuItems )
-        {
-            menuItem.setContentId( generateMenuItemUrl( menuItem.getDocument() ) );
-            processMenuUrls( menuItem.getMenuItems() );
-        }
-    }
-
-    private String generateMenuItemUrl( final String documentPath )
-    {
-        final Path menuItemLocalPath = sourceDir.resolve( documentPath + ".html" );
-
-        if ( isRootAsciiDoc( menuItemLocalPath ) )
-        {
-            return rootContent.get().getId().toString();
-        }
-
-        final ContentPath contentPath = makeRepoPath( menuItemLocalPath );
-
-        if ( !contentService.contentExists( contentPath ) )
-        {
-            return null;
-        }
-
-        return contentService.getByPath( contentPath ).getId().toString();
-    }
-
-    private void addMenuDataToRootContent( final String menu )
+    private void addMenuToRootContent( final String menu )
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams().
             contentId( rootContent.get().getId() ).
@@ -155,9 +127,53 @@ public final class ImportDocCommand
         this.label = label;
     }
 
-    private static final class MenuItem
+    private final class MenuHandler
     {
 
+        public String getMenu( final File menuFile )
+            throws Exception
+        {
+            try (final FileInputStream menuInputStream = new FileInputStream( menuFile ))
+            {
+                final ObjectMapper mapper = new ObjectMapper();
+                final MenuItem menuRoot = mapper.readValue( menuInputStream, MenuItem.class );
+                processMenuUrls( menuRoot.getMenuItems() );
+
+                return mapper.writeValueAsString( menuRoot );
+            }
+        }
+
+        private void processMenuUrls( final List<MenuItem> menuItems )
+        {
+            for ( final MenuItem menuItem : menuItems )
+            {
+                menuItem.setContentId( generateMenuItemUrl( menuItem.getDocument() ) );
+                processMenuUrls( menuItem.getMenuItems() );
+            }
+        }
+
+        private String generateMenuItemUrl( final String documentPath )
+        {
+            final Path menuItemLocalPath = sourceDir.resolve( documentPath + ".html" );
+
+            if ( isRootAsciiDoc( menuItemLocalPath ) )
+            {
+                return rootContent.get().getId().toString();
+            }
+
+            final ContentPath contentPath = makeRepoPath( menuItemLocalPath );
+
+            if ( !contentService.contentExists( contentPath ) )
+            {
+                return null;
+            }
+
+            return contentService.getByPath( contentPath ).getId().toString();
+        }
+    }
+
+    private static final class MenuItem
+    {
         private String title;
 
         private String document;
