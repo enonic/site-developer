@@ -186,11 +186,10 @@ export function get() {
         };
     }
 
-    let type = isGuide(doc) ? 'guide' : 'doc';
     let model = {
         title: doc.data.title || doc.displayName,
         content: processHtml({value: doc.data.html}),
-        type
+        type: isGuide(doc) ? 'guide' : 'doc'
     }; //log.info(`model:${toStr(model)}`);
     if (!isGuide(doc)) { model = Object.assign({}, model, createDocModel(doc)); }
     //log.info(`model modified:${toStr(model)}`);

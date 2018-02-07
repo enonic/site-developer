@@ -4,6 +4,7 @@ module.exports = {
     extends: 'airbnb-base',
 
     globals: {
+      $: false,
       app: false,
       log: false,
       resolve: false,
