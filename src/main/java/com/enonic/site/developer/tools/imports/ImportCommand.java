@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -22,7 +24,6 @@ import com.enonic.site.developer.tools.asciidoc.ExtractAsciiDocHtmlCommand;
 import com.enonic.site.developer.tools.asciidoc.ExtractedDoc;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -30,34 +31,25 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public abstract class ImportCommand
     implements ScriptBean
 {
     protected static final String DEFAULT_ASCIIDOC_NAME = "index.html";
 
-    private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
+    protected static final String JSON_EXT = ".json";
 
-    private static final User SUPER_USER = User.create().
-        key( PrincipalKey.ofUser( UserStoreKey.system(), "su" ) ).
-        login( "su" ).
-        build();
+    protected static final String ASCIIDOC_EXT = ".adoc";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
 
     protected Path sourceDir;
 
     protected String importPath;
-
-    protected String commit;
 
     protected Optional<Content> rootContent;
 
@@ -65,19 +57,14 @@ public abstract class ImportCommand
 
     protected ContentService contentService;
 
-    public final void execute()
-        throws Exception
-    {
-        runAsAdmin( this::doExecute );
-    }
+    private List<String> imported = new ArrayList<>();
 
-    private void doExecute()
+    public final List<String> execute()
+        throws Exception
     {
         try
         {
-            initRootContent();
-            importData();
-            postProcess();
+            return doExecute();
         }
         catch ( final Exception e )
         {
@@ -86,74 +73,114 @@ public abstract class ImportCommand
         }
     }
 
+    private List<String> doExecute()
+        throws Exception
+    {
+        initRootContent();
+        importData();
+        postProcess();
+        return imported;
+    }
+
     protected abstract void initRootContent();
 
     private void importData()
         throws Exception
     {
-        createContents();
+        importContents();
         importAsciiDocs();
     }
 
-    private void createContents()
+    private void importContents()
         throws IOException
     {
-        Files.walk( sourceDir ).filter( path -> !isForbidden( path ) ).forEach( path -> createContent( path ) );
+        Files.walk( sourceDir ).filter( this::isPathAllowedToImport ).forEach( this::importContent );
     }
 
-    private boolean isForbidden( final Path path )
+    private boolean isPathAllowedToImport( final Path filePath )
     {
-        if ( path.equals( sourceDir ) )
-        {
-            return true;
-        }
-
-        if ( path.toString().endsWith( ".json" ) )
-        {
-            return true;
-        }
-
-        if ( path.toString().endsWith( ".adoc" ) )
-        {
-            return true;
-        }
-
+        if ( isRootAsciiDoc( filePath ) )
         {
             return false;
         }
+
+        if ( filePath.equals( sourceDir ) )
+        {
+            return false;
+        }
+
+        if ( filePath.toString().endsWith( JSON_EXT ) )
+        {
+            return false;
+        }
+
+        if ( filePath.toString().endsWith( ASCIIDOC_EXT ) )
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    private void createContent( final Path path )
+    protected final boolean isRootAsciiDoc( final Path path )
     {
-        if ( Files.isDirectory( path ) )
+        return rootContent.isPresent() && path.getParent().equals( sourceDir ) &&
+            path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
+    }
+
+    private void importContent( final Path filePath )
+    {
+        final ContentPath repoPath = makeRepoPath( filePath );
+
+        doImportContent( filePath, repoPath );
+
+        updateListOfImportedContents( repoPath );
+    }
+
+    protected final ContentPath makeRepoPath( final Path path )
+    {
+        return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
+                                     sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
+    }
+
+    private void doImportContent( final Path filePath, final ContentPath repoPath )
+    {
+        if ( !contentService.contentExists( repoPath ) )
         {
-            createDirectory( path );
-        }
-        else if ( isCompiledAsciiDoc( path ) )
-        {
-            createOrUpdateDocpage( path );
+            createContent( filePath, repoPath );
         }
         else
         {
-            createOrUpdateMedia( path );
+            updateContent( filePath, repoPath );
         }
     }
 
-    private void createDirectory( final Path path )
+    private void createContent( final Path filePath, final ContentPath repoPath )
     {
-        if ( isAsciiDocNameSakePresent( path ) )
+        if ( Files.isDirectory( filePath ) )
         {
-            createOrUpdateDocpage( path );
+            createDirectory( filePath, repoPath );
+        }
+        else if ( isCompiledAsciiDoc( filePath ) )
+        {
+            createDocpage( repoPath );
         }
         else
         {
-            createOrUpdateFolder( path );
+            createMedia( filePath, repoPath );
         }
     }
 
-    private boolean isCompiledAsciiDoc( final Path path )
+    private void createDirectory( final Path filePath, final ContentPath repoPath )
     {
-        return path.getFileName().toString().endsWith( ".html" );
+        if ( isAsciiDocNameSakePresent( filePath ) )
+        {
+            createDocpage( repoPath );
+        }
+        else
+        {
+            createFolder( repoPath );
+        }
     }
 
     private boolean isAsciiDocNameSakePresent( final Path path )
@@ -161,85 +188,32 @@ public abstract class ImportCommand
         return new File( path.toString() + ".html" ).exists();
     }
 
-    private void createOrUpdateDocpage( final Path path )
-    {
-        if ( isRootAsciiDoc( path ) )
-        {
-            return;
-        }
-
-        final ContentPath repoPath = makeRepoPath( path );
-
-        if ( contentService.contentExists( repoPath ) )
-        {
-            updateContentWithCommitId( repoPath );
-        }
-        else
-        {
-            createDocpage( repoPath );
-        }
-    }
-
-    protected Content updateContentWithCommitId( final ContentPath repoPath )
-    {
-        LOGGER.info( "Setting commit id [" + commit + "] in [" + repoPath + "]" );
-
-        final Content content = contentService.getByPath( repoPath );
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams().
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.data.setString( "commit", commit );
-            } );
-
-        return contentService.update( updateContentParams );
-    }
-
     private void createDocpage( final ContentPath repoPath )
     {
         LOGGER.info( "Creating empty docpage " + repoPath );
 
         final String name = FilenameUtils.getBaseName( repoPath.getName().toString() );
-        final PropertyTree data = new PropertyTree();
-        data.addString( "commit", commit );
 
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
+            contentData( new PropertyTree() ).
             name( name ).
             displayName( name ).
             parent( repoPath.getParentPath() ).
             type( ContentTypeName.from( applicationKey + ":docpage" ) ).
             requireValid( false ).
             build();
+
         contentService.create( createContentParams );
-    }
-
-    private void createOrUpdateFolder( final Path path )
-    {
-        final ContentPath repoPath = makeRepoPath( path );
-
-        if ( contentService.contentExists( repoPath ) )
-        {
-            updateContentWithCommitId( repoPath );
-        }
-        else
-        {
-            createFolder( repoPath );
-        }
-
     }
 
     private void createFolder( final ContentPath repoPath )
     {
         LOGGER.info( "Creating folder [" + repoPath + "]" );
 
-        final PropertyTree data = new PropertyTree();
-        data.addString( "commit", commit );
-
         final String name = repoPath.getName();
 
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
+            contentData( new PropertyTree() ).
             name( name ).
             displayName( name ).
             parent( repoPath.getParentPath() ).
@@ -249,57 +223,21 @@ public abstract class ImportCommand
         contentService.create( createContentParams );
     }
 
-    protected final ContentPath makeRepoPath( final Path path )
+    private boolean isCompiledAsciiDoc( final Path path )
     {
-        return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
-                                     sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
+        return path.getFileName().toString().endsWith( ".html" );
     }
 
-    private void createOrUpdateMedia( final Path path )
-    {
-        final ContentPath repoPath = makeRepoPath( path );
-
-        if ( contentService.contentExists( repoPath ) )
-        {
-            updateMedia( path, repoPath );
-        }
-        else
-        {
-            createMedia( path, repoPath );
-        }
-    }
-
-    private void updateMedia( final Path path, final ContentPath repoPath )
-    {
-        LOGGER.info( "Updating media " + repoPath );
-
-        final Content media = contentService.getByPath( repoPath );
-
-        final UpdateMediaParams updateMediaParams =
-            new UpdateMediaParams().name( path.getFileName().toString() ).content( media.getId() ).byteSource( loadMedia( path ) );
-
-        contentService.update( updateMediaParams );
-
-        // unable to set data in updateMedia, have to update it after
-        updateContentWithCommitId( repoPath );
-    }
-
-    private void createMedia( final Path path, final ContentPath repoPath )
+    private void createMedia( final Path filePath, final ContentPath repoPath )
     {
         LOGGER.info( "Creating media " + repoPath );
 
-        final PropertyTree data = new PropertyTree();
-        data.addString( "commit", commit );
-
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadMedia( path ) ).
-            name( path.getFileName().toString() ).
+        createMediaParams.byteSource( loadMedia( filePath ) ).
+            name( filePath.getFileName().toString() ).
             parent( repoPath.getParentPath() );
 
         contentService.create( createMediaParams );
-
-        // unable to set data in createMedia, have to update it after
-        updateContentWithCommitId( repoPath );
     }
 
     private ByteSource loadMedia( final Path filePath )
@@ -314,16 +252,45 @@ public abstract class ImportCommand
         }
     }
 
+    private void updateContent( final Path filePath, final ContentPath repoPath )
+    {
+        if ( Files.isDirectory( filePath ) )
+        {
+            // no need to update folder
+        }
+        else if ( isCompiledAsciiDoc( filePath ) )
+        {
+            // asciidoc will be updated when importing asciidocs
+        }
+        else
+        {
+            updateMedia( filePath, repoPath );
+        }
+    }
+
+    private void updateMedia( final Path path, final ContentPath repoPath )
+    {
+        LOGGER.info( "Updating media " + repoPath );
+
+        final Content media = contentService.getByPath( repoPath );
+
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().name( path.getFileName().toString() ).content( media.getId() ).byteSource( loadMedia( path ) );
+
+        contentService.update( updateMediaParams );
+    }
+
+    private void updateListOfImportedContents( final ContentPath repoPath )
+    {
+        final Content importedContent = contentService.getByPath( repoPath );
+
+        imported.add( importedContent.getId().toString() );
+    }
+
     private void importAsciiDocs()
         throws IOException
     {
         Files.walk( sourceDir ).filter( this::isCompiledAsciiDoc ).forEach( this::importAsciiDoc );
-    }
-
-    protected final boolean isRootAsciiDoc( final Path path )
-    {
-        return rootContent.isPresent() && path.getParent().equals( sourceDir ) &&
-            path.getFileName().toString().equals( DEFAULT_ASCIIDOC_NAME );
     }
 
     private void importAsciiDoc( final Path asciiDocPath )
@@ -387,22 +354,6 @@ public abstract class ImportCommand
 
     }
 
-    private void runAsAdmin( final Runnable runnable )
-    {
-        ContextBuilder.from( ContentConstants.CONTEXT_DRAFT ).
-            authInfo( createAdminAuthInfo() ).
-            build().
-            runWith( runnable );
-    }
-
-    private AuthenticationInfo createAdminAuthInfo()
-    {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( SUPER_USER ).
-            build();
-    }
-
     public void setSourceDir( final String sourceDir )
     {
         this.sourceDir = new File( sourceDir ).toPath().normalize().toAbsolutePath();
@@ -411,11 +362,6 @@ public abstract class ImportCommand
     public void setImportPath( final String importPath )
     {
         this.importPath = importPath;
-    }
-
-    public void setCommit( final String commit )
-    {
-        this.commit = commit;
     }
 
     @Override

@@ -108,7 +108,8 @@ function findDocVersionByCheckout(doc, checkout) {
     var result = queryContent({
         query: expr,
         start: 0,
-        count: 1000
+        count: 1000,
+        branch: 'draft'
     });
 
     if (result.total > 0) {
@@ -270,10 +271,12 @@ exports.findLatestDocVersion = function (doc) {
     return null;
 };
 
-exports.findContentsNotMarkedWithCommitId = function (doc, label, commitId) {
-    var expr = and(
-        like('_path', '/content' + doc._path + '/' + label + '/*'),
-        "data.commit NOT LIKE '" + commitId + "'");
+exports.findDocVersionByCheckout = function (doc, checkout) {
+    return findDocVersionByCheckout(doc, checkout);
+};
+
+exports.findChildren = function (content) {
+    var expr = like('_path', '/content' + content._path + '/*');
 
     var result = queryContent({
         query: expr,
@@ -281,11 +284,5 @@ exports.findContentsNotMarkedWithCommitId = function (doc, label, commitId) {
         count: 1000
     });
 
-    return result.hits.filter(function (hit) { // by some reason query returns contents with right commit ids, have to filter those
-        return hit.data.commit != commitId;
-    });
-};
-
-exports.findDocVersionByCheckout = function (doc, checkout) {
-    return findDocVersionByCheckout(doc, checkout);
+    return result.hits;
 };

@@ -43,12 +43,20 @@ function markLatest(doc, checkout) {
     return sudo(docLib.markLatest.bind(null, doc, checkout));
 }
 
-function findContentsNotMarkedWithCommitId(doc, label, commitId) {
-    return sudo(docLib.findContentsNotMarkedWithCommitId.bind(null, doc, label, commitId));
-}
-
 function setLatestOnContent(content, latest) {
     return sudo(docLib.setLatestOnContent.bind(null, content, latest));
+}
+
+function findChildren(content) {
+    return sudo(docLib.findChildren.bind(null, content));
+}
+
+function importGuide(repo, guide) {
+    return sudo(doImportGuide.bind(null, repo, guide));
+}
+
+function importDoc(repo, doc, commit, label) {
+    return sudo(doImportDoc.bind(null, repo, doc, commit, label));
 }
 
 exports.post = function (req) {
@@ -213,7 +221,7 @@ function getLatestCheckout(versions) {
 function buildAndImportVersions(repo, docs, versions) {
     var branches = getBranches(repo);
 
-    versions.forEach(function (version) {
+    versions.forEach((version) => {
         var commitId = getCommitId(version.checkout, branches);
         version.commit = commitId;
 
@@ -224,10 +232,11 @@ function buildAndImportVersions(repo, docs, versions) {
             buildAsciiDoc(repo);
         }
 
-        docsToImportVersionTo.forEach(function (doc) {
-            importDoc(repo, doc, commitId, version.label);
-            removeOldContentsFromDoc(doc, version.label, commitId);
-            var docVersion = docLib.findDocVersionByCheckout(doc, commitId);
+        docsToImportVersionTo.forEach((doc) => {
+            const importedContentsIds = importDoc(repo, doc, commitId, version.label);
+            const docVersion = docLib.findDocVersionByCheckout(doc, commitId);
+            removeOldContentsFromDoc(docVersion, importedContentsIds);
+
             if (isContentPublished(docVersion)) {
                 publishTree(docVersion);
             }
@@ -286,12 +295,16 @@ function defineLatestVersion(versions) {
     }
 }
 
-function removeOldContentsFromDoc(doc, label, commitId) {
-    var contents = findContentsNotMarkedWithCommitId(doc, label, commitId);
+function removeOldContentsFromDoc(docVersion, importedContentsIds) {
+    const contents = findChildren(docVersion);
 
     contents.forEach(function (content) {
-        log.info('Removing ' + content._path);
-        removeContent({key: content._id});
+        const isImportedContent = importedContentsIds.some((importedContentId) => importedContentId == content._id);
+
+        if (!isImportedContent) {
+            log.info('Removing ' + content._path);
+            removeContent({key: content._id});
+        }
     });
 }
 
@@ -357,17 +370,19 @@ function buildAsciiDoc(repo) {
     var bean = __.newBean('com.enonic.site.developer.tools.asciidoc.BuildAsciiDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.repoName = repo.full_name;
+
     bean.execute();
 }
 
-function importGuide(repo, guide) {
+function doImportGuide(repo, guide) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = guide._path.replace('/content', '');
-    bean.execute();
+
+    return __.toNativeObject(bean.execute());
 }
 
-function importDoc(repo, doc, commit, label) {
+function doImportDoc(repo, doc, commit, label) {
     var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = doc._path.replace('/content', '');
@@ -375,7 +390,8 @@ function importDoc(repo, doc, commit, label) {
     if (!!label) {
         bean.label = label;
     }
-    bean.execute();
+
+    return __.toNativeObject(bean.execute());
 }
 
 function getDocVersions(repo) {

@@ -30,6 +30,8 @@ public final class ImportDocCommand
 
     private String label;
 
+    private String commit;
+
     protected void initRootContent()
     {
         if ( label == null || label.isEmpty() )
@@ -38,32 +40,27 @@ public final class ImportDocCommand
             return;
         }
 
-        createOrUpdateDocversion();
-    }
-
-    private void createOrUpdateDocversion()
-    {
-        final ContentPath docVersionContentPath = ContentPath.from( importPath + "/" + label );
-
-        if ( contentService.contentExists( docVersionContentPath ) )
-        {
-            updateDocversion( docVersionContentPath );
-        }
-        else
-        {
-            createDocversion();
-        }
-
+        rootContent = Optional.of( getRootContent() );
         importPath = importPath + "/" + label;
     }
 
-    private void updateDocversion( final ContentPath docVersionContentPath )
+    private Content getRootContent()
     {
-        final Content docVersion = updateContentWithCommitId( docVersionContentPath );
-        rootContent = Optional.of( docVersion );
+        final ContentPath docVersionContentPath = ContentPath.from( importPath + "/" + label );
+
+        if ( !contentService.contentExists( docVersionContentPath ) )
+        {
+            createDocVersion();
+        }
+        else
+        {
+            updateDocVersion( docVersionContentPath );
+        }
+
+        return contentService.getByPath( docVersionContentPath );
     }
 
-    private void createDocversion()
+    private void createDocVersion()
     {
         LOGGER.info( "Creating docversion content [" + label + "]" );
 
@@ -78,7 +75,22 @@ public final class ImportDocCommand
             type( ContentTypeName.from( applicationKey + ":docversion" ) ).
             build();
 
-        rootContent = Optional.of( contentService.create( createContentParams ) );
+        contentService.create( createContentParams );
+    }
+
+    private void updateDocVersion( final ContentPath docVersionContentPath )
+    {
+        LOGGER.info( "Setting commit id [" + commit + "] in [" + docVersionContentPath + "]" );
+
+        final Content docVersion = contentService.getByPath( docVersionContentPath );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams().
+            contentId( docVersion.getId() ).
+            editor( edit -> {
+                edit.data.setString( "commit", commit );
+            } );
+
+        contentService.update( updateContentParams );
     }
 
     @Override
@@ -125,6 +137,11 @@ public final class ImportDocCommand
     public void setLabel( final String label )
     {
         this.label = label;
+    }
+
+    public void setCommit( final String commit )
+    {
+        this.commit = commit;
     }
 
     private final class MenuHandler
