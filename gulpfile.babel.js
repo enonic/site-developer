@@ -11,9 +11,6 @@ import htmlmin from 'gulp-htmlmin'; // HTML minification
 
 import jshint from 'gulp-jshint';
 
-// Webpack
-import gulpWebpack from 'webpack-stream';
-
 // Image minification
 import imagemin from 'gulp-imagemin';
 import pngquant from 'imagemin-pngquant'; // $ npm i -D imagemin-pngquant
@@ -22,8 +19,6 @@ import svgstore from 'gulp-svgstore';
 import path from 'path';
 //import inject from 'gulp-inject';
 import svgmin from 'gulp-svgmin';
-
-import webpackConfig from './webpack.config.js';
 
 // Folder variables
 const srcSite = 'src/main/resources';
@@ -39,7 +34,7 @@ const sassOptions = {
 
 
 // Default task, runs all other tasks
-gulp.task('build', ['sass', 'webpack', 'minifyImages', 'svgstore', 'minifyHTML']);
+gulp.task('build', ['sass', 'minifyImages', 'svgstore', 'minifyHTML']);
 
 // Compile Sass files
 // Create CSS sourcemaps
@@ -78,12 +73,6 @@ gulp.task('minifyHTML', () => gulp.src(`${srcSite}/**/*.html`)
         keepClosingSlash: true
     }))
     .pipe(gulp.dest(buildSite)));
-
-// Runs webpack module bundler
-gulp.task('webpack', () => gulp
-    .src(`${srcAssets}/js/main.es`)
-    .pipe(gulpWebpack(webpackConfig))
-    .pipe(gulp.dest(`${buildAssets}/js`)));
 
 gulp.task('svgstore', () => gulp
     .src(`${srcAssets}/img/icons/*.svg`)

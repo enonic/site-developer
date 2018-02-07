@@ -84,7 +84,8 @@ sourceSets {
 task webpack(type:NodeTask) {
     script = file('node_modules/webpack/bin/webpack.js')
     args = [
-        '--config', 'webpack.3.server.config.babel.js'
+        '--color',
+        '--config', 'webpack.config.babel.js'
     ]
 }
 webpack.dependsOn npmInstall
