@@ -164,8 +164,8 @@ function createDocModel(doc) {
     };
 
     if (model.menu) {
-        model.hasNavigation = true;
         model.navigation = getNavigation(model.menu, versionContent);
+        model.hasNavigation = model.navigation.length > 1;
     }
 
     return model;

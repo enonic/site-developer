@@ -25,15 +25,6 @@ public final class BuildAsciiDocCommand
 
     private String sourceDir;
 
-    public static void main( String[] args )
-        throws Exception
-    {
-        final BuildAsciiDocCommand buildAsciiDocCommand = new BuildAsciiDocCommand();
-        buildAsciiDocCommand.setRepoName( "guide-my-first-app " );
-        buildAsciiDocCommand.setSourceDir( "C:/Dev/Enonic/guide-my-first-app/" );
-        buildAsciiDocCommand.execute();
-    }
-
     public void execute()
         throws Exception
     {
@@ -51,9 +42,21 @@ public final class BuildAsciiDocCommand
     private void doExecute()
         throws Exception
     {
-        final Asciidoctor asciidoctor = createAsciidoctor();
-        asciidoctor.convertDirectory( new AsciiDocDirectoryWalker( sourceDir ), createOptions() );
-        asciidoctor.shutdown();
+        Asciidoctor asciidoctor = null;
+
+        try
+        {
+            asciidoctor = createAsciidoctor();
+            asciidoctor.convertDirectory( new AsciiDocDirectoryWalker( sourceDir ), createOptions() );
+        }
+        finally
+        {
+            if ( asciidoctor != null )
+            {
+                asciidoctor.shutdown();
+            }
+        }
+
     }
 
     private Asciidoctor createAsciidoctor()

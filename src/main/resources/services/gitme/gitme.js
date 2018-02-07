@@ -220,6 +220,7 @@ function buildAndImportVersions(repo, docs, versions) {
         var docsToImportVersionTo = getDocsToImportVersionTo(docs, commitId);
 
         if (docsToImportVersionTo.length > 0) {
+            cloneRepo(repo, version.checkout);
             buildAsciiDoc(repo);
         }
 

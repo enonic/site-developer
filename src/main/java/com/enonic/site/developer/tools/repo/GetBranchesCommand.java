@@ -9,9 +9,16 @@ import org.eclipse.jgit.lib.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
+/**
+ * Class fetches list of repo's branches
+ */
 public class GetBranchesCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( GetBranchesCommand.class );
+
+    protected final static String NO_REPO_MSG = "No repository set to fetch branches from!";
 
     private String repository;
 
@@ -31,18 +38,31 @@ public class GetBranchesCommand
     private List<String> doExecute()
         throws Exception
     {
+        Preconditions.checkNotNull( repository, NO_REPO_MSG );
+
         LOGGER.info( "Fetching list of branches from [" + repository + "] ..." );
 
-        final Collection<Ref> refs = Git.lsRemoteRepository().setHeads( true ).setRemote( repository ).call();
+        final Collection<Ref> refs = listGitRefsFromRepo();
 
+        LOGGER.info( "Branches fetched" );
+
+        return processRefs( refs );
+    }
+
+    protected Collection<Ref> listGitRefsFromRepo()
+        throws Exception
+    {
+        return Git.lsRemoteRepository().setHeads( true ).setRemote( repository ).call();
+    }
+
+    private List<String> processRefs( final Collection<Ref> refs )
+    {
         final List<String> result = new ArrayList<>();
 
         for ( final Ref ref : refs )
         {
             result.add( ref.getName().replace( "refs/heads/", "" ) + "=" + ref.getObjectId().getName() );
         }
-
-        LOGGER.info( "Branches fetched" );
 
         return result;
     }

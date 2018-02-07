@@ -1,6 +1,5 @@
 package com.enonic.site.developer.tools.imports;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.site.developer.tools.CommonTest;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -26,6 +26,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import static org.junit.Assert.*;
 
 public class ImportDocCommandTest
+    extends CommonTest
 {
     private ContentService contentService;
 
@@ -121,10 +122,5 @@ public class ImportDocCommandTest
     private String makeRepoPath( final String path )
     {
         return importPath + "/" + path;
-    }
-
-    private String getPath( final String path )
-    {
-        return new File( getClass().getResource( path ).getFile() ).getAbsolutePath();
     }
 }
