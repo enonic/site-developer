@@ -35,11 +35,6 @@ function s(str) {
 }
 
 
-function group(str) {
-    return wrap(str, '(', ')');
-}
-
-
 function propOpValue(prop, operator, value) {
     return prop + s(operator) + value;
 }
@@ -53,6 +48,11 @@ function sq(str) {
 //──────────────────────────────────────────────────────────────────────────────
 // Exports used later in this file
 //──────────────────────────────────────────────────────────────────────────────
+export function group(str) {
+    return wrap(str, '(', ')');
+}
+
+
 export function arr2List(array) {
     return group(array.map(item => sq(item)).join(C));
 }
