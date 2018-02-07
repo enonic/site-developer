@@ -81,7 +81,7 @@ gulp.task('minifyHTML', () => gulp.src(`${srcSite}/**/*.html`)
 
 // Runs webpack module bundler
 gulp.task('webpack', () => gulp
-    .src(`${srcAssets}/js/main.js`)
+    .src(`${srcAssets}/js/main.es`)
     .pipe(gulpWebpack(webpackConfig))
     .pipe(gulp.dest(`${buildAssets}/js`)));
 
