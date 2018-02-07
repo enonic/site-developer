@@ -4,6 +4,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-minify-webpack-plugin": "^0.3.0",
     "babel-plugin-array-includes": "^2.0.3",
     "babel-plugin-optimize-starts-with": "^1.0.1",
     "babel-plugin-transform-object-assign": "^6.22.0",
@@ -35,9 +36,11 @@
     "path": "^0.12.7",
     "sass-loader": "^6.0.6",
     "svg-url-loader": "^2.3.1",
+    "uglify-es": "^3.3.9",
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
-    "webpack-stream": "^4.0.0"
+    "webpack-stream": "^4.0.0",
+    "webpack-uglify-js-plugin": "^1.1.9"
   },
   "license": "TODO",
   "private": "true",

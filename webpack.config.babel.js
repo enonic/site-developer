@@ -5,8 +5,10 @@
 import ExtractTextPlugin, {extract as extractText} from 'extract-text-webpack-plugin';
 import glob from 'glob';
 import globImporter from 'node-sass-glob-importer';
+//import MinifyPlugin from 'babel-minify-webpack-plugin';
 import path from 'path';
-import { ProvidePlugin } from 'webpack';
+import {ProvidePlugin} from 'webpack';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin'; // Supports ECMAScript2015
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -129,7 +131,13 @@ const ASSETS_JS_CONFIG = { // Javascript assets
                         'transform-object-assign',
                         'transform-object-rest-spread'
                     ],
-                    presets: ['env']
+                    presets: [
+                        [
+                            'env', {
+                                modules: false // NOTE svg4everybody fails runtime without this!
+                            }
+                        ]
+                    ]
                 } // options
             }] // use
         }] // rules
@@ -143,7 +151,18 @@ const ASSETS_JS_CONFIG = { // Javascript assets
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery'
+        }),
+        new UglifyJsPlugin({ // TODO this seems to remove the source map file
+            minimize: true,
+            compress: {
+                warnings: false
+            },
+            parallel: true, // highly recommended
+            sourceMap: true // default is false and overrides devtool? So both is needed.
         })
+        /*new MinifyPlugin({ // minifyOpts
+        }, { // pluginOpts
+        })*/
     ], // plugins
     resolve: {
         alias: {
