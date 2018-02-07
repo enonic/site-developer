@@ -245,7 +245,7 @@
     }
   }
 
-  &__enonic-sites {
+  @at-root #{&}__enonic-sites {
     background: $color-mine-shaft;
     position: fixed;
     bottom: 0;
