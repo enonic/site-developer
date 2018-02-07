@@ -4,27 +4,26 @@
 
 @import 'global/variables';
 
-@import 'lib/placeholders/*';
-@import 'lib/mixins/*';
-@import 'lib/*';
+@import 'lib/placeholders/*.scss';
+@import 'lib/mixins/*.scss';
+@import 'lib/*.scss'; // NOTE not subfolders, currently just normalize
 
-@import 'global/mixins/*';
-@import 'global/*';
+@import 'global/mixins/*.scss';
+@import 'global/*.scss'; // NOTE not subfolders TODO variables imported twice?
 
 
-
-@import 'vendor/*';
+@import 'vendor/*.scss'; // Currently just prism
 
 // Pages
-@import 'pages/common/*';
-@import 'pages/*';
+@import 'pages/common/*.scss';
+@import 'pages/*.scss'; // NOTE not subfolders
 
 // Layouts
-@import 'layouts/common/*';
-@import 'layouts/*';
+@import 'layouts/common/*.scss'; // Currently just layout
+@import 'layouts/*.scss'; // NOTE not subfolders
 
 // Parts
-@import 'parts/*';
+@import 'parts/*.scss';
 
 // Shame
 @import 'shame';
