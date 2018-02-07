@@ -1,6 +1,6 @@
 @mixin page-footer {
 
-  &__footer {
+  @at-root #{&}__footer {
     background: #1C1C1C;
     color: #aaa;
 

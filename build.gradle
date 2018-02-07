@@ -4,14 +4,16 @@ plugins {
     id 'com.enonic.defaults' version '1.0.3'
     id 'com.enonic.xp.app' version '1.0.17'
     id 'com.enonic.xp.run' version '1.0.11'
-    id "com.moowork.gulp" version "0.13"
-    id "com.moowork.node" version "0.13"
+    id "com.moowork.gulp" version "1.2.0"
+    id "com.moowork.node" version "1.2.0"
 }
+
 
 repositories {
     jcenter()
     xp.enonicRepo()
 }
+
 
 app {
     name = project.appName
@@ -21,6 +23,7 @@ app {
     systemVersion = "${xpVersion}"
     instruction( "Private-Package", "*;-split-package:=merge-first;META-INF.jruby.home.*;" )
 }
+
 
 dependencies {
     include 'org.asciidoctor:asciidoctorj:1.5.6'
@@ -40,6 +43,19 @@ dependencies {
     include "com.enonic.lib:lib-markdown:0.5.0"
 }
 
+
+//──────────────────────────────────────────────────────────────────────────────
+// Gradle node plugin
+//──────────────────────────────────────────────────────────────────────────────
+node {
+    version '8.9.4'
+    download true
+}
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Gulp TODO This could/should be replaced with webpack
+//──────────────────────────────────────────────────────────────────────────────
 // makes sure on each build that gulp is installed
 gulp_build.dependsOn 'installGulp'
 
@@ -48,3 +64,29 @@ gulp_build.dependsOn 'npmInstall'
 
 // runs "gulp build" as part of your gradle build
 jar.dependsOn gulp_build
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Webpack
+//──────────────────────────────────────────────────────────────────────────────
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources { // Paths relative to src/main/resources
+            exclude '**/*.es' // Avoid having your es files copied into ./build
+            exclude '**/*.js' // Let webpack do it's thing
+        }
+    }
+}
+
+task webpack(type:NodeTask) {
+    script = file('node_modules/webpack/bin/webpack.js')
+    args = [
+        '--config', 'webpack.3.server.config.babel.js'
+    ]
+}
+webpack.dependsOn npmInstall
+assemble.dependsOn webpack
+assemble.mustRunAfter webpack

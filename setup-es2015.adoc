@@ -1,0 +1,243 @@
+If you already have an Enonic XP app and you want to start programming controllers in ECMAScript 2015, which steps are required to get there?
+
+= Transpilation
+
+Java 8's JavaScript engine "Nashorn", which is what Enonic 6.x is using, doesn't support ECMAScript 2015, so you have to transpile your controller code into commonjs. We will use babel to do that.
+
+== Polyfill
+
+Babel comes with a polyfill which will add (monkey patch) the new ECMAScript 2015 methods onto global objects/built-ins. Babel-polyfill works fine in most modern browsers, but is known to fail in Nashorn.
+
+As Node already supports ECMAScript 2015 a lot of Node modules have started using the new functionality. So you will quickly find yourself in a situation where polyfills are needed.
+
+Since the babel-polyfill fails in Nashorn you will typically have to add single purpose polyfills one at a time. Often the polyfills are intended and tested only in browsers. As such they often use global objects that doesn't exist in Nashorn. So you will have to be careful about which polyfills you use, and even how you use them. I've found that adding polyfills via webpack works well. I will try to put together a list of polyfills known to work in Nashorn.
+
+== Ponyfill
+
+Ponyfills are inobtrusive polyfills. They allow you to use new ECMAScript 2015 methods without modifying global objects/built-ins.
+
+So for example a polyfill will allow you to do:
+[source, js]
+----
+Object.assign()
+----
+
+While a ponyfill will require you to do this:
+[source, js]
+----
+import objectAssign from 'object-assign';
+objectAssign()
+----
+
+= Transforms
+
+In many instanses there is an alternative to polyfills. Instead of adding stuff at runtime, you can't transform your code during build time. There are many such transforms available as Babel plugins. The most common ones are grouped together in presets.
+
+When building for the browser babel-preset-env is typically used as it will provide all the newest functionality (when paired with babel-polyfill).
+
+When building for Nashorn however, I believe babel-preset-es2015 is the current way to go.
+
+Here are some transforms I typically use in addition to babel-preset-es2015:
+* array-includes
+* optimize-starts-with
+* transform-object-assign
+* transform-object-rest-spread
+
+= Node
+
+In order to install needed build tools you need Node.
+How to install Node I will not explain here.
+I will however suggest you use nvm and avn (Auto version switching).
+
+== pacakage.json
+
+The first time you run npm install, the package.json file will be generated, with the following warnings which you might want to resolve:
+
+[source, console]
+----
+npm WARN a No description
+npm WARN a No repository field.
+npm WARN a No README data
+npm WARN a No license field.
+----
+
+Typically you don't want to publish your Enonic XP app on npmjs.com,
+so you should add this:
+
+[source, json]
+----
+  "private": "true",
+----
+
+== Babel
+
+[source, console]
+----
+npm install --save-dev babel-core babel-preset-env babel-preset-es2015 babel-plugin-array-includes babel-plugin-optimize-starts-with babel-plugin-transform-object-assign babel-plugin-transform-object-rest-spread
+----
+
+=== .babelrc
+
+If you want to write build config files, like webpack.config, in ECMAScript 2015 you need to setup a .babelrc file. To avoid conflicts between environments (build, server and client) I only use the .babelrc file in the build environment, and will explicitly define presets and plugins for server and client-side in their respective webpack config files.
+
+I'm using babel-preset-env in the build enrionment.
+
+[source, json]
+----
+{
+  "plugins": [
+    "array-includes",
+    "optimize-starts-with",
+    "transform-object-assign",
+    "transform-object-rest-spread"
+  ],
+  "presets": ["env"]
+}
+----
+
+== Webpack
+
+Make sure you have webpack 3.
+
+[source, console]
+----
+npm install --save-dev webpack babel-loader glob path
+----
+
+=== webpack.3.config.babel.js
+
+// TODO urls to live and updated example configs?
+
+[source, js]
+----
+/* eslint-disable no-console */
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
+import glob from 'glob';
+import path from 'path';
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Functions
+//──────────────────────────────────────────────────────────────────────────────
+//const toStr = v => JSON.stringify(v, null, 4);
+const dict = arr => Object.assign(...arr.map(([k, v]) => ({ [k]: v })));
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+const SRC_DIR = 'src/main/resources';
+const SRC_DIR_ABS = path.resolve(__dirname, SRC_DIR);
+const DST_DIR = 'build/resources/main';
+const DST_DIR_ABS = path.join(__dirname, DST_DIR);
+
+const ASSETS_GLOB = `${SRC_DIR}/{site/assets,assets}/**/*.es`;
+//console.log(`ASSETS_GLOB:${JSON.stringify(ASSETS_GLOB, null, 4)}`);
+//console.log(`ASSET_FILES:${JSON.stringify(glob.sync(ASSETS_GLOB), null, 4)}`);
+
+const FILES = glob.sync(`${SRC_DIR}/**/*.es`, {ignore: ASSETS_GLOB});
+//console.log(`FILES:${toStr(FILES)}`);
+
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+const WEBPACK_CONFIG = {
+    context: SRC_DIR_ABS,
+    entry: dict(FILES.map(k => [
+        k.replace(`${SRC_DIR}/`, '').replace(/\.[^.]*$/, ''), // name
+        `.${k.replace(`${SRC_DIR}`, '')}` // source relative to context
+    ])),
+    externals: [
+        /\/lib\/(enonic|xp)/
+    ],
+    devtool: false, // Don't waste time generating sourceMaps
+    module: {
+        rules: [{
+            test: /\.(es6?|js)$/, // Will need js for node module depenencies
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    babelrc: false, // The .babelrc file should only be used to transpile config files.
+                    comments: false,
+                    compact: false,
+                    minified: false,
+                    plugins: [
+                        'array-includes',
+                        'optimize-starts-with',
+                        'transform-object-assign',
+                        'transform-object-rest-spread'
+                    ],
+                    presets: ['es2015']
+                } // options
+            }] // use
+        }] // rules
+    }, // module
+    output: {
+        path: DST_DIR_ABS,
+        filename: '[name].js',
+        libraryTarget: 'commonjs'
+    }, // output
+    resolve: {
+        alias: {
+            '/lib': path.resolve(__dirname, SRC_DIR, 'lib')
+        }
+    }, // resolve
+    stats: {
+        colors: true,
+        hash: false,
+        maxModules: 0,
+        modules: false,
+        moduleTrace: false,
+        timings: false,
+        version: false
+    } // stats
+};
+
+//console.log(`WEBPACK_CONFIG:${JSON.stringify(WEBPACK_CONFIG, null, 4)}`);
+//process.exit();
+
+export { WEBPACK_CONFIG as default };
+----
+
+= Gradle
+
+You want to continue to use gradle to build and that is now possible using the
+https://github.com/srs/gradle-node-plugin
+
+Add this to build.gradle
+
+[source, groovy]
+----
+plugins {
+  id 'com.moowork.node' version "1.2.0"
+}
+
+node {
+    version '8.9.4'
+    download true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources { // Paths relative to src/main/resources
+            exclude '**/*.es' // Avoid having your es files copied into ./build
+        }
+    }
+}
+
+task webpack(type:NodeTask) {
+    script = file('node_modules/webpack/bin/webpack.js')
+    args = [
+        '--config', 'webpack.3.server.config.babel.js'
+    ]
+}
+webpack.dependsOn npmInstall
+assemble.dependsOn webpack
+assemble.mustRunAfter webpack
+----
