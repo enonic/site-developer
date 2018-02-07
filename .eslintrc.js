@@ -6,11 +6,8 @@ module.exports = {
     globals: {
       $: false,
       app: false,
-      document: false,
-      jQuery: false,
       log: false,
       resolve: false,
-      window: false,
       __: false
     },
     rules: { // https://eslint.org/docs/rules

@@ -1,5 +1,5 @@
-$('.page-search-result-header__filter-reset').click(() => {
-    const currentUrl = window.location.href;
-    const resultUrl = currentUrl.substr(0, currentUrl.indexOf('&doc='));
+$('.page-search-result-header__filter-reset').click(function () {
+    var currentUrl = window.location.href;
+    var resultUrl = currentUrl.substr(0, currentUrl.indexOf('&doc='));
     window.location.href = resultUrl;
 });
