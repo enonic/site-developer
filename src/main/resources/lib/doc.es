@@ -1,46 +1,22 @@
 //──────────────────────────────────────────────────────────────────────────────
-// Imports
+// Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-var libs = {
-    c: require('/lib/xp/content'),
-    ct: require('/content-types'),
-    q: require('/lib/query'),
-    p: require('/lib/xp/portal'),
-    u: require('/lib/util'),
-    eu: require('/lib/enonic/util'),
-    v: require('/lib/enonic/util/value')
-};
-
-// Imported Contstants
-var CT_DOCPAGE = libs.ct.CT_DOCPAGE;
-var CT_DOCVERSION = libs.ct.CT_DOCVERSION;
-var CT_GUIDE = libs.ct.CT_GUIDE;
-
-// Imported functions
-var and = libs.q.and;
-var fulltext = libs.q.fulltext;
-var getSitePath = libs.u.getSitePath;
-var group = libs.q.group;
-var isSet = libs.v.isSet;
-var like = libs.q.like;
-var ngram = libs.q.ngram;
-var or = libs.q.or;
-var pageUrl = libs.p.pageUrl;
-var propIn = libs.q.propIn;
-var queryContent = libs.c.query;
-var modifyContent = libs.c.modify;
-var toStr = libs.eu.toStr;
-var getNearestContentByType = libs.u.getNearestContentByType;
-var getContentParent = libs.u.getContentParent;
-var getCurrentSite = libs.p.getSite;
-
+import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
+import {modify as modifyContent, query as queryContent} from '/lib/xp/content';
+import {isSet} from '/lib/enonic/util/value';
+import {toStr} from '/lib/enonic/util';
+import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE} from '/content-types';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
+import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
 
 //──────────────────────────────────────────────────────────────────────────────
-// Private Contstants
+// Private Constants
 //──────────────────────────────────────────────────────────────────────────────
-var DEBUG = true;
-var TRACE = false;
-
+const DEBUG = true;
+const TRACE = false;
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
@@ -50,7 +26,7 @@ function toSearchResultEntry(content, currentSite, hideVersion) {
         return;
     }
 
-    var result = {
+    const result = {
         name: getSearchResultName(content, hideVersion),
         title: content.data.title || content.displayName,
         url: pageUrl({path: content._path}),
@@ -64,7 +40,7 @@ function toSearchResultEntry(content, currentSite, hideVersion) {
 
 function getSearchResultName(content, hideVersion) {
     if (isDocPage(content)) {
-        var parentDocVersion = getNearestContentByType(content, 'docversion');
+        const parentDocVersion = getNearestContentByType(content, 'docversion');
 
         if (!parentDocVersion || hideVersion) {
             return content.displayName;
@@ -74,7 +50,7 @@ function getSearchResultName(content, hideVersion) {
     }
 
     if (isDocVersion(content)) {
-        var doc = getContentParent(content);
+        const doc = getContentParent(content);
         if (hideVersion) {
             return doc.displayName;
         }
@@ -86,11 +62,11 @@ function getSearchResultName(content, hideVersion) {
 }
 
 function findDocpagesAndDocversions(doc) {
-    var expr = and(
+    const expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 1000
@@ -100,12 +76,12 @@ function findDocpagesAndDocversions(doc) {
 }
 
 function findDocVersionByCheckout(doc, checkout) {
-    var expr = and(
+    const expr = and(
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'),
         like('data.commit', checkout));
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 1000,
@@ -152,11 +128,11 @@ exports.search = function (query, path, start, count) {
         query = '';
     }
 
-    var hideVersion = !!path;
-    var restrictSearchToLatestOnly = !path;
+    const hideVersion = !!path;
+    const restrictSearchToLatestOnly = !path;
     path = '/content' + (!!path ? path : getSitePath());
 
-    var fields = [ // have not checked CT_DOCPAGE
+    const fields = [ // have not checked CT_DOCPAGE
         'data.title^3', // CT_DOCPAGE and CT_DOCVERSION
         'displayName^2', // All content
         'data.shortdescription^1', // CT_GUIDE
@@ -168,7 +144,7 @@ exports.search = function (query, path, start, count) {
         //'_alltext' // NOTE Nope there are things we don't want to search!
     ].join(',');
 
-    var expr = and(
+    let expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
         group(or(
             like('_path', path + '/*'),
@@ -188,17 +164,17 @@ exports.search = function (query, path, start, count) {
 
     DEBUG && log.info('expr: ' + toStr(expr));
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: start || 0,
         count: count || 100
     });
 
-    var currentSite = getCurrentSite();
-    var entries = [];
-    for (var i = 0; i < result.hits.length; i++) {
-        var hit = result.hits[i];
-        var entry = toSearchResultEntry(hit, currentSite, hideVersion);
+    const currentSite = getCurrentSite();
+    const entries = [];
+    for (let i = 0; i < result.hits.length; i++) {
+        const hit = result.hits[i];
+        const entry = toSearchResultEntry(hit, currentSite, hideVersion);
         if (entry) {
             entry.score = hit.score;
             entries.push(entry);
@@ -213,7 +189,7 @@ exports.search = function (query, path, start, count) {
 }; // exports.search
 
 exports.unmarkLatest = function (doc) {
-    var contents = findDocpagesAndDocversions(doc);
+    const contents = findDocpagesAndDocversions(doc);
 
     contents.forEach(function (content) {
         setLatestOnContent(content, false);
@@ -221,14 +197,14 @@ exports.unmarkLatest = function (doc) {
 };
 
 exports.markLatest = function (doc, checkout) {
-    var docVersion = findDocVersionByCheckout(doc, checkout);
+    const docVersion = findDocVersionByCheckout(doc, checkout);
     if (!docVersion) {
         return;
     }
 
     setLatestOnContent(docVersion, true);
 
-    var contents = findDocpagesAndDocversions(docVersion);
+    const contents = findDocpagesAndDocversions(docVersion);
     contents.forEach(function (content) {
         setLatestOnContent(content, true);
     });
@@ -239,11 +215,11 @@ exports.setLatestOnContent = function (content, latest) {
 };
 
 exports.findDocVersions = function (doc) {
-    var expr = and(
+    const expr = and(
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 100
@@ -253,12 +229,12 @@ exports.findDocVersions = function (doc) {
 };
 
 exports.findLatestDocVersion = function (doc) {
-    var expr = and(
+    const expr = and(
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'),
         like('data.latest', 'true'));
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 100
@@ -276,9 +252,9 @@ exports.findDocVersionByCheckout = function (doc, checkout) {
 };
 
 exports.findChildren = function (content) {
-    var expr = like('_path', '/content' + content._path + '/*');
+    const expr = like('_path', '/content' + content._path + '/*');
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 1000

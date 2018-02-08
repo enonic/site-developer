@@ -1,68 +1,30 @@
-// Imports
-import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Enonic XP libs (build.gradle)
+//──────────────────────────────────────────────────────────────────────────────
+import {render} from '/lib/xp/thymeleaf';
+import {getSite as getCurrentSite, serviceUrl} from '/lib/xp/portal';
+import {get as getContent} from '/lib/xp/content'
+import {getMenuTree} from '/lib/enonic/menu'
+import {toStr} from '/lib/enonic/util'
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {getContentParent, getSiteUrl} from '/lib/util'
+import {search as searchDocs} from '/lib/doc'
 
-var libs = {
-    portal: require('/lib/xp/portal'),
-    thymeleaf: require('/lib/xp/thymeleaf'),
-    menu: require('/lib/enonic/menu'),
-    eutil: require('/lib/enonic/util'),
-    util: require('/lib/util'),
-    doc: require('/lib/doc'),
-    u: require('/lib/util'),
-    content: require('/lib/xp/content')
-};
+//──────────────────────────────────────────────────────────────────────────────
+// Private Constants
+//──────────────────────────────────────────────────────────────────────────────
+const DEBUG = false;
+const VIEW_FILE = resolve('/site/pages/search-result/search-result.html');
+const EMPTY_RESULT = {count: 0, total: 0, hits: []};
+const RT_HTML = 'text/html; charset=UTF-8';
 
-// Functions
-var getCurrentSite = libs.portal.getSite;
-var getMenuTree = libs.menu.getMenuTree;
-var getSiteUrl = libs.util.getSiteUrl;
-var render = libs.thymeleaf.render;
-var searchDocs = libs.doc.search;
-var toStr = libs.eutil.toStr;
-var getContent = libs.content.get;
-var getContentParent = libs.u.getContentParent;
-
-// Constants
-var DEBUG = false;
-var VIEW_FILE = resolve('/site/pages/search-result/search-result.html');
-var EMPTY_RESULT = {count: 0, total: 0, hits: []};
-
-// Exports
-exports.get = function (req) {
-    const currentSite = getCurrentSite();
-    const docToSearchIn = getDocToSearchIn(req);
-    const searchPath = getSearchPath(docToSearchIn);
-
-    const model = {
-
-        // Used directly in view
-        searchResult: req.params.q
-            ? searchDocs(req.params.q, searchPath, req.params.start, req.params.count)
-            : EMPTY_RESULT,
-        filterText: getFilterText(docToSearchIn),
-
-        // Used in fragments (not mentioned in view)
-        menuItems: getMenuTree(3),
-        pageTitle: 'Search result',
-        searchDocId: getIdOfDocToSearchIn(docToSearchIn),
-        searchResultPageUrl: getSiteUrl() + 'search',
-        serviceUrl: generateServiceUrl(docToSearchIn),
-        showHeaderSearch: false,
-        siteName: currentSite.displayName,
-        sitePath: currentSite['_path'],
-        searchQuery: req.params.q
-
-    }; // model
-    DEBUG && log.info('model:' + toStr(model));
-
-    return {
-        body: render(VIEW_FILE, model),
-        contentType: 'text/html; charset=UTF-8'
-    };
-} // get
-
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
 function getDocToSearchIn(req) {
-    var docId = req.params.doc;
+    const docId = req.params.doc;
 
     if (!docId) {
         return null;
@@ -105,6 +67,42 @@ function getFilterText(docToSearchIn) {
         return null;
     }
 
-    var doc = getContentParent(docToSearchIn);
+    const doc = getContentParent(docToSearchIn);
     return doc.displayName + ' (' + docToSearchIn.displayName + ')';
 }
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.get = function (req) {
+    const currentSite = getCurrentSite();
+    const docToSearchIn = getDocToSearchIn(req);
+    const searchPath = getSearchPath(docToSearchIn);
+
+    const model = {
+
+        // Used directly in view
+        searchResult: req.params.q
+            ? searchDocs(req.params.q, searchPath, req.params.start, req.params.count)
+            : EMPTY_RESULT,
+        filterText: getFilterText(docToSearchIn),
+
+        // Used in fragments (not mentioned in view)
+        menuItems: getMenuTree(3),
+        pageTitle: 'Search result',
+        searchDocId: getIdOfDocToSearchIn(docToSearchIn),
+        searchResultPageUrl: getSiteUrl() + 'search',
+        serviceUrl: generateServiceUrl(docToSearchIn),
+        showHeaderSearch: false,
+        siteName: currentSite.displayName,
+        sitePath: currentSite['_path'],
+        searchQuery: req.params.q
+
+    }; // model
+    DEBUG && log.info('model:' + toStr(model));
+
+    return {
+        body: render(VIEW_FILE, model),
+        contentType: RT_HTML
+    };
+} // get

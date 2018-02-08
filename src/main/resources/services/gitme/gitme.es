@@ -1,17 +1,34 @@
-// Handle github's webhook post.
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Enonic XP libs (build.gradle)
+//──────────────────────────────────────────────────────────────────────────────
+import {delete as doDeleteContent, get as doGetContent, publish as doPublishContent, query as doQueryContent} from '/lib/xp/content';
+import {run as runWithContext} from '/lib/xp/context';
+import {submit as submitTask} from '/lib/xp/task';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {
+    findChildren as doFindChildren,
+    findDocVersionByCheckout,
+    findDocVersions,
+    markLatest as doMarkLatest,
+    setLatestOnContent as doSetLatestOnContent,
+    unmarkLatest as doUnmarkLatest
+} from '/lib/doc';
 
-var contextLib = require('/lib/xp/context');
-var contentLib = require('/lib/xp/content');
-var docLib = require('/lib/doc');
-var taskLib = require('/lib/xp/task');
+//──────────────────────────────────────────────────────────────────────────────
+// Private Constants
+//──────────────────────────────────────────────────────────────────────────────
+const REPO_DEST = './docs-repos/';
+const DOCS_PATH = '/docs';
+const MASTER_BRANCH = 'master';
+const DRAFT_BRANCH = 'draft';
 
-var REPO_DEST = './docs-repos/';
-var DOCS_PATH = '/docs';
-var MASTER_BRANCH = 'master';
-var DRAFT_BRANCH = 'draft';
-
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
 function sudo(callback) {
-    return contextLib.run({
+    return runWithContext({
         principals: ['role:system.admin'],
         user: {
             login: 'su'
@@ -20,35 +37,35 @@ function sudo(callback) {
 }
 
 function queryContent(params) {
-    return sudo(contentLib.query.bind(null, params));
+    return sudo(doQueryContent.bind(null, params));
 }
 
 function removeContent(params) {
-    return sudo(contentLib.delete.bind(null, params));
+    return sudo(doDeleteContent.bind(null, params));
 }
 
 function getContent(params) {
-    return sudo(contentLib.get.bind(null, params));
+    return sudo(doGetContent.bind(null, params));
 }
 
 function publish(params) {
-    return sudo(contentLib.publish.bind(null, params));
+    return sudo(doPublishContent.bind(null, params));
 }
 
 function unmarkLatest(params) {
-    return sudo(docLib.unmarkLatest.bind(null, params));
+    return sudo(doUnmarkLatest.bind(null, params));
 }
 
 function markLatest(doc, checkout) {
-    return sudo(docLib.markLatest.bind(null, doc, checkout));
+    return sudo(doMarkLatest.bind(null, doc, checkout));
 }
 
 function setLatestOnContent(content, latest) {
-    return sudo(docLib.setLatestOnContent.bind(null, content, latest));
+    return sudo(doSetLatestOnContent.bind(null, content, latest));
 }
 
 function findChildren(content) {
-    return sudo(docLib.findChildren.bind(null, content));
+    return sudo(doFindChildren.bind(null, content));
 }
 
 function importGuide(repo, guide) {
@@ -58,18 +75,6 @@ function importGuide(repo, guide) {
 function importDoc(repo, doc, commit, label) {
     return sudo(doImportDoc.bind(null, repo, doc, commit, label));
 }
-
-exports.post = function (req) {
-
-    taskLib.submit({
-        description: 'Site Developer: GitHub Webhook',
-        task: function () {
-            execute(req);
-        }
-    });
-
-    return;
-};
 
 function execute(req) {
     try {
@@ -82,7 +87,7 @@ function execute(req) {
 }
 
 function doExecute(req) {
-    var repo = getRepoInfo(req)
+    const repo = getRepoInfo(req)
 
     if (!isRepoReferencedByAnyContent(repo.html_url)) {
         return;
@@ -93,14 +98,14 @@ function doExecute(req) {
 }
 
 function getRepoInfo(req) {
-    var reqBodyJson = JSON.parse(req.body);
+    const reqBodyJson = JSON.parse(req.body);
     return reqBodyJson.repository;
 }
 
 function isRepoReferencedByAnyContent(repoUrl) {
-    var expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide' ) AND data.repository = '" + repoUrl + "'";
+    const expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide' ) AND data.repository = '" + repoUrl + "'";
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 0
@@ -112,16 +117,16 @@ function isRepoReferencedByAnyContent(repoUrl) {
 };
 
 function findContentsLinkedToRepo(repoUrl, contentType) {
-    var expr = "type ='" + app.name + ":" + contentType + "' AND data.repository = '" + repoUrl + "'";
+    const expr = "type ='" + app.name + ":" + contentType + "' AND data.repository = '" + repoUrl + "'";
 
-    var result = queryContent({
+    const result = queryContent({
         query: expr,
         start: 0,
         count: 10000
     });
 
-    var keys = [];
-    for (var i = 0; i < result.hits.length; i++) {
+    const keys = [];
+    for (let i = 0; i < result.hits.length; i++) {
         keys.push(result.hits[i]);
     }
 
@@ -137,7 +142,7 @@ function buildMaster(repo) {
 }
 
 function importGuides(repo) {
-    var guides = findContentsLinkedToRepo(repo.html_url, 'guide');
+    const guides = findContentsLinkedToRepo(repo.html_url, 'guide');
 
     if (guides.length == 0) {
         return;
@@ -146,20 +151,20 @@ function importGuides(repo) {
     cloneMaster(repo);
     buildMaster(repo);
 
-    guides.forEach(function (guide) {
+    guides.forEach((guide) => {
         importGuide(repo, guide);
         setLatestOnContent(guide, true);
     });
 }
 
 function importDocs(repo) {
-    var docs = findContentsLinkedToRepo(repo.html_url, 'doc');
+    const docs = findContentsLinkedToRepo(repo.html_url, 'doc');
 
     if (docs.length == 0) {
         return;
     }
 
-    var versions = getDocVersions(repo);
+    const versions = getDocVersions(repo);
 
     unmarkLatestDocs(docs);
     defineLatestVersion(versions);
@@ -169,15 +174,16 @@ function importDocs(repo) {
 }
 
 function removeUnusedVersions(docs, versions) {
-    docs.forEach(function (doc) {
+    docs.forEach((doc) => {
         doRemoveUnusedVersions(doc, versions);
     });
 }
 
 function doRemoveUnusedVersions(doc, versions) {
-    var docVersions = docLib.findDocVersions(doc);
-    docVersions.forEach(function (docVersion) {
-        var isInVersionsJson = versions.some(function (version) {
+    const docVersions = findDocVersions(doc);
+
+    docVersions.forEach((docVersion) => {
+        var isInVersionsJson = versions.some((version) => {
             return version.commit == docVersion.data.commit;
         });
 
@@ -193,7 +199,7 @@ function doRemoveUnusedVersions(doc, versions) {
 }
 
 function unmarkLatestDocs(docs) {
-    docs.forEach(function (doc) {
+    docs.forEach((doc) => {
         unmarkLatest(doc);
     });
 }
@@ -201,15 +207,15 @@ function unmarkLatestDocs(docs) {
 function markLatestDocs(docs, versions) {
     var latestCheckout = getLatestCheckout(versions);
 
-    docs.forEach(function (doc) {
+    docs.forEach((doc) => {
         markLatest(doc, latestCheckout);
     });
 }
 
 function getLatestCheckout(versions) {
-    var checkout = 'master';
+    let checkout = MASTER_BRANCH;
 
-    versions.some(function (version) {
+    versions.some((version) => {
         if (version.latest) {
             checkout = version.commit;
         }
@@ -220,13 +226,13 @@ function getLatestCheckout(versions) {
 }
 
 function buildAndImportVersions(repo, docs, versions) {
-    var branches = getBranches(repo);
+    const branches = getBranches(repo);
 
     versions.forEach((version) => {
-        var commitId = getCommitId(version.checkout, branches);
+        const commitId = getCommitId(version.checkout, branches);
         version.commit = commitId;
 
-        var docsToImportVersionTo = getDocsToImportVersionTo(docs, commitId);
+        const docsToImportVersionTo = getDocsToImportVersionTo(docs, commitId);
 
         if (docsToImportVersionTo.length > 0) {
             cloneRepo(repo, version.checkout);
@@ -235,7 +241,7 @@ function buildAndImportVersions(repo, docs, versions) {
 
         docsToImportVersionTo.forEach((doc) => {
             const importedContentsIds = importDoc(repo, doc, commitId, version.label);
-            const docVersion = docLib.findDocVersionByCheckout(doc, commitId);
+            const docVersion = findDocVersionByCheckout(doc, commitId);
             removeOldContentsFromDoc(docVersion, importedContentsIds);
 
             if (isContentPublished(docVersion)) {
@@ -266,7 +272,7 @@ function getDocsToImportVersionTo(docs, commitId) {
     var docsToImport = [];
 
     docs.forEach(function (doc) {
-        var docVersions = docLib.findDocVersions(doc);
+        var docVersions = findDocVersions(doc);
         var isUpToDate = docVersions.some(function (docVersion) {
             return commitId == docVersion.data.commit;
         });
@@ -406,3 +412,17 @@ function getDocVersions(repo) {
 
     return versionsJson.versions;
 }
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.post = function (req) {
+    submitTask({
+        description: 'Site Developer: GitHub Webhook',
+        task: function () {
+            execute(req);
+        }
+    });
+
+    return;
+};

@@ -1,34 +1,66 @@
-var libs = {
-    portal: require('/lib/xp/portal'),
-    content: require('/lib/xp/content'),
-    thymeleaf: require('/lib/xp/thymeleaf'),
-    doc: require('/lib/doc')
-};
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Enonic XP libs (build.gradle)
+//──────────────────────────────────────────────────────────────────────────────
+import {getContent as getCurrentContent, pageUrl} from '/lib/xp/portal';
+import {render} from '/lib/xp/thymeleaf';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {findDocVersions, findLatestDocVersion} from '/lib/doc';
 
-exports.get = handleGet;
 
-function handleGet(req) {
-    var doc = libs.portal.getContent();
+//──────────────────────────────────────────────────────────────────────────────
+// Private Constants
+//──────────────────────────────────────────────────────────────────────────────
+const RT_HTML = 'text/html; charset=UTF-8';
 
-    var isPreview = isPreviewMode(req);
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
+function isPreviewMode(req) {
+    return req.mode === 'preview';
+}
+
+function getAvailableVersions(doc) {
+    const availableVersions = [];
+    const docVersions = findDocVersions(doc);
+
+    docVersions.forEach((docVersion) => {
+        availableVersions.push({
+            label: docVersion.displayName,
+            isLatest: docVersion.data.latest,
+            url: pageUrl({path: docVersion._path})
+        })
+    });
+
+    return availableVersions;
+}
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.get = function (req) {
+    const doc = getCurrentContent();
+
+    const isPreview = isPreviewMode(req);
 
     if (isPreview) {
-        var view = resolve('/site/pages/available-versions/available-versions.html');
+        const view = resolve('/site/pages/available-versions/available-versions.html');
 
-        var model = {
+        const model = {
             versions: getAvailableVersions(doc)
         };
 
         return {
-            body: libs.thymeleaf.render(view, model),
-            contentType: 'text/html; charset=UTF-8'
+            body: render(view, model),
+            contentType: RT_HTML
         }
     }
     else {
-        var latestDocVersion = libs.doc.findLatestDocVersion(doc);
+        const latestDocVersion = findLatestDocVersion(doc);
 
         if (!!latestDocVersion) {
-            var docVersionUrl = libs.portal.pageUrl({
+            const docVersionUrl = pageUrl({
                 id: latestDocVersion._id,
             });
 
@@ -39,27 +71,7 @@ function handleGet(req) {
 
         return {
             body: '<div style="font-size: 21px;color: lightgray;top: 50%;text-align: center;width: 100%;position: absolute;margin-top: -20px;">No docs available</div>',
-            contentType: 'text/html; charset=UTF-8'
+            contentType: RT_HTML
         }
     }
 }
-
-function isPreviewMode(req) {
-    return req.mode === 'preview';
-}
-
-function getAvailableVersions(doc) {
-    var availableVersions = [];
-    var docVersions = libs.doc.findDocVersions(doc);
-
-    docVersions.forEach(function (docVersion) {
-        availableVersions.push({
-            label: docVersion.displayName,
-            isLatest: docVersion.data.latest,
-            url: libs.portal.pageUrl({path: docVersion._path})
-        })
-    });
-
-    return availableVersions;
-}
-

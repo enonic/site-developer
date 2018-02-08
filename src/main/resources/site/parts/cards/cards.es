@@ -1,32 +1,30 @@
-var libs = {
-    thymeleaf: require('/lib/xp/thymeleaf'),
-    portal: require('/lib/xp/portal'),
-    content: require('/lib/xp/content'),
-    util: require('/lib/util')
-}
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Enonic XP libs (build.gradle)
+//──────────────────────────────────────────────────────────────────────────────
+import {render} from '/lib/xp/thymeleaf';
+import {getComponent, getContent as getCurrentContent} from '/lib/xp/portal';
+import {get as getContent, query} from '/lib/xp/content'
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {getSitePath, getSiteUrl} from '/lib/util'
 
-exports.get = function (req) {
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+const VIEW = resolve('cards.html'); // The view to render
+const RT_HTML = 'text/html; charset=UTF-8';
 
-
-    var model = {
-        cards: getCards()
-    };
-
-    var view = resolve('cards.html');
-
-    return {
-        body: libs.thymeleaf.render(view, model),
-        contentType: 'text/html; charset=UTF-8'
-    };
-};
-
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
 function getCards() {
-    var docIds = asArray(libs.portal.getComponent().config.cards); // Current component
-    var cards = [];
+    const docIds = asArray(getComponent().config.cards); // Current component
+    let cards = [];
 
     if (docIds) {
-        docIds.forEach(function(id) {
-            cards.push(createCard(libs.content.get({key: id})));
+        docIds.forEach((id) => {
+            cards.push(createCard(getContent({key: id})));
         });
     }
     else {
@@ -42,7 +40,7 @@ function createCard(content) {
         text: content.data.shortdescription || 'Mock text', //content.data.raw.substr(0, 128) + '...',
         tags: content.data.tags,
         image: content.data.image,
-        url: libs.util.getSiteUrl() + content._path.replace(libs.util.getSitePath() + '/', '')
+        url: getSiteUrl() + content._path.replace(getSitePath() + '/', '')
     }
 }
 
@@ -59,22 +57,37 @@ function asArray(obj) {
 }
 
 function searchCards() {
-    var content = libs.portal.getContent();
+    const content = getCurrentContent();
 
-    var expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide') " +
+    const expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide') " +
                "AND _path LIKE '/content" + content._path + "/*' ";
 
-    var result = libs.content.query({
+    const result = query({
         query: expr,
         start: 0,
         count: 100
     });
 
-    var cards = [];
-    for (var i = 0; i < result.hits.length; i++) {
-        var hit = result.hits[i];
-        cards.push(createCard(libs.content.get({key: hit._path})));
+    const cards = [];
+
+    for (let i = 0; i < result.hits.length; i++) {
+        const hit = result.hits[i];
+        cards.push(createCard(getContent({key: hit._path})));
     }
 
     return cards;
 }
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
+exports.get = function (req) {
+    const model = {
+        cards: getCards()
+    };
+
+    return {
+        body: render(VIEW, model),
+        contentType: RT_HTML
+    };
+};

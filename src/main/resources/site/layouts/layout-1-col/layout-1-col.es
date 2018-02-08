@@ -1,30 +1,39 @@
-var libs = {
-    portal: require('/lib/xp/portal'),
-    thymeleaf: require('/lib/xp/thymeleaf'),
-    util: require('/lib/enonic/util')
-};
+//──────────────────────────────────────────────────────────────────────────────
+// Imports
+//──────────────────────────────────────────────────────────────────────────────
+import {render} from '/lib/xp/thymeleaf';
+import {getComponent} from '/lib/xp/portal';
+import {region} from '/lib/enonic/util';
 
-// Handle GET request
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
+const VIEW = resolve('layout-1-col.html'); // The view to render
+
+//──────────────────────────────────────────────────────────────────────────────
+// Private functions
+//──────────────────────────────────────────────────────────────────────────────
+function createModel() {
+    const model = {};
+    const component = getComponent(); // Current component
+    const bgColor = (component.config.bgColor || {}).themeColor;
+
+    model.mainRegion = component.regions['main'];
+    model.regions = region.get();
+    model.component = component;
+    model.layoutClass = 'layout-1-col' + (bgColor ? ' layout-1-col--' + bgColor : '');
+    model.layoutClass += component.config.paddingTop ? ' layout-1-col--padding-top' : '';
+
+    return model;
+}
+
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
 exports.get = handleGet;
 
 function handleGet(req) {
-    var component = libs.portal.getComponent(); // Current component
-    var view = resolve('layout-1-col.html');
-    var model = createModel();
-
-    function createModel() {
-        var model = {};
-        var bgColor = (component.config.bgColor || {}).themeColor;
-        model.mainRegion = component.regions['main'];
-        model.regions = libs.util.region.get();
-        model.component = component;
-
-        model.layoutClass = 'layout-1-col' + (bgColor ? ' layout-1-col--' + bgColor : '');
-        model.layoutClass += component.config.paddingTop ? ' layout-1-col--padding-top' : '';
-        return model;
-    }
-
     return {
-        body: libs.thymeleaf.render(view, model)
+        body: render(VIEW, createModel())
     };
 }

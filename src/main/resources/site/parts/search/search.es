@@ -1,11 +1,21 @@
-import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
-import {getSiteUrl} from '/lib/util';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Enonic XP libs (build.gradle)
+//──────────────────────────────────────────────────────────────────────────────
 import {render} from '/lib/xp/thymeleaf';
+import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
+//──────────────────────────────────────────────────────────────────────────────
+// Imports: Application libs
+//──────────────────────────────────────────────────────────────────────────────
+import {getSiteUrl} from '/lib/util';
 
-
+//──────────────────────────────────────────────────────────────────────────────
+// Constants
+//──────────────────────────────────────────────────────────────────────────────
 const VIEW_FILE = resolve('search.html');
 
-
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
 export function get() {
     const model = {
         searchResultPageUrl: `${getSiteUrl()}search`,

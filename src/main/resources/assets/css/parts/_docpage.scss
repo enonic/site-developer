@@ -375,11 +375,17 @@
       display: none;
     }
 
-    &_outer .docpage-toc__list .toc-list li a {
-      color: $color-toc-light-blue;
+    &_outer {
+      .docpage-toc__list .toc-list li a {
+        color: $color-toc-light-blue;
 
-      &:hover {
-        color: $color-toc-blue;
+        &:hover {
+          color: $color-toc-blue;
+        }
+      }
+
+      .docpage-toc__title {
+        color: $color-white;
       }
     }
   }

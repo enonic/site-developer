@@ -2,14 +2,14 @@
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
 //import {toStr} from '/lib/enonic/util';
-import {
-    query as queryContent,
-    get as getContentByKey
-} from '/lib/xp/content';
+import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
 import {getSite, pageUrl} from '/lib/xp/portal';
 import {and, pathMatch, propEq} from '/lib/query';
 
 
+//──────────────────────────────────────────────────────────────────────────────
+// Exports
+//──────────────────────────────────────────────────────────────────────────────
 export function getContentParent(content) {
     const path = content._path;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
@@ -21,12 +21,6 @@ export function getSiteUrl() {
     const baseUrl = pageUrl({ path: getSite()._path });
     return `${baseUrl}${baseUrl.slice(-1) !== '/' ? '/' : ''}`;
 }
-
-
-export function getSiteDisplayName() {
-    return getSite().displayName;
-}
-
 
 export function getSitePath() {
     return getSite()._path;
