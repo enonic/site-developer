@@ -256,7 +256,7 @@ function buildAndImportVersions(repo, docs, versions) {
 
 // idea is that checkout is rather branch name or commit id, checking if checkout is in branches list
 function getCommitId(checkout, branches) {
-    var result = checkout;
+    let result = checkout;
 
     branches.some(function (branch) {
         if (branch.name == checkout) {
@@ -272,11 +272,11 @@ function getCommitId(checkout, branches) {
 }
 
 function getDocsToImportVersionTo(docs, commitId) {
-    var docsToImport = [];
+    const docsToImport = [];
 
     docs.forEach(function (doc) {
-        var docVersions = findDocVersions(doc);
-        var isUpToDate = docVersions.some(function (docVersion) {
+        const docVersions = findDocVersions(doc);
+        const isUpToDate = docVersions.some(function (docVersion) {
             return commitId == docVersion.data.commit;
         });
 
@@ -289,9 +289,9 @@ function getDocsToImportVersionTo(docs, commitId) {
 }
 
 function defineLatestVersion(versions) {
-    var isLatestRegExp = /^true$/i;
+    const isLatestRegExp = /^true$/i;
 
-    var isLatestSpecified = false;
+    let isLatestSpecified = false;
 
     versions.forEach(function (version) {
         version.latest = isLatestRegExp.test(version.latest);
@@ -346,15 +346,15 @@ function makeVersionsJsonWithMaster() {
 }
 
 function getBranches(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.repo.GetBranchesCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.repo.GetBranchesCommand');
     bean.repository = repo.html_url;
 
-    var branches = __.toNativeObject(bean.execute());
+    const branches = __.toNativeObject(bean.execute());
 
-    var result = [];
+    const result = [];
 
     branches.forEach(function (branchStr) {
-        var branchArr = branchStr.split('=');
+        const branchArr = branchStr.split('=');
         result.push({
             name: branchArr[0],
             id: branchArr[1]
@@ -365,7 +365,7 @@ function getBranches(repo) {
 }
 
 function cloneRepo(repo, checkout) {
-    var bean = __.newBean('com.enonic.site.developer.tools.repo.CloneRepoCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.repo.CloneRepoCommand');
     bean.repository = repo.html_url;
     bean.destination = REPO_DEST + repo.full_name;
     bean.repoName = repo.full_name;
@@ -377,7 +377,7 @@ function cloneRepo(repo, checkout) {
 }
 
 function buildAsciiDoc(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.asciidoc.BuildAsciiDocCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.asciidoc.BuildAsciiDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.repoName = repo.full_name;
 
@@ -385,7 +385,7 @@ function buildAsciiDoc(repo) {
 }
 
 function doImportGuide(repo, guide) {
-    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = guide._path.replace('/content', '');
 
@@ -393,7 +393,7 @@ function doImportGuide(repo, guide) {
 }
 
 function doImportDoc(repo, doc, commit, label) {
-    var bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = doc._path.replace('/content', '');
     bean.commit = commit;
@@ -405,9 +405,9 @@ function doImportDoc(repo, doc, commit, label) {
 }
 
 function getDocVersions(repo) {
-    var bean = __.newBean('com.enonic.site.developer.tools.repo.GetVersionsCommand');
+    const bean = __.newBean('com.enonic.site.developer.tools.repo.GetVersionsCommand');
     bean.repository = repo.full_name;
-    var versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
+    const versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
 
     if (!versionsJson || !versionsJson.versions || versionsJson.versions.length == 0) {
         return makeVersionsJsonWithMaster();
