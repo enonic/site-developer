@@ -1,9 +1,9 @@
 // Handle github's webhook post.
 
-var nashornUtil = require('/lib/nashornUtil');
 var contextLib = require('/lib/xp/context');
 var contentLib = require('/lib/xp/content');
 var docLib = require('/lib/doc');
+var taskLib = require('/lib/xp/task');
 
 var REPO_DEST = './docs-repos/';
 var DOCS_PATH = '/docs';
@@ -60,15 +60,16 @@ function importDoc(repo, doc, commit, label) {
 }
 
 exports.post = function (req) {
-    callExecuteAsync(req);
+
+    taskLib.submit({
+        description: 'Site Developer: GitHub Webhook',
+        task: function () {
+            execute(req);
+        }
+    });
+
     return;
 };
-
-function callExecuteAsync(req) {
-    nashornUtil.setTimeout(function () { // making all activity async
-        execute(req)
-    }, 0);
-}
 
 function execute(req) {
     try {
