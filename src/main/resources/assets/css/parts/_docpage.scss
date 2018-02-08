@@ -375,6 +375,13 @@
       display: none;
     }
 
+    &_outer .docpage-toc__list .toc-list li a {
+      color: $color-toc-light-blue;
+
+      &:hover {
+        color: $color-toc-blue;
+      }
+    }
   }
 
   &-sticky-toc {
