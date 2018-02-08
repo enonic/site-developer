@@ -58,7 +58,7 @@ public class ImportDocCommandTest
     {
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
-            Content.create().name( "name" ).parentPath( ContentPath.ROOT ).build() );
+            Content.create().id( ContentId.from( "testId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() );
 
         importDocCommand.execute();
 
@@ -78,7 +78,7 @@ public class ImportDocCommandTest
 
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
-            Content.create().name( "name" ).parentPath( ContentPath.ROOT ).build() );
+            Content.create().id( ContentId.from( "testId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() );
         final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
         final ArgumentCaptor<CreateMediaParams> createMediaParamsArgumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
 
@@ -106,7 +106,7 @@ public class ImportDocCommandTest
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 9 ) ).update( updateContentParamsArgumentCaptor.capture() );
+        Mockito.verify( contentService, Mockito.times( 5 ) ).update( updateContentParamsArgumentCaptor.capture() );
 
         final EditableContent content = updateContentParamsArgumentCaptor.getAllValues().stream().map( params -> {
             final EditableContent editableContent =
