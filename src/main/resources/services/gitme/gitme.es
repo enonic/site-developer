@@ -32,7 +32,8 @@ function sudo(callback) {
         principals: ['role:system.admin'],
         user: {
             login: 'su'
-        }
+        },
+        branch: DRAFT_BRANCH
     }, callback);
 }
 
