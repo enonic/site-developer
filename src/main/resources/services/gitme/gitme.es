@@ -108,7 +108,8 @@ function isRepoReferencedByAnyContent(repoUrl) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 0
+        count: 0,
+        branch: DRAFT_BRANCH
     });
 
     log.info('Docs and guides referencing repo "' + repoUrl + '" - ' + result.total);
@@ -122,7 +123,8 @@ function findContentsLinkedToRepo(repoUrl, contentType) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 10000
+        count: 10000,
+        branch: DRAFT_BRANCH
     });
 
     const keys = [];
@@ -190,7 +192,7 @@ function doRemoveUnusedVersions(doc, versions) {
         if (!isInVersionsJson) {
             log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName);
             var isDocVersionPublished = isContentPublished(docVersion);
-            removeContent({key: docVersion._id});
+            removeContent({key: docVersion._id, branch: DRAFT_BRANCH});
             if (isDocVersionPublished) {
                 publishTree(docVersion);
             }
@@ -310,7 +312,7 @@ function removeOldContentsFromDoc(docVersion, importedContentsIds) {
 
         if (!isImportedContent) {
             log.info('Removing ' + content._path);
-            removeContent({key: content._id});
+            removeContent({key: content._id, branch: DRAFT_BRANCH});
         }
     });
 }

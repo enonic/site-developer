@@ -17,6 +17,7 @@ import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
 //──────────────────────────────────────────────────────────────────────────────
 const DEBUG = true;
 const TRACE = false;
+const DRAFT_BRANCH = 'draft';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
@@ -69,7 +70,8 @@ function findDocpagesAndDocversions(doc) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 1000
+        count: 1000,
+        branch: DRAFT_BRANCH
     });
 
     return result.hits;
@@ -85,7 +87,7 @@ function findDocVersionByCheckout(doc, checkout) {
         query: expr,
         start: 0,
         count: 1000,
-        branch: 'draft'
+        branch: DRAFT_BRANCH
     });
 
     if (result.total > 0) {
@@ -102,7 +104,8 @@ function setLatestOnContent(content, latest) {
             c.data.latest = latest;
             return c;
         },
-        requireValid: false
+        requireValid: false,
+        branch: DRAFT_BRANCH
     });
 }
 
@@ -167,7 +170,8 @@ exports.search = function (query, path, start, count) {
     const result = queryContent({
         query: expr,
         start: start || 0,
-        count: count || 100
+        count: count || 100,
+        branch: DRAFT_BRANCH
     });
 
     const currentSite = getCurrentSite();
@@ -222,7 +226,8 @@ exports.findDocVersions = function (doc) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 100
+        count: 100,
+        branch: DRAFT_BRANCH
     });
 
     return result.hits;
@@ -237,7 +242,8 @@ exports.findLatestDocVersion = function (doc) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 100
+        count: 100,
+        branch: DRAFT_BRANCH
     });
 
     if (result.total > 0) {
@@ -257,7 +263,8 @@ exports.findChildren = function (content) {
     const result = queryContent({
         query: expr,
         start: 0,
-        count: 1000
+        count: 1000,
+        branch: DRAFT_BRANCH
     });
 
     return result.hits;

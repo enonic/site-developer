@@ -6,6 +6,10 @@ import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
 import {getSite, pageUrl} from '/lib/xp/portal';
 import {and, pathMatch, propEq} from '/lib/query';
 
+//──────────────────────────────────────────────────────────────────────────────
+// Private Constants
+//──────────────────────────────────────────────────────────────────────────────
+const DRAFT_BRANCH = 'draft';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Exports
@@ -13,12 +17,12 @@ import {and, pathMatch, propEq} from '/lib/query';
 export function getContentParent(content) {
     const path = content._path;
     const parentPath = path.substr(0, path.lastIndexOf('/'));
-    return getContentByKey({key: parentPath});
+    return getContentByKey({key: parentPath, branch: DRAFT_BRANCH});
 }
 
 
 export function getSiteUrl() {
-    const baseUrl = pageUrl({ path: getSite()._path });
+    const baseUrl = pageUrl({path: getSite()._path});
     return `${baseUrl}${baseUrl.slice(-1) !== '/' ? '/' : ''}`;
 }
 
@@ -36,7 +40,8 @@ export function getNearestContentByType(content, type) {
     const result = queryContent({
         query,
         start: 0,
-        count: 1
+        count: 1,
+        branch: DRAFT_BRANCH
     }); //log.info(`getNearestContentByType result:${toStr(result)}`);
     return result.total > 0 ? result.hits[0] : null;
 } // export getNearestContentByType
