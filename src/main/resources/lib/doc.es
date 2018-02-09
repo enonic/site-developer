@@ -5,7 +5,7 @@ import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
 import {modify as modifyContent, query as queryContent} from '/lib/xp/content';
 import {isSet} from '/lib/enonic/util/value';
 import {toStr} from '/lib/enonic/util';
-import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE} from '/content-types';
+import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -107,18 +107,6 @@ function setLatestOnContent(content, latest) {
         requireValid: false,
         branch: DRAFT_BRANCH
     });
-}
-
-function isDocVersion(content) {
-    return content.type === CT_DOCVERSION;
-}
-
-function isGuide(content) {
-    return content.type === CT_GUIDE;
-}
-
-function isDocPage(content) {
-    return content.type === CT_DOCPAGE;
 }
 
 

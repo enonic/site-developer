@@ -13,7 +13,7 @@ export function isDoc(content) {
 }
 
 
-export function isDocpage(content) {
+export function isDocPage(content) {
     return content.type === CT_DOCPAGE;
 }
 

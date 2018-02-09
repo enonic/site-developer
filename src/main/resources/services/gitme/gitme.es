@@ -258,7 +258,7 @@ function buildAndImportVersions(repo, docs, versions) {
 function getCommitId(checkout, branches) {
     let result = checkout;
 
-    branches.some(function (branch) {
+    branches.some((branch) => {
         if (branch.name == checkout) {
             result = branch.id;
             return true;
@@ -274,9 +274,9 @@ function getCommitId(checkout, branches) {
 function getDocsToImportVersionTo(docs, commitId) {
     const docsToImport = [];
 
-    docs.forEach(function (doc) {
+    docs.forEach((doc) => {
         const docVersions = findDocVersions(doc);
-        const isUpToDate = docVersions.some(function (docVersion) {
+        const isUpToDate = docVersions.some((docVersion) => {
             return commitId == docVersion.data.commit;
         });
 
@@ -293,7 +293,7 @@ function defineLatestVersion(versions) {
 
     let isLatestSpecified = false;
 
-    versions.forEach(function (version) {
+    versions.forEach((version) => {
         version.latest = isLatestRegExp.test(version.latest);
         if (!!version.latest) {
             isLatestSpecified = true;
@@ -308,7 +308,7 @@ function defineLatestVersion(versions) {
 function removeOldContentsFromDoc(docVersion, importedContentsIds) {
     const contents = findChildren(docVersion);
 
-    contents.forEach(function (content) {
+    contents.forEach((content) => {
         const isImportedContent = importedContentsIds.some((importedContentId) => importedContentId == content._id);
 
         if (!isImportedContent) {
