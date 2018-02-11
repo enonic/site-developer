@@ -12,7 +12,6 @@ import {
     findDocVersionByCheckout,
     findDocVersions,
     markLatest as doMarkLatest,
-    setLatestOnContent as doSetLatestOnContent,
     unmarkLatest as doUnmarkLatest
 } from '/lib/doc';
 
@@ -61,10 +60,6 @@ function markLatest(doc, checkout) {
     return sudo(doMarkLatest.bind(null, doc, checkout));
 }
 
-function setLatestOnContent(content, latest) {
-    return sudo(doSetLatestOnContent.bind(null, content, latest));
-}
-
 function findChildren(content) {
     return sudo(doFindChildren.bind(null, content));
 }
@@ -73,8 +68,8 @@ function importGuide(repo, guide) {
     return sudo(doImportGuide.bind(null, repo, guide));
 }
 
-function importDoc(repo, doc, commit, label) {
-    return sudo(doImportDoc.bind(null, repo, doc, commit, label));
+function importDoc(repo, doc, version) {
+    return sudo(doImportDoc.bind(null, repo, doc, version));
 }
 
 function execute(req) {
@@ -156,7 +151,10 @@ function importGuides(repo) {
 
     guides.forEach((guide) => {
         importGuide(repo, guide);
-        setLatestOnContent(guide, true);
+
+        if (isContentPublished(guide)) {
+            publishTree(guide);
+        }
     });
 }
 
@@ -167,13 +165,62 @@ function importDocs(repo) {
         return;
     }
 
-    const versions = getDocVersions(repo);
+    const versions = getVersions(repo);
 
     unmarkLatestDocs(docs);
-    defineLatestVersion(versions);
     buildAndImportVersions(repo, docs, versions);
     removeUnusedVersions(docs, versions);
     markLatestDocs(docs, versions);
+}
+
+function getVersions(repo) {
+    const versions = getDocVersions(repo);
+
+    if (!isLatestSpecified(versions)) {
+        versions[0].latest = true;
+    }
+
+    setVersionsCommitIds(repo, versions);
+
+    return versions;
+}
+
+function isLatestSpecified(versions) {
+    const isLatestRegExp = /^true$/i;
+
+    let isLatestSpecified = false;
+
+    versions.forEach((version) => {
+        version.latest = isLatestRegExp.test(version.latest);
+
+        if (!!version.latest) {
+            isLatestSpecified = true;
+        }
+    });
+
+    return isLatestSpecified;
+}
+
+function setVersionsCommitIds(repo, versions) {
+    const branches = getBranches(repo);
+
+    versions.forEach((version) => {
+        version.commit = getCommitId(version.checkout, branches);
+    });
+}
+
+// idea is that checkout is rather branch name or commit id, checking if checkout is in branches list
+function getCommitId(checkout, branches) {
+    let result = checkout;
+
+    branches.some((branch) => {
+        if (branch.name == checkout) {
+            result = branch.id;
+            return true;
+        }
+    });
+
+    return result;
 }
 
 function removeUnusedVersions(docs, versions) {
@@ -194,6 +241,7 @@ function doRemoveUnusedVersions(doc, versions) {
             log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName);
             var isDocVersionPublished = isContentPublished(docVersion);
             removeContent({key: docVersion._id, branch: DRAFT_BRANCH});
+
             if (isDocVersionPublished) {
                 publishTree(docVersion);
             }
@@ -229,58 +277,31 @@ function getLatestCheckout(versions) {
 }
 
 function buildAndImportVersions(repo, docs, versions) {
-    const branches = getBranches(repo);
-
     versions.forEach((version) => {
-        const commitId = getCommitId(version.checkout, branches);
-        version.commit = commitId;
-
-        const docsToImportVersionTo = getDocsToImportVersionTo(docs, commitId);
-
-        if (docsToImportVersionTo.length > 0) {
-            cloneRepo(repo, version.checkout);
-            buildAsciiDoc(repo);
-        }
-
-        docsToImportVersionTo.forEach((doc) => {
-            const importedContentsIds = importDoc(repo, doc, commitId, version.label);
-            const docVersion = findDocVersionByCheckout(doc, commitId);
-            removeOldContentsFromDoc(docVersion, importedContentsIds);
-
-            if (isContentPublished(docVersion)) {
-                publishTree(docVersion);
-            }
-        });
+        buildAndImportVersion(repo, docs, version)
     });
 }
 
-// idea is that checkout is rather branch name or commit id, checking if checkout is in branches list
-function getCommitId(checkout, branches) {
-    let result = checkout;
+function buildAndImportVersion(repo, docs, version) {
+    const docsToImportVersionTo = getDocsToImportVersionTo(docs, version.commit);
 
-    branches.some((branch) => {
-        if (branch.name == checkout) {
-            result = branch.id;
-            return true;
-        }
-        else {
-            return false;
-        }
+    if (docsToImportVersionTo.length == 0) {
+        return;
+    }
+
+    cloneRepo(repo, version.checkout);
+    buildAsciiDoc(repo);
+
+    docsToImportVersionTo.forEach((doc) => {
+        importVersionIntoDoc(repo, doc, version);
     });
-
-    return result;
 }
 
 function getDocsToImportVersionTo(docs, commitId) {
     const docsToImport = [];
 
     docs.forEach((doc) => {
-        const docVersions = findDocVersions(doc);
-        const isUpToDate = docVersions.some((docVersion) => {
-            return commitId == docVersion.data.commit;
-        });
-
-        if (!isUpToDate) {
+        if (!isUpToDate(doc, commitId)) {
             docsToImport.push(doc);
         }
     });
@@ -288,20 +309,23 @@ function getDocsToImportVersionTo(docs, commitId) {
     return docsToImport;
 }
 
-function defineLatestVersion(versions) {
-    const isLatestRegExp = /^true$/i;
-
-    let isLatestSpecified = false;
-
-    versions.forEach((version) => {
-        version.latest = isLatestRegExp.test(version.latest);
-        if (!!version.latest) {
-            isLatestSpecified = true;
-        }
+function isUpToDate(doc, commitId) {
+    const docVersions = findDocVersions(doc);
+    const isUpToDate = docVersions.some((docVersion) => {
+        return commitId == docVersion.data.commit;
     });
 
-    if (!isLatestSpecified) {
-        versions[0].latest = true;
+    return isUpToDate;
+}
+
+function importVersionIntoDoc(repo, doc, version) {
+    const importedContentsIds = importDoc(repo, doc, version);
+    const docVersion = findDocVersionByCheckout(doc, version.commit);
+
+    removeOldContentsFromDoc(docVersion, importedContentsIds);
+
+    if (isContentPublished(docVersion)) {
+        publishTree(docVersion);
     }
 }
 
@@ -392,13 +416,13 @@ function doImportGuide(repo, guide) {
     return __.toNativeObject(bean.execute());
 }
 
-function doImportDoc(repo, doc, commit, label) {
+function doImportDoc(repo, doc, version) {
     const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = doc._path.replace('/content', '');
-    bean.commit = commit;
-    if (!!label) {
-        bean.label = label;
+    bean.commit = version.commit;
+    if (!!version.label) {
+        bean.label = version.label;
     }
 
     return __.toNativeObject(bean.execute());

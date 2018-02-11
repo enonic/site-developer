@@ -5,12 +5,12 @@ import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
 import {modify as modifyContent, query as queryContent} from '/lib/xp/content';
 import {isSet} from '/lib/enonic/util/value';
 import {toStr} from '/lib/enonic/util';
-import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
 import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
+import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
@@ -149,7 +149,10 @@ exports.search = function (query, path, start, count) {
     if (restrictSearchToLatestOnly) {
         expr = and(
             expr,
-            like('data.latest', 'true')
+            group(or(
+                like('data.latest', 'true'),
+                propIn('type', [CT_GUIDE]),
+            ))
         );
     }
 
@@ -200,10 +203,6 @@ exports.markLatest = function (doc, checkout) {
     contents.forEach(function (content) {
         setLatestOnContent(content, true);
     });
-};
-
-exports.setLatestOnContent = function (content, latest) {
-    setLatestOnContent(content, latest);
 };
 
 exports.findDocVersions = function (doc) {
