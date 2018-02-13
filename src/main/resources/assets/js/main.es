@@ -20,6 +20,11 @@ import './pages/search-result.es';
 import './parts/docpage.es';
 
 
+// Gives Uncaught TypeError: n is not a function
+// Might have something to do with minification
+//import './vendor/tocbot.min.js';
+
+
 $('.live-search__input').liveSearch();
 $('.pagination').pagination();
 $('.main-menu').enonicMenu({
