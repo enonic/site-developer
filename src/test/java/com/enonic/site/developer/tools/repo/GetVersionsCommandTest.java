@@ -1,10 +1,14 @@
 package com.enonic.site.developer.tools.repo;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.site.developer.tools.CommonTest;
 
@@ -13,6 +17,7 @@ import static org.junit.Assert.*;
 public class GetVersionsCommandTest
     extends CommonTest
 {
+    private static final String MASTER_COMMIT_ID = "d843a5af87ed28b09465d8e17c206c189542c522";
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -26,7 +31,7 @@ public class GetVersionsCommandTest
         }
         catch ( final Exception e )
         {
-            assertEquals( GetVersionsCommand.NO_REPO_MSG, e.getCause().getMessage() );
+            assertEquals( GetVersionsCommand.NO_REPO_NAME_MSG, e.getCause().getMessage() );
             return;
         }
 
@@ -34,14 +39,23 @@ public class GetVersionsCommandTest
     }
 
     @Test
-    public void testNoVersionsReturnsNull()
+    public void testNoVersionsReturnsVersionsWithMasterOnly()
         throws Exception
     {
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommandExt( makeUrlToFile( "non-existing-path" ) );
-        getVersionsCommand.setRepository( "some-test-repo" );
+        getVersionsCommand.setRepoName( "test-repo-name" );
+        getVersionsCommand.setRepoUrl( "test-repo-url" );
+
         final String result = getVersionsCommand.execute();
 
-        assertNull( result );
+        final GetVersionsCommand.VersionsJson versionsJson = new ObjectMapper().readValue( result, GetVersionsCommand.VersionsJson.class );
+        assertTrue( versionsJson.getVersions().size() == 1 );
+
+        final GetVersionsCommand.VersionJson versionJson = versionsJson.getVersions().get( 0 );
+        assertTrue( versionJson.isLatest() );
+        assertEquals( versionJson.getLabel(), GetVersionsCommand.MASTER_BRANCH );
+        assertEquals( versionJson.getCheckout(), GetVersionsCommand.MASTER_BRANCH );
+        assertEquals( versionJson.getCommitId(), MASTER_COMMIT_ID );
     }
 
     @Test
@@ -50,7 +64,8 @@ public class GetVersionsCommandTest
     {
         final String path = getPath( "getversions/versions.json" );
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommandExt( makeUrlToFile( path ) );
-        getVersionsCommand.setRepository( "some-test-repo" );
+        getVersionsCommand.setRepoName( "test-repo-name" );
+        getVersionsCommand.setRepoUrl( "test-repo-url" );
         final String result = getVersionsCommand.execute();
 
         assertNotNull( result );
@@ -75,9 +90,17 @@ public class GetVersionsCommandTest
         }
 
         @Override
-        protected String makeUrlToVersionsJson()
+        protected String makeUrlToVersionsJson( final String masterCommitId )
         {
             return url;
+        }
+
+        @Override
+        protected List<GitBranch> getBranches()
+        {
+            final List<GitBranch> branches = new ArrayList<>();
+            branches.add( new GitBranch( MASTER_BRANCH, MASTER_COMMIT_ID ) );
+            return branches;
         }
     }
 }

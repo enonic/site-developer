@@ -165,62 +165,12 @@ function importDocs(repo) {
         return;
     }
 
-    const versions = getVersions(repo);
+    const versions = getDocVersions(repo);
 
     unmarkLatestDocs(docs);
     buildAndImportVersions(repo, docs, versions);
     removeUnusedVersions(docs, versions);
     markLatestDocs(docs, versions);
-}
-
-function getVersions(repo) {
-    const versions = getDocVersions(repo);
-
-    if (!isLatestSpecified(versions)) {
-        versions[0].latest = true;
-    }
-
-    setVersionsCommitIds(repo, versions);
-
-    return versions;
-}
-
-function isLatestSpecified(versions) {
-    const isLatestRegExp = /^true$/i;
-
-    let isLatestSpecified = false;
-
-    versions.forEach((version) => {
-        version.latest = isLatestRegExp.test(version.latest);
-
-        if (!!version.latest) {
-            isLatestSpecified = true;
-        }
-    });
-
-    return isLatestSpecified;
-}
-
-function setVersionsCommitIds(repo, versions) {
-    const branches = getBranches(repo);
-
-    versions.forEach((version) => {
-        version.commit = getCommitId(version.checkout, branches);
-    });
-}
-
-// idea is that checkout is rather branch name or commit id, checking if checkout is in branches list
-function getCommitId(checkout, branches) {
-    let result = checkout;
-
-    branches.some((branch) => {
-        if (branch.name == checkout) {
-            result = branch.id;
-            return true;
-        }
-    });
-
-    return result;
 }
 
 function removeUnusedVersions(docs, versions) {
@@ -232,21 +182,26 @@ function removeUnusedVersions(docs, versions) {
 function doRemoveUnusedVersions(doc, versions) {
     const docVersions = findDocVersions(doc);
 
-    docVersions.forEach((docVersion) => {
-        var isInVersionsJson = versions.some((version) => {
-            return version.commit == docVersion.data.commit;
-        });
-
-        if (!isInVersionsJson) {
-            log.info('Removing ' + doc.displayName + ' : ' + docVersion.displayName);
-            var isDocVersionPublished = isContentPublished(docVersion);
-            removeContent({key: docVersion._id, branch: DRAFT_BRANCH});
-
-            if (isDocVersionPublished) {
-                publishTree(docVersion);
-            }
-        }
+    docVersions.filter(docVersion => !isDocVersionUsed(docVersion, versions)).forEach((docVersion) => {
+        log.info('Removing unused ' + doc.displayName + ' : ' + docVersion.displayName);
+        doRemoveUnusedDocVersion(docVersion);
     });
+}
+
+function isDocVersionUsed(docVersion, versions) {
+    return versions.some((version) => {
+        return version.commitId == docVersion.data.commit;
+    });
+}
+
+function doRemoveUnusedDocVersion(docVersion) {
+    const isDocVersionPublished = isContentPublished(docVersion);
+
+    removeContent({key: docVersion._id, branch: DRAFT_BRANCH});
+
+    if (isDocVersionPublished) {
+        publishTree(docVersion);
+    }
 }
 
 function unmarkLatestDocs(docs) {
@@ -268,7 +223,7 @@ function getLatestCheckout(versions) {
 
     versions.some((version) => {
         if (version.latest) {
-            checkout = version.commit;
+            checkout = version.commitId;
         }
         return version.latest;
     });
@@ -278,12 +233,12 @@ function getLatestCheckout(versions) {
 
 function buildAndImportVersions(repo, docs, versions) {
     versions.forEach((version) => {
-        buildAndImportVersion(repo, docs, version)
+        buildAndImportVersion(repo, docs, version);
     });
 }
 
 function buildAndImportVersion(repo, docs, version) {
-    const docsToImportVersionTo = getDocsToImportVersionTo(docs, version.commit);
+    const docsToImportVersionTo = getDocsToImportVersionTo(docs, version.commitId);
 
     if (docsToImportVersionTo.length == 0) {
         return;
@@ -320,7 +275,7 @@ function isUpToDate(doc, commitId) {
 
 function importVersionIntoDoc(repo, doc, version) {
     const importedContentsIds = importDoc(repo, doc, version);
-    const docVersion = findDocVersionByCheckout(doc, version.commit);
+    const docVersion = findDocVersionByCheckout(doc, version.commitId);
 
     removeOldContentsFromDoc(docVersion, importedContentsIds);
 
@@ -330,16 +285,16 @@ function importVersionIntoDoc(repo, doc, version) {
 }
 
 function removeOldContentsFromDoc(docVersion, importedContentsIds) {
-    const contents = findChildren(docVersion);
+    const docVersionContents = findChildren(docVersion);
 
-    contents.forEach((content) => {
-        const isImportedContent = importedContentsIds.some((importedContentId) => importedContentId == content._id);
-
-        if (!isImportedContent) {
-            log.info('Removing ' + content._path);
-            removeContent({key: content._id, branch: DRAFT_BRANCH});
-        }
+    docVersionContents.filter(content => !isImportedContent(content._id, importedContentsIds)).forEach((content) => {
+        log.info('Removing ' + content._path);
+        removeContent({key: content._id, branch: DRAFT_BRANCH});
     });
+}
+
+function isImportedContent(contentId, importedContentsIds) {
+    return importedContentsIds.some((importedContentId) => importedContentId == contentId);
 }
 
 function isContentPublished(content) {
@@ -357,35 +312,6 @@ function publishTree(content) {
         sourceBranch: DRAFT_BRANCH,
         targetBranch: MASTER_BRANCH
     })
-}
-
-function makeVersionsJsonWithMaster() {
-    return [
-        {
-            "label": "latest",
-            "checkout": "master",
-            "latest": true
-        }
-    ];
-}
-
-function getBranches(repo) {
-    const bean = __.newBean('com.enonic.site.developer.tools.repo.GetBranchesCommand');
-    bean.repository = repo.html_url;
-
-    const branches = __.toNativeObject(bean.execute());
-
-    const result = [];
-
-    branches.forEach(function (branchStr) {
-        const branchArr = branchStr.split('=');
-        result.push({
-            name: branchArr[0],
-            id: branchArr[1]
-        });
-    });
-
-    return result;
 }
 
 function cloneRepo(repo, checkout) {
@@ -420,7 +346,7 @@ function doImportDoc(repo, doc, version) {
     const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
     bean.importPath = doc._path.replace('/content', '');
-    bean.commit = version.commit;
+    bean.commit = version.commitId;
     if (!!version.label) {
         bean.label = version.label;
     }
@@ -430,12 +356,11 @@ function doImportDoc(repo, doc, version) {
 
 function getDocVersions(repo) {
     const bean = __.newBean('com.enonic.site.developer.tools.repo.GetVersionsCommand');
-    bean.repository = repo.full_name;
-    const versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
+    bean.repoName = repo.full_name;
+    bean.repoUrl = repo.html_url;
 
-    if (!versionsJson || !versionsJson.versions || versionsJson.versions.length == 0) {
-        return makeVersionsJsonWithMaster();
-    }
+    const versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
+    log.info('versions: ' + JSON.stringify(versionsJson));
 
     return versionsJson.versions;
 }

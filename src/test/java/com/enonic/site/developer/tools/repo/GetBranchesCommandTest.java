@@ -36,12 +36,15 @@ public class GetBranchesCommandTest
         final GetBranchesCommand getBranchesCommand = new GetBranchesCommandExt();
         getBranchesCommand.setRepository( "some-test-repo" );
 
-        final List<String> result = getBranchesCommand.execute();
+        final List<GitBranch> result = getBranchesCommand.execute();
 
         assertTrue( result.size() == 3 );
-        assertEquals( "branch_0=0123456789012345678901234567890123456780", result.get( 0 ) );
-        assertEquals( "branch_1=0123456789012345678901234567890123456781", result.get( 1 ) );
-        assertEquals( "branch_2=0123456789012345678901234567890123456782", result.get( 2 ) );
+        assertEquals( "branch_0", result.get( 0 ).getName() );
+        assertEquals( "0123456789012345678901234567890123456780", result.get( 0 ).getCommitId() );
+        assertEquals( "branch_1", result.get( 1 ).getName() );
+        assertEquals( "0123456789012345678901234567890123456781", result.get( 1 ).getCommitId() );
+        assertEquals( "branch_2", result.get( 2 ).getName() );
+        assertEquals( "0123456789012345678901234567890123456782", result.get( 2 ).getCommitId() );
     }
 
     private final class GetBranchesCommandExt

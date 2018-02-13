@@ -22,7 +22,7 @@ public class GetBranchesCommand
 
     private String repository;
 
-    public List<String> execute()
+    public List<GitBranch> execute()
     {
         try
         {
@@ -35,7 +35,7 @@ public class GetBranchesCommand
         }
     }
 
-    private List<String> doExecute()
+    private List<GitBranch> doExecute()
         throws Exception
     {
         Preconditions.checkNotNull( repository, NO_REPO_MSG );
@@ -55,13 +55,13 @@ public class GetBranchesCommand
         return Git.lsRemoteRepository().setHeads( true ).setRemote( repository ).call();
     }
 
-    private List<String> processRefs( final Collection<Ref> refs )
+    private List<GitBranch> processRefs( final Collection<Ref> refs )
     {
-        final List<String> result = new ArrayList<>();
+        final List<GitBranch> result = new ArrayList<>();
 
         for ( final Ref ref : refs )
         {
-            result.add( ref.getName().replace( "refs/heads/", "" ) + "=" + ref.getObjectId().getName() );
+            result.add( new GitBranch( ref.getName().replace( "refs/heads/", "" ), ref.getObjectId().getName() ) );
         }
 
         return result;
