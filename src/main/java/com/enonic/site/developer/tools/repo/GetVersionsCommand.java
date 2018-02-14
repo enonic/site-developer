@@ -57,14 +57,6 @@ public class GetVersionsCommand
         return new ObjectMapper().writeValueAsString( versionsJson );
     }
 
-    protected List<GitBranch> getBranches()
-    {
-        final GetBranchesCommand getBranchesCommand = new GetBranchesCommand();
-        getBranchesCommand.setRepository( repoUrl );
-
-        return getBranchesCommand.execute();
-    }
-
     private VersionsJson fetchVersionsJson()
         throws Exception
     {
@@ -89,6 +81,14 @@ public class GetVersionsCommand
             LOGGER.info( "No [" + VERSIONS_JSON_PATH + "] found in [" + repoName + "]" );
             return makeMasterOnlyVersionsJson( masterCommitId );
         }
+    }
+
+    protected List<GitBranch> getBranches()
+    {
+        final GetBranchesCommand getBranchesCommand = new GetBranchesCommand();
+        getBranchesCommand.setRepository( repoUrl );
+
+        return getBranchesCommand.execute();
     }
 
     private InputStream getVersionsJsonAsStream( final String masterCommitId )

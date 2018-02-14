@@ -11,6 +11,7 @@ import {toStr} from '/lib/enonic/util';
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
 import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
 import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
+import {propEq} from './query.es';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
@@ -62,9 +63,24 @@ function getSearchResultName(content, hideVersion) {
     return content.displayName;
 }
 
-function findDocpagesAndDocversions(doc) {
+function findDocPagesAndDocVersions(doc) {
     const expr = and(
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION]),
+        like('_path', '/content' + doc._path + '/*'));
+
+    const result = queryContent({
+        query: expr,
+        start: 0,
+        count: 1000,
+        branch: DRAFT_BRANCH
+    });
+
+    return result.hits;
+}
+
+function findDocVersions(doc) {
+    const expr = and(
+        propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
     const result = queryContent({
@@ -81,7 +97,7 @@ function findDocVersionByCheckout(doc, checkout) {
     const expr = and(
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'),
-        like('data.commit', checkout));
+        propEq('data.commit', checkout));
 
     const result = queryContent({
         query: expr,
@@ -98,6 +114,8 @@ function findDocVersionByCheckout(doc, checkout) {
 }
 
 function setLatestOnContent(content, latest) {
+    log.info('Setting latest "' + latest + '" on ' + content._path);
+
     modifyContent({
         key: content._id,
         editor: function (c) {
@@ -109,6 +127,33 @@ function setLatestOnContent(content, latest) {
     });
 }
 
+function isLatest(content) {
+    const isLatestRegExp = /^true$/i;
+
+    return isLatestRegExp.test(content.data.latest);
+}
+
+function doMarkLatest(docVersion) {
+    if (!isLatest(docVersion)) {
+        setLatestOnContent(docVersion, true);
+    }
+
+    const contents = findDocPagesAndDocVersions(docVersion);
+    contents.filter((content) => !isLatest(content)).forEach((content) => {
+        setLatestOnContent(content, true);
+    });
+}
+
+function doUnMarkLatest(docVersion) {
+    if (isLatest(docVersion)) {
+        setLatestOnContent(docVersion, false);
+    }
+
+    const contents = findDocPagesAndDocVersions(docVersion);
+    contents.filter((content) => isLatest(content)).forEach((content) => {
+        setLatestOnContent(content, false);
+    });
+}
 
 //──────────────────────────────────────────────────────────────────────────────
 // Exports
@@ -183,26 +228,13 @@ exports.search = function (query, path, start, count) {
     };
 }; // exports.search
 
-exports.unmarkLatest = function (doc) {
-    const contents = findDocpagesAndDocversions(doc);
+exports.markLatest = function (doc, latestCheckout) {
+    const docVersions = findDocVersions(doc);
+    const latestDocVersion = docVersions.filter((docVersion) => docVersion.data.commit == latestCheckout)[0];
+    const nonLatestDocVersions = docVersions.filter((docVersion) => docVersion.data.commit != latestCheckout);
 
-    contents.forEach(function (content) {
-        setLatestOnContent(content, false);
-    });
-};
-
-exports.markLatest = function (doc, checkout) {
-    const docVersion = findDocVersionByCheckout(doc, checkout);
-    if (!docVersion) {
-        return;
-    }
-
-    setLatestOnContent(docVersion, true);
-
-    const contents = findDocpagesAndDocversions(docVersion);
-    contents.forEach(function (content) {
-        setLatestOnContent(content, true);
-    });
+    doMarkLatest(latestDocVersion);
+    nonLatestDocVersions.forEach(doUnMarkLatest);
 };
 
 exports.findDocVersions = function (doc) {

@@ -57,6 +57,8 @@ public final class ImportDocCommand
             updateDocVersion( docVersionContentPath );
         }
 
+        updateListOfImportedContents( docVersionContentPath );
+
         return contentService.getByPath( docVersionContentPath );
     }
 

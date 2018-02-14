@@ -1,20 +1,14 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {delete as doDeleteContent, get as doGetContent, publish as doPublishContent, query as doQueryContent} from '/lib/xp/content';
+import {delete as doDeleteContent, get as doGetContent, publish as doPublishContent} from '/lib/xp/content';
 import {run as runWithContext} from '/lib/xp/context';
 import {submit as submitTask} from '/lib/xp/task';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
-import {
-    findChildren as doFindChildren,
-    findDocVersionByCheckout,
-    findDocVersions,
-    markLatest as doMarkLatest,
-    unmarkLatest as doUnmarkLatest
-} from '/lib/doc';
-
+import {findChildren as doFindChildren, findDocVersions, markLatest as doMarkLatest} from '/lib/doc';
+import {findContentsLinkedToRepo, isRepoReferencedByAnyContent} from '/lib/repo'
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
 //──────────────────────────────────────────────────────────────────────────────
@@ -36,10 +30,6 @@ function sudo(callback) {
     }, callback);
 }
 
-function queryContent(params) {
-    return sudo(doQueryContent.bind(null, params));
-}
-
 function removeContent(params) {
     return sudo(doDeleteContent.bind(null, params));
 }
@@ -52,12 +42,8 @@ function publish(params) {
     return sudo(doPublishContent.bind(null, params));
 }
 
-function unmarkLatest(params) {
-    return sudo(doUnmarkLatest.bind(null, params));
-}
-
-function markLatest(doc, checkout) {
-    return sudo(doMarkLatest.bind(null, doc, checkout));
+function markLatest(doc, latestCheckout) {
+    return sudo(doMarkLatest.bind(null, doc, latestCheckout));
 }
 
 function findChildren(content) {
@@ -83,7 +69,7 @@ function execute(req) {
 }
 
 function doExecute(req) {
-    const repo = getRepoInfo(req)
+    const repo = JSON.parse(req.body).repository;
 
     if (!isRepoReferencedByAnyContent(repo.html_url)) {
         return;
@@ -92,44 +78,6 @@ function doExecute(req) {
     importGuides(repo);
     importDocs(repo);
 }
-
-function getRepoInfo(req) {
-    const reqBodyJson = JSON.parse(req.body);
-    return reqBodyJson.repository;
-}
-
-function isRepoReferencedByAnyContent(repoUrl) {
-    const expr = "(type ='" + app.name + ":doc' OR type ='" + app.name + ":guide' ) AND data.repository = '" + repoUrl + "'";
-
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 0,
-        branch: DRAFT_BRANCH
-    });
-
-    log.info('Docs and guides referencing repo "' + repoUrl + '" - ' + result.total);
-
-    return result.total > 0;
-};
-
-function findContentsLinkedToRepo(repoUrl, contentType) {
-    const expr = "type ='" + app.name + ":" + contentType + "' AND data.repository = '" + repoUrl + "'";
-
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 10000,
-        branch: DRAFT_BRANCH
-    });
-
-    const keys = [];
-    for (let i = 0; i < result.hits.length; i++) {
-        keys.push(result.hits[i]);
-    }
-
-    return keys;
-};
 
 function cloneMaster(repo) {
     cloneRepo(repo);
@@ -167,7 +115,6 @@ function importDocs(repo) {
 
     const versions = getDocVersions(repo);
 
-    unmarkLatestDocs(docs);
     buildAndImportVersions(repo, docs, versions);
     removeUnusedVersions(docs, versions);
     markLatestDocs(docs, versions);
@@ -202,12 +149,6 @@ function doRemoveUnusedDocVersion(docVersion) {
     if (isDocVersionPublished) {
         publishTree(docVersion);
     }
-}
-
-function unmarkLatestDocs(docs) {
-    docs.forEach((doc) => {
-        unmarkLatest(doc);
-    });
 }
 
 function markLatestDocs(docs, versions) {
@@ -275,10 +216,14 @@ function isUpToDate(doc, commitId) {
 
 function importVersionIntoDoc(repo, doc, version) {
     const importedContentsIds = importDoc(repo, doc, version);
-    const docVersion = findDocVersionByCheckout(doc, version.commitId);
+    const docVersion = getContent({
+        key: importedContentsIds[0],
+        branch: DRAFT_BRANCH
+    })
 
     removeOldContentsFromDoc(docVersion, importedContentsIds);
 
+    log.info('isContentPublished');
     if (isContentPublished(docVersion)) {
         publishTree(docVersion);
     }

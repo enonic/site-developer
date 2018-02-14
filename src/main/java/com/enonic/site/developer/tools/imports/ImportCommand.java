@@ -280,7 +280,7 @@ public abstract class ImportCommand
         contentService.update( updateMediaParams );
     }
 
-    private void updateListOfImportedContents( final ContentPath repoPath )
+    protected final void updateListOfImportedContents( final ContentPath repoPath )
     {
         final Content importedContent = contentService.getByPath( repoPath );
 
