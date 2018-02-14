@@ -1,7 +1,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {getContent as getCurrentContent, pageUrl} from '/lib/xp/portal';
+import {getContent as getCurrentContent, pageUrl, serviceUrl} from '/lib/xp/portal';
 import {render} from '/lib/xp/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
@@ -48,7 +48,10 @@ exports.get = function (req) {
         const view = resolve('/site/pages/available-versions/available-versions.html');
 
         const model = {
-            versions: getAvailableVersions(doc)
+            versions: getAvailableVersions(doc),
+            repoUrl: doc.data.repository,
+            docUrl: pageUrl({path: doc._path}),
+            webhookServiceUrl: serviceUrl({service: 'gitme'})
         };
 
         return {

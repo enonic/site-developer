@@ -16,6 +16,7 @@ const REPO_DEST = './docs-repos/';
 const DOCS_PATH = '/docs';
 const MASTER_BRANCH = 'master';
 const DRAFT_BRANCH = 'draft';
+const GITHUB_URL = 'https://github.com/'
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
@@ -58,6 +59,10 @@ function importDoc(repo, doc, version) {
     return sudo(doImportDoc.bind(null, repo, doc, version));
 }
 
+function isPreviewMode(req) {
+    return req.mode === 'preview';
+}
+
 function execute(req) {
     try {
         doExecute(req);
@@ -69,7 +74,8 @@ function execute(req) {
 }
 
 function doExecute(req) {
-    const repo = JSON.parse(req.body).repository;
+    // in preview mode if triggered manually from page, thus repo url is in params and not in body
+    const repo = isPreviewMode(req) ? makeRepoObjFromUrl(req.params.repository) : JSON.parse(req.body).repository;
 
     if (!isRepoReferencedByAnyContent(repo.html_url)) {
         return;
@@ -77,6 +83,13 @@ function doExecute(req) {
 
     importGuides(repo);
     importDocs(repo);
+}
+
+function makeRepoObjFromUrl(repoUrl) {
+    return {
+        html_url: repoUrl,
+        full_name: repoUrl.replace(GITHUB_URL, '')
+    }
 }
 
 function cloneMaster(repo) {
@@ -321,5 +334,9 @@ exports.post = function (req) {
         }
     });
 
-    return;
+    if (isPreviewMode(req)) { // for manually triggered webhook redirecting back to page where it was triggered
+        return {
+            redirect: req.params.docUrl
+        };
+    }
 };

@@ -12,6 +12,13 @@
         </li>
     </ul>
 </div>
+<div class="webhook">
+    <form data-th-action="${webhookServiceUrl}" method="post" target="_self">
+        <input type="hidden" name="repository" data-th-value="${repoUrl}">
+        <input type="hidden" name="docUrl" data-th-value="${docUrl}">
+        <input type="submit" value="Update">
+    </form>
+</div>
 
 
 </body>
