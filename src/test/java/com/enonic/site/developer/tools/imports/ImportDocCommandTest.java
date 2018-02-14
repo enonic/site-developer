@@ -67,11 +67,29 @@ public class ImportDocCommandTest
     }
 
     @Test
-    public void testPathsAreCorrect()
+    public void testContentPathsAreCorrect()
         throws Exception
     {
         final List<String> contentPaths =
             Arrays.asList( makeRepoPath( "beta/images" ), makeRepoPath( "beta/images/secondary" ), makeRepoPath( "beta/includes" ) );
+
+        Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
+        Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
+            Content.create().id( ContentId.from( "testId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() );
+        final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
+
+        importDocCommand.execute();
+
+        Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
+
+        assertTrue( createContentParamsArgumentCaptor.getAllValues().stream().map(
+            params -> params.getParent() + "/" + params.getDisplayName() ).collect( Collectors.toList() ).containsAll( contentPaths ) );
+    }
+
+    @Test
+    public void testMediaPathsAreCorrect()
+        throws Exception
+    {
         final List<String> mediaPaths =
             Arrays.asList( makeRepoPath( "beta/images/kitchen.jpg" ), makeRepoPath( "beta/images/secondary/bedroom.jpg" ),
                            makeRepoPath( "beta/images/song.mp3" ) );
@@ -79,16 +97,12 @@ public class ImportDocCommandTest
         Mockito.when( contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( false );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn(
             Content.create().id( ContentId.from( "testId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() );
-        final ArgumentCaptor<CreateContentParams> createContentParamsArgumentCaptor = ArgumentCaptor.forClass( CreateContentParams.class );
         final ArgumentCaptor<CreateMediaParams> createMediaParamsArgumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
 
         importDocCommand.execute();
 
-        Mockito.verify( contentService, Mockito.times( 9 ) ).create( createContentParamsArgumentCaptor.capture() );
         Mockito.verify( contentService, Mockito.times( 4 ) ).create( createMediaParamsArgumentCaptor.capture() );
 
-        assertTrue( createContentParamsArgumentCaptor.getAllValues().stream().map(
-            params -> params.getParent() + "/" + params.getDisplayName() ).collect( Collectors.toList() ).containsAll( contentPaths ) );
         assertTrue(
             createMediaParamsArgumentCaptor.getAllValues().stream().map( params -> params.getParent() + "/" + params.getName() ).collect(
                 Collectors.toList() ).containsAll( mediaPaths ) );
