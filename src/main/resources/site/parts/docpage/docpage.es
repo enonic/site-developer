@@ -3,10 +3,7 @@
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
 //import {toStr} from '/lib/enonic/util';
-import {
-    get as getContentByKey,
-    query as queryContent
-} from '/lib/xp/content';
+import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
 import {
     getContent as getCurrentContent,
     getSite as getCurrentSite,
@@ -18,14 +15,9 @@ import {render} from '/lib/xp/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
-import {
-    CT_DOCVERSION,
-    RT_HTML,
-    isDoc,
-    isGuide
-} from '/content-types';
+import {CT_DOCVERSION, isDoc, isGuide, RT_HTML} from '/content-types';
 import {and, decendantOf, propEq} from '/lib/query';
-import {getNearestContentByType} from '/lib/util';
+import {getNearestContentByType, getSiteUrl} from '/lib/util';
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -151,6 +143,8 @@ function createDocModel(doc) {
         rootDocTitle: rootDoc.displayName,
         rootDocUrl: pageUrl({path: versionContent._path}),
         service: 'search',
+        searchDocId: doc._id,
+        searchResultPageUrl: `${getSiteUrl()}search`,
         serviceUrl: getServiceUrl({
             service: 'search',
             params: {
