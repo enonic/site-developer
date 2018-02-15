@@ -2,7 +2,7 @@
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
 import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
-import {modify as modifyContent, query as queryContent} from '/lib/xp/content';
+import {get as getContent, modify as modifyContent, publish as publishContent, query as queryContent} from '/lib/xp/content';
 import {isSet} from '/lib/enonic/util/value';
 import {toStr} from '/lib/enonic/util';
 //──────────────────────────────────────────────────────────────────────────────
@@ -19,6 +19,7 @@ import {propEq} from './query.es';
 const DEBUG = true;
 const TRACE = false;
 const DRAFT_BRANCH = 'draft';
+const MASTER_BRANCH = 'master';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
@@ -133,26 +134,59 @@ function isLatest(content) {
     return isLatestRegExp.test(content.data.latest);
 }
 
-function doMarkLatest(docVersion) {
+function doMarkLatest(docVersion, publish) {
+    let updated = false;
+
     if (!isLatest(docVersion)) {
         setLatestOnContent(docVersion, true);
+        updated = true;
     }
 
     const contents = findDocPagesAndDocVersions(docVersion);
     contents.filter((content) => !isLatest(content)).forEach((content) => {
         setLatestOnContent(content, true);
+        updated = true;
     });
+
+    if (publish && updated) {
+        publishTree(docVersion);
+    }
 }
 
-function doUnMarkLatest(docVersion) {
+function doUnMarkLatest(docVersion, publish) {
+    let updated = false;
+
     if (isLatest(docVersion)) {
         setLatestOnContent(docVersion, false);
+        updated = true;
     }
 
     const contents = findDocPagesAndDocVersions(docVersion);
     contents.filter((content) => isLatest(content)).forEach((content) => {
         setLatestOnContent(content, false);
+        updated = true;
     });
+
+    if (publish && updated) {
+        publishTree(docVersion);
+    }
+}
+
+function isPublished(content) {
+    return !!getContent({
+        key: content._id,
+        branch: MASTER_BRANCH
+    })
+}
+
+function publishTree(content) {
+    log.info('Publishing ' + content._path);
+
+    publishContent({
+        keys: [content._id],
+        sourceBranch: DRAFT_BRANCH,
+        targetBranch: MASTER_BRANCH
+    })
 }
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -230,11 +264,12 @@ exports.search = function (query, path, start, count) {
 
 exports.markLatest = function (doc, latestCheckout) {
     const docVersions = findDocVersions(doc);
-    const latestDocVersion = docVersions.filter((docVersion) => docVersion.data.commit == latestCheckout)[0];
-    const nonLatestDocVersions = docVersions.filter((docVersion) => docVersion.data.commit != latestCheckout);
+    const latestDocVersion = docVersions.filter((docVersion) => docVersion.data.commit === latestCheckout)[0];
+    const nonLatestDocVersions = docVersions.filter((docVersion) => docVersion.data.commit !== latestCheckout);
 
-    doMarkLatest(latestDocVersion);
-    nonLatestDocVersions.forEach(doUnMarkLatest);
+    const isDocPublished = isPublished(doc);
+    doMarkLatest(latestDocVersion, isDocPublished);
+    nonLatestDocVersions.forEach((nonLatestDocVersion) => doUnMarkLatest(nonLatestDocVersion, isDocPublished));
 };
 
 exports.findDocVersions = function (doc) {
@@ -288,3 +323,11 @@ exports.findChildren = function (content) {
 
     return result.hits;
 };
+
+exports.isPublished = function (content) {
+    return isPublished(content);
+};
+
+exports.publishTree = function (content) {
+    return publishTree(content);
+}
