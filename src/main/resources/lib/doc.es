@@ -10,7 +10,7 @@ import {toStr} from '/lib/enonic/util';
 //──────────────────────────────────────────────────────────────────────────────
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
 import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
-import {CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
+import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 import {propEq} from './query.es';
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -174,14 +174,14 @@ exports.search = function (query, path, start, count) {
         'data.shortdescription^1', // CT_GUIDE
         'data.tags^1', // CT_GUIDE
         'data.repository^1', // CT_GUIDE
-        'data.raw' // CT_DOCPAGE, CT_DOCVERSION and CT_GUIDE
-        //'data.html' // NOTE data.raw covers this.
+        'data.raw', // CT_DOCPAGE, CT_DOCVERSION and CT_GUIDE
+        'data.html' // CT_ARTICLE; NOTE data.raw covers this.
         //'data.menu' // NOTE We don't want to search this!
         //'_alltext' // NOTE Nope there are things we don't want to search!
     ].join(',');
 
     let expr = and(
-        propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE]),
+        propIn('type', [CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, CT_ARTICLE]),
         group(or(
             like('_path', path + '/*'),
             like('_path', path)
@@ -196,7 +196,7 @@ exports.search = function (query, path, start, count) {
             expr,
             group(or(
                 like('data.latest', 'true'),
-                propIn('type', [CT_GUIDE]),
+                propIn('type', [CT_GUIDE, CT_ARTICLE]),
             ))
         );
     }

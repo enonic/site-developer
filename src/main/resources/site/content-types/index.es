@@ -3,6 +3,7 @@ export const CT_DOC        = `${APP_NAME}:doc`;
 export const CT_DOCPAGE    = `${APP_NAME}:docpage`;
 export const CT_DOCVERSION = `${APP_NAME}:docversion`;
 export const CT_GUIDE      = `${APP_NAME}:guide`;
+export const CT_ARTICLE = `${APP_NAME}:article`;
 
 export const RT_HTML = 'text/html; charset=UTF-8';
 export const RT_JSON = 'text/json';

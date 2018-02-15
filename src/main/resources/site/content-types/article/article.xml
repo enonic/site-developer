@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content-type>
+  <display-name>Article</display-name>
+  <super-type>base:structured</super-type>
+  <is-abstract>false</is-abstract>
+  <form>
+    <input name="shortdescription" type="TextLine">
+      <label>Short description</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input name="tags" type="Tag">
+      <label>Tags</label>
+      <occurrences minimum="0" maximum="0"/>
+    </input>
+    <input name="image" type="ImageSelector">
+      <label>Teaser image</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
+    <input name="html" type="HtmlArea">
+      <label>HTML</label>
+    </input>
+  </form>
+</content-type>
