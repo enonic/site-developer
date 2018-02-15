@@ -9,6 +9,7 @@
                 <relationship-type>system:reference</relationship-type>
                 <allow-content-type>doc</allow-content-type>
                 <allow-content-type>guide</allow-content-type>
+              <allow-content-type>article</allow-content-type>
                 <allowPath>${site}/*</allowPath>
             </config>
         </input>
