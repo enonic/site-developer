@@ -3,7 +3,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 import {delete as deleteContent, get as getContent} from '/lib/xp/content';
 import {run as runWithContext} from '/lib/xp/context';
-import {submit as submitTask} from '/lib/xp/task';
+import {list as listTasks, submit as submitTask} from '/lib/xp/task';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -18,10 +18,20 @@ const DOCS_PATH = '/docs';
 const MASTER_BRANCH = 'master';
 const DRAFT_BRANCH = 'draft';
 const GITHUB_URL = 'https://github.com/';
+const TASK_DESCRIPTION = 'Site Dev: GitHub Webhook';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
 //──────────────────────────────────────────────────────────────────────────────
+function runTask(req) {
+    submitTask({
+        description: TASK_DESCRIPTION,
+        task: function () {
+            sudo(execute.bind(null, req));
+        }
+    });
+}
+
 function sudo(callback) {
     return runWithContext({
         principals: ['role:system.admin'],
@@ -39,7 +49,6 @@ function isPreviewMode(req) {
 function execute(req) {
     try {
         doExecute(req);
-        log.info('Import done!');
     }
     catch (e) {
         log.error(e);
@@ -56,6 +65,8 @@ function doExecute(req) {
 
     importGuides(repo);
     importDocs(repo);
+
+    log.info('Import done!');
 }
 
 function makeRepoObjFromUrl(repoUrl) {
@@ -282,12 +293,14 @@ function getDocVersions(repo) {
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
 exports.post = function (req) {
-    submitTask({
-        description: 'Site Developer: GitHub Webhook',
-        task: function () {
-            sudo(execute.bind(null, req));
-        }
-    });
+    const isTaskAlreadyRunning = listTasks().some(task => task.description === TASK_DESCRIPTION && task.state === "RUNNING");
+
+    if (isTaskAlreadyRunning) {
+        log.info('Site Dev GitHub Webhook is already running!');
+    }
+    else {
+        runTask(req);
+    }
 
     if (isPreviewMode(req)) { // for manually triggered webhook redirecting back to page where it was triggered
         return {
