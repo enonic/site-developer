@@ -42,24 +42,20 @@ public final class BuildAsciiDocCommand
     private void doExecute()
         throws Exception
     {
-        Asciidoctor asciidoctor = null;
+        final Asciidoctor asciidoctor = createAsciiDoctor();
 
         try
         {
-            asciidoctor = createAsciidoctor();
             asciidoctor.convertDirectory( new AsciiDocDirectoryWalker( sourceDir ), createOptions() );
         }
         finally
         {
-            if ( asciidoctor != null )
-            {
-                asciidoctor.shutdown();
-            }
+            asciidoctor.shutdown();
         }
 
     }
 
-    private Asciidoctor createAsciidoctor()
+    private Asciidoctor createAsciiDoctor()
     {
         final RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader( this.getClass().getClassLoader() );
@@ -75,7 +71,6 @@ public final class BuildAsciiDocCommand
     {
         Attributes attributes = attributes().backend( "html5" ).icons( "font" ).setAnchors( true ).attribute( "sectlinks", true ).
             attribute( "encoding", "utf-8" ).linkAttrs( true ).attribute( "idprefix", "" ).
-            attribute( "toclevels", 2 ).
             tableOfContents( Placement.RIGHT ).get();
 
         return options().backend( "html5" ).safe( SafeMode.UNSAFE ).attributes( attributes ).get();
