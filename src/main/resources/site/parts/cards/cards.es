@@ -25,9 +25,7 @@ function getCards() {
     let cards = [];
 
     if (docIds) {
-        docIds.forEach((id) => {
-            cards.push(createCard(getContent({key: id})));
-        });
+        cards = docIds.map(id => getContent({key: id})).filter(content => !!content).map(content => createCard(content));
     }
     else {
         cards = searchCards();
