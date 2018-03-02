@@ -18,16 +18,15 @@ const DOCS_PATH = '/docs';
 const MASTER_BRANCH = 'master';
 const DRAFT_BRANCH = 'draft';
 const GITHUB_URL = 'https://github.com/';
-const TASK_DESCRIPTION = 'Site Dev: GitHub Webhook';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
 //──────────────────────────────────────────────────────────────────────────────
-function runTask(req) {
+function runTask(repo) {
     submitTask({
-        description: TASK_DESCRIPTION,
+        description: repo.html_url,
         task: function () {
-            sudo(execute.bind(null, req));
+            sudo(execute.bind(null, repo));
         }
     });
 }
@@ -46,19 +45,16 @@ function isPreviewMode(req) {
     return req.mode === 'preview';
 }
 
-function execute(req) {
+function execute(repo) {
     try {
-        doExecute(req);
+        doExecute(repo);
     }
     catch (e) {
         log.error(e);
     }
 }
 
-function doExecute(req) {
-    // in preview mode if triggered manually from page, thus repo url is in params and not in body
-    const repo = isPreviewMode(req) ? makeRepoObjFromUrl(req.params.repository) : JSON.parse(req.body).repository;
-
+function doExecute(repo) {
     if (!isRepoReferencedByAnyContent(repo.html_url)) {
         return;
     }
@@ -293,13 +289,15 @@ function getDocVersions(repo) {
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
 exports.post = function (req) {
-    const isTaskAlreadyRunning = listTasks().some(task => task.description === TASK_DESCRIPTION && task.state === "RUNNING");
+    // in preview mode if triggered manually from page, thus repo url is in params and not in body
+    const repo = isPreviewMode(req) ? makeRepoObjFromUrl(req.params.repository) : JSON.parse(req.body).repository;
+    const isTaskAlreadyRunning = listTasks().some(task => task.description === repo.html_url && task.state === "RUNNING");
 
     if (isTaskAlreadyRunning) {
         log.info('Site Dev GitHub Webhook is already running!');
     }
     else {
-        runTask(req);
+        runTask(repo);
     }
 
     if (isPreviewMode(req)) { // for manually triggered webhook redirecting back to page where it was triggered
