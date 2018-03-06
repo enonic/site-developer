@@ -1,6 +1,6 @@
 .docpage {
 
-  background-color: $color-white;
+//  background-color: $color-white;
   display: flex;
   margin-bottom: 0px;
 
@@ -17,9 +17,11 @@
   }
 
   &-menu {
-    background-color: $color-mine-shaft;
+    background-color: $color-pelorous;
     padding: 0 20px;
     min-width: 230px;
+    position: relative;
+    top: 15px;
 
     &-wrapper {
       position: sticky;
@@ -208,8 +210,6 @@
     justify-content: center;
     flex-direction: column;
     align-items: baseline;
-    position: relative;
-    top: -15px;
     background-color: white;
     width: 100%;
     word-wrap: break-word;
@@ -392,6 +392,8 @@
 
   &-sticky-toc {
     background-color: $color-mine-shaft;
+    position: relative;
+    top: 15px;
   }
 
   &-sticky-toc .docpage-toc {
@@ -407,8 +409,7 @@
   }
 
   &.type-guide .docpage-content {
-    padding-left: 0px;
-    padding-right: 0px;
+    margin-left: 20px;
   }
 
   &._0-768, &._768-1024, &._1024-1280 {
@@ -457,7 +458,6 @@
         top: 0px;
         z-index: 1;
         margin-right: 0px;
-        margin-bottom: 15px;
         padding: 0;
         background-color: $color-pelorous;
 
