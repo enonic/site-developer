@@ -23,15 +23,11 @@
         <option value="floating">Floating</option>
       </config>
     </input>
-    <input name="headerColor" type="RadioButton">
-      <label>Header color</label>
-      <help-text>Sets the color of header logo and menu button</help-text>
-      <occurrences minimum="1" maximum="1"/>
-      <config>
-        <option value="black">Black</option>
-        <option value="white">White</option>
-      </config>
-      <default>white</default>
+    <input name="headerInverted" type="CheckBox">
+      <label>Invert header color</label>
+      <help-text>Use color opposite to the background</help-text>
+      <occurrences minimum="0" maximum="1"/>
+      <default>checked</default>
     </input>
   </config>
   <regions>

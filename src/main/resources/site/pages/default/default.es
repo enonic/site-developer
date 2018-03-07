@@ -1,15 +1,9 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {
-    getContent as getCurrentContent,
-    getSite as getCurrentSite,
-    serviceUrl as getServiceUrl
-} from '/lib/xp/portal';
+import {getContent as getCurrentContent, getSite as getCurrentSite, serviceUrl as getServiceUrl} from '/lib/xp/portal';
 import {getMenuTree} from '/lib/enonic/menu';
 import {render} from '/lib/xp/thymeleaf';
-
-
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -27,7 +21,15 @@ const VIEW = resolve('default.html'); // The view to render
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
 export function get() {
-    function getBodyClass(headerType) {
+    function isHeaderColorInverted() {
+        if (headerInverted) {
+            return pageColor === 'black';
+        }
+
+        return pageColor === 'white';
+    }
+
+    function getBodyClass() {
         if (!headerType) { return ''; }
         if (headerType === 'hidden') { return 'no-header'; }
         return headerType === 'layered' ? 'layered' : '';
@@ -35,9 +37,9 @@ export function get() {
 
     const content = getCurrentContent();
     const {
-        headerColor,
         headerType,
-        pageColor
+        pageColor,
+        headerInverted
     } = content.page.config;
     const model =  {
         mainRegion: content.page.regions.main,
@@ -49,8 +51,8 @@ export function get() {
         serviceUrl: getServiceUrl({ service: 'search' }),
 
         headerClass: headerType ? `header-${headerType}` : 'header-default', // Defines whether page header is layered or not
-        headerColor, // Header logo and menu button color
-        bodyClass: getBodyClass(headerType),
+        isHeaderColorInverted: isHeaderColorInverted(), // Header logo and menu button color
+        bodyClass: getBodyClass(),
         pageColor,
 
         showHeaderSearch: true
