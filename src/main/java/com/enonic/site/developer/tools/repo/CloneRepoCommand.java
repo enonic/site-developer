@@ -14,31 +14,21 @@ import java.nio.file.attribute.BasicFileAttributes;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
 public final class CloneRepoCommand
+    extends GitCommand
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( CloneRepoCommand.class );
-
-    private static final String GITHUB_URL = "https://github.com/";
-
-    private static final String ENONIC_REPOSITORY_PREFIX = "enonic/";
-
-    private static final String GIT_REPOSITORY_SUFFIX = ".git";
 
     protected static final String NO_REPO_MSG = "No repository set to clone from!";
 
     protected static final String NO_DEST_MSG = "No destination set to clone repo to!";
 
     private String destination;
-
-    private String repository;
-
-    private String repoName;
 
     private String checkout; // Branch or commit to checkout
 
@@ -61,27 +51,13 @@ public final class CloneRepoCommand
         Preconditions.checkNotNull( repository, NO_REPO_MSG );
         Preconditions.checkNotNull( destination, NO_DEST_MSG );
 
-        final String gitRepositoryUri = resolveGitRepositoryUri();
-        return cloneGitRepository( gitRepositoryUri );
+        return cloneGitRepository();
     }
 
-    private String resolveGitRepositoryUri()
+    private String cloneGitRepository()
+        throws Exception
     {
-        if ( repository.contains( ":/" ) )
-        {
-            return repository;
-        }
-        if ( repository.contains( "/" ) )
-        {
-            return GITHUB_URL + repository + GIT_REPOSITORY_SUFFIX;
-        }
-        return GITHUB_URL + ENONIC_REPOSITORY_PREFIX + repository + GIT_REPOSITORY_SUFFIX;
-    }
-
-    private String cloneGitRepository( final String gitRepositoryUri )
-        throws GitAPIException, IOException
-    {
-        LOGGER.info( "Retrieving Git repository from [ " + makeUriWithCommit( gitRepositoryUri ) + " ] ..." );
+        LOGGER.info( "Retrieving Git repository from [ " + makeUriWithCommit() + " ] ..." );
 
         // Creates the destination directory if it does not exist and cleans it
         final File destinationDirectory = new File( destination );
@@ -93,8 +69,10 @@ public final class CloneRepoCommand
         {
             // Clones the Git repository
             final CloneCommand cloneCommand = Git.cloneRepository().
-                setURI( gitRepositoryUri ).
+                setURI( makeUri() ).
                 setDirectory( temporaryDirectory );
+
+            setSshTransportIfNeeded( cloneCommand );
 
             final Git git = cloneCommand.call();
 
@@ -135,14 +113,14 @@ public final class CloneRepoCommand
         FileUtils.deleteQuietly( new File( directory, "README.md" ) );
     }
 
-    private String makeUriWithCommit( final String gitRepositoryUri )
+    private String makeUriWithCommit()
     {
         if ( checkout != null )
         {
-            return gitRepositoryUri + " : " + checkout;
+            return repository + " : " + checkout;
         }
 
-        return gitRepositoryUri;
+        return repository;
     }
 
     private class CopyFileVisitor
@@ -196,11 +174,6 @@ public final class CloneRepoCommand
     public void setDestination( String destination )
     {
         this.destination = destination;
-    }
-
-    public void setRepository( String repository )
-    {
-        this.repository = repository;
     }
 
     public void setRepoName( String repoName )

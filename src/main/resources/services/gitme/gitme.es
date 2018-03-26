@@ -277,7 +277,7 @@ function importDoc(repo, doc, version) {
 function getDocVersions(repo) {
     const bean = __.newBean('com.enonic.site.developer.tools.repo.GetVersionsCommand');
     bean.repoName = repo.full_name;
-    bean.repoUrl = repo.html_url;
+    bean.repository = repo.html_url;
 
     const versionsJson = JSON.parse(__.toNativeObject(bean.execute()));
     log.info('versions: ' + JSON.stringify(versionsJson));

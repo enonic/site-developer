@@ -2,8 +2,12 @@ package com.enonic.site.developer.tools.repo;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectIdRef;
+import org.eclipse.jgit.lib.Ref;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,7 +21,7 @@ import static org.junit.Assert.*;
 public class GetVersionsCommandTest
     extends CommonTest
 {
-    private static final String MASTER_COMMIT_ID = "d843a5af87ed28b09465d8e17c206c189542c522";
+    private static final String MASTER_COMMIT_ID = "0123456789012345678901234567890123456789";
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
@@ -44,7 +48,7 @@ public class GetVersionsCommandTest
     {
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommandExt( makeUrlToFile( "non-existing-path" ) );
         getVersionsCommand.setRepoName( "test-repo-name" );
-        getVersionsCommand.setRepoUrl( "test-repo-url" );
+        getVersionsCommand.setRepository( "test-repo-url" );
 
         final String result = getVersionsCommand.execute();
 
@@ -65,7 +69,7 @@ public class GetVersionsCommandTest
         final String path = getPath( "getversions/versions.json" );
         final GetVersionsCommand getVersionsCommand = new GetVersionsCommandExt( makeUrlToFile( path ) );
         getVersionsCommand.setRepoName( "test-repo-name" );
-        getVersionsCommand.setRepoUrl( "test-repo-url" );
+        getVersionsCommand.setRepository( "test-repo-url" );
         final String result = getVersionsCommand.execute();
 
         assertNotNull( result );
@@ -77,6 +81,21 @@ public class GetVersionsCommandTest
         throws Exception
     {
         return Paths.get( path ).toUri().toURL().toString();
+    }
+
+    @Test
+    public void testGetBranchesOk()
+        throws Exception
+    {
+        final String path = getPath( "getversions/versions.json" );
+        final GetVersionsCommand getVersionsCommand = new GetVersionsCommandExt( makeUrlToFile( path ) );
+        getVersionsCommand.setRepository( "some-test-repo" );
+        getVersionsCommand.setRepoName( "name" );
+
+        final String result = getVersionsCommand.execute();
+        assertTrue( result.contains( "0123456789012345678901234567890123456780" ) );
+        assertTrue( result.contains( "0123456789012345678901234567890123456781" ) );
+        assertTrue( result.contains( "0123456789012345678901234567890123456782" ) );
     }
 
     private final class GetVersionsCommandExt
@@ -96,11 +115,23 @@ public class GetVersionsCommandTest
         }
 
         @Override
-        protected List<GitBranch> getBranches()
+        protected Collection<Ref> listGitRefsFromRepo()
+            throws Exception
         {
-            final List<GitBranch> branches = new ArrayList<>();
-            branches.add( new GitBranch( MASTER_BRANCH, MASTER_COMMIT_ID ) );
-            return branches;
+            final List<Ref> refs = new ArrayList<>();
+
+            final ObjectId master = ObjectId.fromString( "0123456789012345678901234567890123456789" );
+            final Ref masterRef = new ObjectIdRef.PeeledNonTag( Ref.Storage.NETWORK, "refs/heads/master", master );
+            refs.add( masterRef );
+
+            for ( int i = 0; i < 3; i++ )
+            {
+                final ObjectId objectId = ObjectId.fromString( "012345678901234567890123456789012345678" + i );
+                final Ref ref = new ObjectIdRef.PeeledNonTag( Ref.Storage.NETWORK, "refs/heads/branch_" + i, objectId );
+                refs.add( ref );
+            }
+
+            return refs;
         }
     }
 }

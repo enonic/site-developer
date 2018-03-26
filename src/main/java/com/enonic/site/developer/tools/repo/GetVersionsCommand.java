@@ -4,8 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.LsRemoteCommand;
+import org.eclipse.jgit.lib.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +20,7 @@ import com.google.common.base.Preconditions;
  * Class fetches versions.json if available from repo's /docs folder
  */
 public class GetVersionsCommand
+    extends GitCommand
 {
     private static final Logger LOGGER = LoggerFactory.getLogger( GetVersionsCommand.class );
 
@@ -28,10 +33,6 @@ public class GetVersionsCommand
     protected final static String NO_REPO_NAME_MSG = "No repository name set to fetch versions from!";
 
     protected final static String NO_REPO_URL_MSG = "No repository url set to fetch versions from!";
-
-    private String repoName;
-
-    private String repoUrl;
 
     public String execute()
     {
@@ -50,7 +51,7 @@ public class GetVersionsCommand
         throws Exception
     {
         Preconditions.checkNotNull( repoName, NO_REPO_NAME_MSG );
-        Preconditions.checkNotNull( repoUrl, NO_REPO_URL_MSG );
+        Preconditions.checkNotNull( repository, NO_REPO_URL_MSG );
 
         final VersionsJson versionsJson = fetchVersionsJson();
 
@@ -84,11 +85,31 @@ public class GetVersionsCommand
     }
 
     protected List<GitBranch> getBranches()
+        throws Exception
     {
-        final GetBranchesCommand getBranchesCommand = new GetBranchesCommand();
-        getBranchesCommand.setRepository( repoUrl );
+        final Collection<Ref> refs = listGitRefsFromRepo();
 
-        return getBranchesCommand.execute();
+        return processRefs( refs );
+    }
+
+    protected Collection<Ref> listGitRefsFromRepo()
+        throws Exception
+    {
+        final LsRemoteCommand command = Git.lsRemoteRepository().setHeads( true ).setRemote( makeUri() );
+        setSshTransportIfNeeded( command );
+        return command.call();
+    }
+
+    private List<GitBranch> processRefs( final Collection<Ref> refs )
+    {
+        final List<GitBranch> result = new ArrayList<>();
+
+        for ( final Ref ref : refs )
+        {
+            result.add( new GitBranch( ref.getName().replace( "refs/heads/", "" ), ref.getObjectId().getName() ) );
+        }
+
+        return result;
     }
 
     private InputStream getVersionsJsonAsStream( final String masterCommitId )
@@ -146,16 +167,6 @@ public class GetVersionsCommand
     {
         return branches.stream().filter( branch -> branch.getName().equals( checkout ) ).findFirst().orElse(
             new GitBranch( "", checkout ) ).getCommitId();
-    }
-
-    public void setRepoName( final String repoName )
-    {
-        this.repoName = repoName;
-    }
-
-    public void setRepoUrl( final String repoUrl )
-    {
-        this.repoUrl = repoUrl;
     }
 
     protected static final class VersionsJson

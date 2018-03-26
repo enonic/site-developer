@@ -2,16 +2,16 @@
   "versions": [
     {
       "label": "1.0.1",
-      "checkout": "59777ccf143dfe227a48c75aee6fc3f82572cc0d"
+        "checkout": "0123456789012345678901234567890123456780"
     },
     {
       "label": "1.0.2",
-      "checkout": "ff196a27c481e5fb667d970c0303ba4f145dc652",
+        "checkout": "0123456789012345678901234567890123456781",
       "latest": true
     },
     {
       "label": "1.0.3",
-      "checkout": "d843a5af87ed28b09465d8e17c206c189542c52f"
+        "checkout": "0123456789012345678901234567890123456782"
     },
     {
       "label": "master",
