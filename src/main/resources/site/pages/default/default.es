@@ -23,10 +23,10 @@ const VIEW = resolve('default.html'); // The view to render
 export function get() {
     function isHeaderColorInverted() {
         if (headerInverted) {
-            return pageColor === 'black';
+            return pageColor === 'white';
         }
 
-        return pageColor === 'white';
+        return pageColor === 'black';
     }
 
     function getBodyClass() {
