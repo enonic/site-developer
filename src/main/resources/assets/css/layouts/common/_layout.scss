@@ -4,14 +4,22 @@
   }
 
   &--white {
-    background-color: #fff;
+    background-color: $color-white;
+    color: $color-black;
   }
 
   &--grey {
     background-color: #f0f0f0;
+    color: $color-black;
   }
 
   &--blue {
     background-color: #C4EBFF;
+    color: $color-black;
+  }
+
+  &--darkgrey {
+    background-color: $color-dark-gray;
+    color: $color-white;
   }
 }

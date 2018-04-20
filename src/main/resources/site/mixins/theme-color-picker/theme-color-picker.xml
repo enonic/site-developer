@@ -9,6 +9,7 @@
               <option value="white">White</option>
               <option value="grey">Grey</option>
               <option value="blue">Blue</option>
+              <option value="darkgrey">Dark grey</option>
             </config>
         </input>
     </items>
