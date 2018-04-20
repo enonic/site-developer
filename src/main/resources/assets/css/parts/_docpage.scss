@@ -213,6 +213,7 @@
     background-color: white;
     width: 100%;
     word-wrap: break-word;
+    min-width: 50%; // to make long words break under flex
 
     &__doc {
       @import '_asciidoctor';
@@ -222,6 +223,10 @@
 
       a {
         color: $color-anchor;
+      }
+
+      code[class*="language-"] {
+        text-shadow: none;
       }
     }
 
@@ -377,10 +382,10 @@
 
     &_outer {
       .docpage-toc__list .toc-list li a {
-        color: $color-toc-light-blue;
+        color: white;
 
         &:hover {
-          color: $color-toc-blue;
+          color: $color-silver;
         }
       }
 

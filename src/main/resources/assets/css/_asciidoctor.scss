@@ -240,7 +240,11 @@ strong, b { font-weight: bold; line-height: inherit; }
 
 small { font-size: 60%; line-height: inherit; }
 
-code { font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; font-weight: normal; color: rgba(0, 0, 0, 0.9); }
+code {
+  font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
+  font-weight: normal;
+  color: white;
+}
 
 /* Lists */
 ul, ol, dl {
@@ -322,7 +326,7 @@ h1 strong, h2 strong, h3 strong, #toctitle strong, .sidebarblock > .content > .t
   letter-spacing: 0;
   padding: 0.1em 0.5ex;
   word-spacing: -0.15em;
-  background-color: #f7f7f8;
+  background-color: black;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   line-height: 1.45;
@@ -332,7 +336,13 @@ h1 strong, h2 strong, h3 strong, #toctitle strong, .sidebarblock > .content > .t
 *:not(pre) > code.nobreak { word-wrap: normal; }
 *:not(pre) > code.nowrap { white-space: nowrap; }
 
-pre, pre > code { line-height: 1.45; color: rgba(0, 0, 0, 0.9); font-family: "Droid Sans Mono", "DejaVu Sans Mono", "Monospace", monospace; font-weight: normal; text-rendering: optimizeSpeed; }
+pre, pre > code {
+  line-height: 1.45;
+  color: white;
+  font-family: "Droid Sans Mono", "DejaVu Sans Mono", "Monospace", monospace;
+  font-weight: normal;
+  text-rendering: optimizeSpeed;
+}
 
 em em { font-style: normal; }
 
@@ -475,6 +485,10 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint { background: #f7f7f8; }
 .sidebarblock .literalblock pre, .sidebarblock .listingblock pre:not(.highlight), .sidebarblock .listingblock pre[class="highlight"], .sidebarblock .listingblock pre[class^="highlight "], .sidebarblock .listingblock pre.CodeRay, .sidebarblock .listingblock pre.prettyprint { background: #f2f1f1; }
 
+.listingblock pre[class="highlight"] {
+  background: black;
+}
+
 .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { -webkit-border-radius: 4px; border-radius: 4px; word-wrap: break-word; padding: 1.6rem; font-size: 1.3rem; }
 .literalblock pre.nowrap, .literalblock pre[class].nowrap, .listingblock pre.nowrap, .listingblock pre[class].nowrap { overflow-x: auto; white-space: pre; word-wrap: normal; }
 @media only screen and (min-width: 768px) { .literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] { font-size:  1.45rem; } }
@@ -486,7 +500,10 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .listingblock pre.highlightjs > code { padding: 1em; -webkit-border-radius: 4px; border-radius: 4px; overflow-x: auto; }
 
 .listingblock pre.highlight { overflow-x: auto; }
-.listingblock pre.highlight > code { white-space: pre; }
+
+.listingblock pre.highlight > code {
+  white-space: pre-wrap;
+}
 
 .listingblock pre.prettyprint { border-width: 0; }
 
@@ -788,6 +805,12 @@ span.icon > .fa { cursor: default; }
   font-style: normal;
   font-weight: bold;
 }
+
+code .conum[data-value] {
+  background-color: white;
+  color: black !important;
+}
+
 .conum[data-value] * { color: #fff !important; }
 .conum[data-value] + b { display: none; }
 .conum[data-value]:after { content: attr(data-value); }
