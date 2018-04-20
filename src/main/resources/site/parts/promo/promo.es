@@ -19,7 +19,8 @@ const RT_HTML = 'text/html; charset=UTF-8';
 export function get() {
     const model = {
         linkDocs: `${getSiteUrl()}docs`,
-        linkGuides: `${getSiteUrl()}start`
+        linkGuides: `${getSiteUrl()}guides`,
+        linkStart: `${getSiteUrl()}start`
     };
 
     return {
