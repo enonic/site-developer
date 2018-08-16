@@ -26,7 +26,7 @@ module.exports = {
         'import/no-absolute-path': ['off'],
         'import/no-extraneous-dependencies': ['off'],
         'import/no-unresolved': ['off'],
-        indent: ['error', 4],
+        indent: ['warn', 'tab'],
         'max-len': ['error', 100, 2, {
             ignoreUrls: true,
             ignoreComments: true,
@@ -35,6 +35,7 @@ module.exports = {
             ignoreTemplateLiterals: true,
         }],
         'no-multi-spaces': ['off'],
+        'no-tabs': ['off'],
         'no-underscore-dangle': ['error', {
             allow: [
                 '_path',
