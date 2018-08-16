@@ -49,8 +49,8 @@ dependencies {
 // Gradle node plugin
 //──────────────────────────────────────────────────────────────────────────────
 node {
-    version '8.9.4'
-    download true
+	version '8.11.4'
+	download true
 }
 
 
