@@ -5,7 +5,10 @@ root = true
 
 # Unix-style newlines with a newline ending every file
 [*]
+charset = utf-8
 end_of_line = lf
+indent_size = 4
+indent_style = tab
 insert_final_newline = true
 trim_trailing_whitespace = true
 
@@ -18,11 +21,6 @@ indent_size = 4
 
 [*.{css,less}]
 indent_size = 2
-
-[*.{java}]
-charset = utf-8
-indent_style = tab
-indent_size = 4
 
 [package.json]
 charset = utf-8
