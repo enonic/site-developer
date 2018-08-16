@@ -90,12 +90,12 @@ sourceSets {
 }
 
 task webpack(type:NodeTask) {
-	script = file('node_modules/webpack/bin/webpack.js')
+	script = file('node_modules/webpack-cli/bin/cli.js')
 	args = [
 		'--color',
-		'--config', 'webpack.config.babel.js'
 	]
 }
 webpack.dependsOn npmInstall
+webpack.mustRunAfter npmInstall
 assemble.dependsOn webpack
 assemble.mustRunAfter webpack
