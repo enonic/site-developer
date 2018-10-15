@@ -326,7 +326,10 @@ h1 strong, h2 strong, h3 strong, #toctitle strong, .sidebarblock > .content > .t
   letter-spacing: 0;
   padding: 0.1em 0.5ex;
   word-spacing: -0.15em;
-  background-color: rgb(45, 47, 65); 
+  background-color: #eee; 
+  color: black;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   line-height: 1.45;
@@ -483,7 +486,8 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .exampleblock > .content > :last-child > :last-child, .exampleblock > .content .olist > ol > li:last-child > :last-child, .exampleblock > .content .ulist > ul > li:last-child > :last-child, .exampleblock > .content .qlist > ol > li:last-child > :last-child, .sidebarblock > .content > :last-child > :last-child, .sidebarblock > .content .olist > ol > li:last-child > :last-child, .sidebarblock > .content .ulist > ul > li:last-child > :last-child, .sidebarblock > .content .qlist > ol > li:last-child > :last-child { margin-bottom: 0; }
 
 .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint {
-  $pre-highlight-color: rgb(45, 47, 65);
+  /*$pre-highlight-color: rgb(45, 47, 65);*/
+  $pre-highlight-color: #272727;
   background-color: $pre-highlight-color;
   border: 1.5px solid darken($pre-highlight-color, 15%);
 }
