@@ -90,7 +90,7 @@
           }
 
           li a {
-            color: $color-silver;
+            color: $color-menu-gray;
             @include font-size(15);
 
             &:hover {
@@ -165,7 +165,7 @@
       display: block;
       text-align: center;
 
-      width: 120px;
+      width: 130px;
       margin-left: auto;
       margin-right: auto;
       padding: 0px;
@@ -174,7 +174,7 @@
       top: -10px;
 
       select {
-        width: 140px;
+        width: 160px;
         background: transparent;
         border: none;
         color: $color-dove-gray;
@@ -185,6 +185,7 @@
 
         &:focus {
           outline: none;
+          
         }
       }
 
