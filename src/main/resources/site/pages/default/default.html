@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head data-th-replace="/site/pages/fragments/fragments::head-fragment"></head>
 
 <body data-th-class="page-default__body" data-th-classappend="${bodyClass} + ' ' + ${pageColor}">
-<div data-th-replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-default')"></div>
+    <h1>Persijn dev</h1>
+    <div data-th-replace="/site/pages/fragments/fragments::header-fragment(baseClass='page-default')"></div>
 
-<div class="page-default__content">
-    <main data-th-attr="data-portal-region=${mainRegion.name}">
-        <div data-th-each="component : ${mainRegion.components}" data-th-remove="tag">
-            <div data-portal-component="${component.path}" data-th-remove="tag"></div>
-        </div>
-    </main>
-</div>
+    <div class="page-default__content">
+        <main data-th-attr="data-portal-region=${mainRegion.name}">
+            <div data-th-each="component : ${mainRegion.components}" data-th-remove="tag">
+                <div data-portal-component="${component.path}" data-th-remove="tag"></div>
+            </div>
+        </main>
+    </div>
 
-<footer data-th-replace="/site/pages/fragments/fragments::footer-fragment(footerClass='page-default__footer')"></footer>
+    <footer data-th-replace="/site/pages/fragments/fragments::footer-fragment(footerClass='page-default__footer')"></footer>
 
-<script async="async" data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
+    <script async="async" data-th-src="${portal.assetUrl({'_path=js/main.min.js'})}"></script>
 
 </body>
+
 </html>
