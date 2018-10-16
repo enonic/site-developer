@@ -94,17 +94,16 @@
             @include font-size(15);
 
             &:hover {
-              color: $color-aqua-haze;
+							color: $color-aqua-haze;
+							outline: 1px solid white;
             }
           }
 
           &.active {
             > label a, > a {
-              color: $color-highlight;
-
-              &:hover {
-                color: $color-dark-highlight;
-              }
+							color: $color-highlight;
+							font-weight: bold;
+							border-bottom: 2px solid white;
             }
           }
         }
@@ -145,7 +144,7 @@
         width: 18px;
         height: 18px;
         display: inline-block;
-        top: 8px;
+        top: 11px;
         left: 12px;
       }
 
@@ -165,22 +164,25 @@
       display: block;
       text-align: center;
 
-      width: 130px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
+      /*margin-left: auto;
+      margin-right: auto;*/
       padding: 0px;
       overflow: hidden;
       position: relative;
       top: -10px;
 
       select {
-        width: calc(100% + 30px );
-        background: transparent;
-        border: none;
-        color: $color-dove-gray;
+        width: 100%;
+				background: transparent;
+				border: none;
+				border-left: 2px solid $color-toc-dark-blue;
+				border-radius: 0px;
+				color: $color-dove-gray;
+				appearance: none;
 
         option {
-          color: $color-dove-gray;
+					color: $color-dove-gray;
         }
 
         &:focus {
