@@ -36,7 +36,8 @@
           white-space: nowrap;
           @include font-size(16);
           position: relative;
-          list-style: none;
+					list-style: none;
+					padding: 1.5px 0px;
 
           input {
             position: absolute;
@@ -60,7 +61,7 @@
                 top: 10px;
                 border-left: 5px solid transparent;
                 border-right: 5px solid transparent;
-                border-top: 5px solid black;
+                border-top: 5px solid $color-menu-gray;
               }
 
               + ol > li {
@@ -77,7 +78,7 @@
               top: 7px;
               border-top: 5px solid transparent;
               border-bottom: 5px solid transparent;
-              border-left: 5px solid black;
+              border-left: 5px solid $color-menu-gray;
             }
           }
 
@@ -100,9 +101,9 @@
 
           &.active {
             > label a, > a {
-							color: $color-highlight;
+							color: $color-menu-gray;
 							font-weight: bold;
-							border-bottom: 2px solid white;
+							border-bottom: 2px solid $color-menu-gray;
             }
           }
         }
@@ -164,8 +165,6 @@
       text-align: center;
 
       width: 100%;
-      /*margin-left: auto;
-      margin-right: auto;*/
       padding: 0px;
       overflow: hidden;
       position: relative;
@@ -174,10 +173,10 @@
       select {
         width: 100%;
 				background: transparent;
-				border: none;
-				border-left: 2px solid $color-toc-dark-blue;
+        border: none;
+        text-align: center;
 				border-radius: 0px;
-				color: $color-dove-gray;
+				color: darken($color-menu-gray, 20%);
 				appearance: none;
 
         option {
@@ -197,7 +196,7 @@
         z-index: -1;
 
         g {
-          fill: $color-dove-gray;
+          fill: darken($color-menu-gray, 20%);
         }
       }
     }
@@ -223,9 +222,13 @@
       @import '_asciidoctor';
       @import '_font-awesome';
 
-      h1, h2 {
+      h1, h2, h3, h4 {
         > a.link {
           color: $color-anchor;
+        }
+
+        > a.link:hover {
+          color: $color-toc-dark-blue;
         }
       }
 
