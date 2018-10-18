@@ -48,7 +48,7 @@
   "private": "true",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/poi33/site-developer"
+    "url": "git+https://github.com/enonic/site-developer"
   },
   "scripts": {
     "gulp": "./node_modules/gulp/bin/gulp.js build",
