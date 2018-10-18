@@ -36,7 +36,8 @@
           white-space: nowrap;
           @include font-size(16);
           position: relative;
-          list-style: none;
+					list-style: none;
+					padding: 1.5px 0px;
 
           input {
             position: absolute;
@@ -60,7 +61,7 @@
                 top: 10px;
                 border-left: 5px solid transparent;
                 border-right: 5px solid transparent;
-                border-top: 5px solid black;
+                border-top: 5px solid $color-menu-gray;
               }
 
               + ol > li {
@@ -77,7 +78,7 @@
               top: 7px;
               border-top: 5px solid transparent;
               border-bottom: 5px solid transparent;
-              border-left: 5px solid black;
+              border-left: 5px solid $color-menu-gray;
             }
           }
 
@@ -90,21 +91,19 @@
           }
 
           li a {
-            color: $color-silver;
+            color: $color-menu-gray;
             @include font-size(15);
 
             &:hover {
-              color: $color-aqua-haze;
+							color: $color-aqua-haze;
             }
           }
 
           &.active {
             > label a, > a {
-              color: $color-highlight;
-
-              &:hover {
-                color: $color-dark-highlight;
-              }
+							color: $color-menu-gray;
+							font-weight: bold;
+							border-bottom: 2px solid $color-menu-gray;
             }
           }
         }
@@ -145,7 +144,7 @@
         width: 18px;
         height: 18px;
         display: inline-block;
-        top: 8px;
+        top: 11px;
         left: 12px;
       }
 
@@ -165,26 +164,28 @@
       display: block;
       text-align: center;
 
-      width: 120px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
       padding: 0px;
       overflow: hidden;
       position: relative;
       top: -10px;
 
       select {
-        width: 140px;
-        background: transparent;
+        width: 100%;
+				background: transparent;
         border: none;
-        color: $color-dove-gray;
+        text-align: center;
+				border-radius: 0px;
+				color: darken($color-menu-gray, 20%);
+				appearance: none;
 
         option {
-          color: $color-dove-gray;
+					color: $color-dove-gray;
         }
 
         &:focus {
           outline: none;
+          
         }
       }
 
@@ -195,7 +196,7 @@
         z-index: -1;
 
         g {
-          fill: $color-dove-gray;
+          fill: darken($color-menu-gray, 20%);
         }
       }
     }
@@ -217,14 +218,25 @@
     min-width: 50%; // to make long words break under flex
 
     &__doc {
+
       @import '_asciidoctor';
       @import '_font-awesome';
+
+      h1, h2, h3, h4 {
+        > a.link {
+          color: $color-anchor;
+        }
+
+        > a.link:hover {
+          color: $color-toc-dark-blue;
+        }
+      }
 
       width: 100%;
 
       a {
         color: $color-anchor;
-      }
+      } 
 
       code[class*="language-"] {
         text-shadow: none;
