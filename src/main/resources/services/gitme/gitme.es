@@ -257,7 +257,7 @@ function buildAsciiDoc(repo) {
 function importGuide(repo, guide) {
     const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportGuideCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
-    bean.importPath = guide._path.replace('/content', '');
+    bean.importPath = guide._path.replace('/content/', '/');
 
     return __.toNativeObject(bean.execute());
 }
@@ -265,7 +265,7 @@ function importGuide(repo, guide) {
 function importDoc(repo, doc, version) {
     const bean = __.newBean('com.enonic.site.developer.tools.imports.ImportDocCommand');
     bean.sourceDir = REPO_DEST + repo.full_name + DOCS_PATH;
-    bean.importPath = doc._path.replace('/content', '');
+    bean.importPath = doc._path.replace('/content/', '/');
     bean.commit = version.commitId;
     if (!!version.label) {
         bean.label = version.label;
