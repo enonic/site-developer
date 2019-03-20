@@ -2,50 +2,9 @@
   <display-name>Command</display-name>
   <description>CLI-style command text</description>
   <form>
-    <input name="line1" type="TextLine">
-        <label>Line 1</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="1" maximum="1"/>
-    </input>
-    <input name="line2" type="TextLine">
-        <label>Line 2</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line3" type="TextLine">
-        <label>Line 3</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line4" type="TextLine">
-        <label>Line 4</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line5" type="TextLine">
-        <label>Line 5</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line6" type="TextLine">
-        <label>Line 6</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line7" type="TextLine">
-        <label>Line 7</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line8" type="TextLine">
-        <label>Line 8</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
-    </input>
-    <input name="line9" type="TextLine">
-        <label>Line 9</label>
-        <help-text>If a line begins with $ followed by space, this character is shown faded</help-text>
-        <occurrences minimum="0" maximum="1"/>
+    <input name="body" type="TextArea">
+        <label>Commands</label>
+        <help-text>Use shift-enter inside the HTML editor (not in this macro window!) to create new lines. If a line starts with $ followed by space, it is formatted as a prompt.</help-text>
     </input>
   </form>
 </macro>

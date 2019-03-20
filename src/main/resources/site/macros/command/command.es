@@ -1,26 +1,17 @@
 exports.macro = function (context) {
-    // Only output content if first line has data
-    if (context.params.line1 && context.params.line1.trim().length) {
-        const linesConfig = [
-            context.params.line1,
-            context.params.line2,
-            context.params.line3,
-            context.params.line4,
-            context.params.line5,
-            context.params.line6,
-            context.params.line7,
-            context.params.line8,
-            context.params.line9,
-        ];
-        const lines = [];
-        linesConfig.forEach(function (line) {
+    const command = context.body;
+
+    if (command && command.trim().length) {
+        const lines = command.split('<br />\n'); // This markup is created when doing a shift-enter inside the editor
+        const linesFormatted = [];
+        lines.forEach(function (line) {
             // Only return lines with data
             if (line && line.trim().length) {
                 // Replace '$ ' with prompt markup
-                lines.push(line.replace(/^\$ /, '<span class="prompt"></span>'));
+                linesFormatted.push(line.replace(/^\$ /, '<span class="prompt"></span>'));
             }
         });
-        const body = '<code class="command">' + lines.join('<br/>') + '</code>';
+        const body = '<code class="command">' + linesFormatted.join('<br/>') + '</code>';
 
         return {
             body: body,
