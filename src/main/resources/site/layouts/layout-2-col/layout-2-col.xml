@@ -14,6 +14,10 @@
       <label>Top padding</label>
       <occurrences minimum="0" maximum="1"/>
     </input>
+    <input type="Checkbox" name="oneColMobile">
+      <label>1-column on mobile</label>
+      <occurrences minimum="0" maximum="1"/>
+    </input>
   </config>
   <regions>
     <region name="left"/>

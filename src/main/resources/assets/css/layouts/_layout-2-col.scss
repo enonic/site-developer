@@ -6,14 +6,22 @@
     justify-content: space-between;
   }
 
-  [data-portal-region='left'] {
-    width: 50%;
-    margin-right: 10px;
-  }
-
+  // Add 20px gap between columns
   [data-portal-region='right'] {
-    width: 50%;
-    margin-left: 10px;
+    margin-left: 20px;
   }
+}
 
+// Single-column on mobile devices
+.layout2-col--oneColMobile {
+
+  @include media('<medium') {
+    .container {
+      flex-direction: column;
+    }
+
+    [data-portal-region='right'] {
+      margin-left: 0;
+    }
+  }
 }

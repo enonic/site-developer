@@ -1,5 +1,4 @@
 .layout-3-col {
-
   @include layout;
 
   .container {
@@ -7,19 +6,24 @@
     justify-content: space-between;
   }
 
-  [data-portal-region='left'] {
-    width: 33%;
-    margin-right: 10px;
-  }
-
+  // Add 20px gap between columns
   [data-portal-region='middle'] {
-    width: 33%;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
+}
 
-  [data-portal-region='right'] {
-    width: 33%;
-    margin-left: 10px;
+// Single-column on mobile devices
+.layout3-col--oneColMobile {
+
+  @include media('<medium') {
+    .container {
+      flex-direction: column;
+    }
+
+    [data-portal-region='middle'] {
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
 }
