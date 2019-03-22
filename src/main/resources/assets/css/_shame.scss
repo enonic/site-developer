@@ -31,3 +31,317 @@ form {
   white-space: nowrap;
   overflow: hidden;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.cli-installer {
+  padding: 0;
+  text-align: center;
+
+  &__panel-container {
+    @extend .container;
+    padding-top: 50px;
+    padding-bottom: 100px;
+  }
+
+  &__panel-cols {
+    display: flex;
+  }
+
+  &__panel-col {
+    &--1 {
+      width: 30%;
+      text-align: right;
+      border-right: 1px solid #ddd;
+      padding-right: 20px;
+    }
+
+    &--2 {
+      width: 70%;
+      text-align: left;
+      padding-left: 20px;
+    }
+  }
+
+  &__heading {
+    text-transform: none;
+    margin-top: 0;
+    font-weight: normal;
+  }
+
+  &__button {
+    //@extend .button;
+    //@extend .highlight;
+    margin-top: 0 !important;
+    margin-bottom: 30px;
+  }
+
+  &__logo {
+    width: 100px;
+    height: auto;
+    max-height: 150px;
+    margin-bottom: 15px;
+  }
+
+  &__code {
+    border: 1px solid #ddd;
+    background: #fff;
+    white-space: pre-line;
+    //@include font-size(10);
+    display: block;
+    padding: 0 10px;
+    line-height: 2em;
+  }
+
+  &__modal {
+    &-cols {
+      display: flex;
+      margin: -20px;
+    }
+
+    &-col {
+      &--1 {
+        width: 30%;
+        text-align: right;
+        border-right: 1px solid #ddd;
+        //padding-right: 20px;
+        //background-color: #f0f0f0;
+        padding: 50px 20px;
+      }
+
+      &--2 {
+        width: 70%;
+        text-align: left;
+        padding: 50px 20px;
+      }
+    }
+
+    &-form {
+      margin: 0;
+      width: auto;
+      //@include enonic-form;
+
+      &-submit {
+        //@extend .highlight;
+      }
+    }
+  }
+
+  &__modal-cols--submitted {
+    .cli-installer {
+      &__modal {
+        &-col {
+          &--1 {
+            display: none;
+          }
+
+          &--2 {
+            width: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+          }
+        }
+      }
+
+      &__heading {
+        display: none;
+      }
+    }
+
+    .form-submitted-message {
+      font-size: 1.5em;
+    }
+  }
+
+  &__link {
+    /*float: right;*/
+    /*margin-top: 50px;*/
+    //@extend %clearfix;
+    color: #000;
+    border-color: #000;
+	 font-size: 1.6rem;
+	 display: inline-block;
+	 margin: 20px;
+  }
+  .gdpr-consent {
+	  margin-bottom: 14px;
+	  label {
+		  margin-bottom: 6px;
+		  input {
+			  /*float: left;*/
+			  display: inline;
+			  width: auto;
+			  margin-right: 10px;
+			  border: none;
+		  }
+		  &.hidden {
+			  display: none;
+		  }
+	  }
+	  .required {
+		  display: block;
+		  padding-bottom: 8px;
+		  &:after {
+			  content: "*";
+			  color: #FC5D4B;
+			  margin-left: 4px;
+		  }
+	  }
+  }
+}
+
+.tabs__panel-container--cli-installer {
+  background-color: #5e5e5e;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.js-tabs {
+  position: relative;
+
+  &__list {
+    //@extend .list-unstyled;
+    margin: 0;
+    position: relative;
+  }
+
+  &__list--vertical {
+    display: block;
+    overflow: hidden;
+    border: 1px solid #39a5c8;
+
+    &::after {
+      content: "☰"; /* "Three Line Menu Navicon" shows up */
+      position: absolute;
+      color: #fff;
+      top: 8px;
+      right: 15px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .js-tabs__item {
+      display: block;
+      text-align: center;
+    }
+
+    .js-tabs__link {
+      position: absolute; /* Stack links on top of each other */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 10px 20px;
+
+
+      &[aria-selected=true] {
+        position: relative;
+        border: 0;
+        z-index: 1; /* Active tab is on top */
+        background: #39a5c8;
+        color: #fff;
+      }
+    }
+
+    &.js-tabs__list--open {
+      .js-tabs__link {
+        position: relative;
+      }
+    }
+  }
+
+  &__item {
+    display: inline-block;
+  }
+
+
+
+
+
+  &__link {
+    //display: inline-block;
+    display: block;
+    padding: 20px 30px;
+    color: #fff;
+    text-transform: uppercase;
+    cursor: pointer;
+    //text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    &:focus,
+    &:hover,
+    &:active,
+    &[aria-selected="true"] {
+      color: #39a5c8;
+    }
+  }
+
+  &__panels {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__panel {
+    padding: 20px 0;
+    position: absolute;
+    width: 100%;
+    visibility: hidden;
+
+
+    &[aria-hidden=false] {
+      visibility: visible;
+    }
+  }
+
+  &__indicator {
+    background: #39a5c8;
+    position: absolute;
+    z-index: 1;
+    bottom: -4px;
+    height: 4px;
+    will-change: left, width;
+    transition: left 0.3s ease-out, width 0.3s ease-out;
+  }
+}
