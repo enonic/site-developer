@@ -181,7 +181,7 @@ function handleGet(req) {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     }
 
-    log.info(JSON.stringify(model, null, 4));
+    //log.info(JSON.stringify(model, null, 4));
 
     return {
         body: libs.thymeleaf.render(view, model)
