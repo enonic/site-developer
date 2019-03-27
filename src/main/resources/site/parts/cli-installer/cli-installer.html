@@ -11,25 +11,55 @@
     <div class="js-tabs" data-th-if="${!errorExists}">
         <ul class="js-tabs__list tabs__list--cli-installer">
 			<li class="js-tabs__item" data-th-each="tab : ${tabs}">
-                <a data-th-href="'#cli-installer-tab-' + ${tab.name}" data-th-text="${tab.title}" data-th-id="'tabs-label__' + ${tab.name}" class="js-tabs__link"></a>
+                <a data-th-if="${tab.isActive}" class="js-tabs__link js-tabs__primary js-tabs__link--preselected js-tabs__item--selected"
+                    data-th-href="'#' + ${tab.name}"
+                    data-th-text="${tab.title}"
+                    data-th-id="'tabs-label__' + ${tab.name}"
+                    data-th-attr="aria-selected=${tab.isActive}"></a>
+                <a data-th-unless="${tab.isActive}" class="js-tabs__link"
+                    data-th-href="'#' + ${tab.name}"
+                    data-th-text="${tab.title}"
+                    data-th-id="'tabs-label__' + ${tab.name}"
+                    data-th-attr="aria-selected=${tab.isActive}"></a>
             </li>
-            <!--li class="js-tabs__item">
-                <a href="#download-windows" id="tabs-label__download-windows" class="js-tabs__link">Windows</a>
-            </li>
-            <li class="js-tabs__item">
-				<a href="#download-other" id="tabs-label__download-other" class="js-tabs__link">Linux</a>
-			</li-->
         </ul>
 
         <div class="tabs__panel-container--cli-installer">
             <div data-th-each="tab : ${tabs}" data-th-remove="tag">
-                <div data-th-attr="id='cli-installer-tab-' + ${tab.name}" class="js-tabs__panel tabs__panel--cli-installer">
+                <div data-th-if="${tab.isActive}" class="js-tabs__panel tabs__panel--cli-installer js-tabs__panel-primary js-tabs__panel--preselected"
+                    data-th-attr="id=${tab.name}">
 
                     <div class="cli-installer__panel-container">
                         <div class="cli-installer__panel-cols">
                             <div class="cli-installer__panel-col--1">
 
-                                <img data-th-src="${tab.svgUrl}" data-th-class="cli-installer__logo" data-th-alt="${tab.name} + ' icon'"/>
+                                <img data-th-if="${tab.svgUrl}" data-th-src="${tab.svgUrl}" data-th-class="cli-installer__logo" data-th-alt="${tab.name} + ' icon'"/>
+                                <!--svg>
+                                     <image data-th-attr="xlink:href=${tab.svgUrl}"/>
+                                </svg-->
+
+                                <!--svg data-th-replace="fragments::logo-fragment(type=${downloadType})"></svg-->
+
+                                <!--div data-th-text="'Enonic XP ' + ${latestInstallerStableVersion}"></div>
+                                <div data-th-text="'Release date ' + ${installerInfo.timestamp}"></div>
+                                <div data-th-if="${downloadType != 'docker'}"
+                                     data-th-text="'Size ' + ${installerInfo['size']}"></div-->
+
+                            </div>
+
+                            <div class="cli-installer__panel-col--2" data-th-utext="${tab.text}"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div data-th-unless="${tab.isActive}" class="js-tabs__panel tabs__panel--cli-installer"
+                    data-th-attr="id=${tab.name}">
+
+                    <div class="cli-installer__panel-container">
+                        <div class="cli-installer__panel-cols">
+                            <div class="cli-installer__panel-col--1">
+
+                                <img data-th-if="${tab.svgUrl}" data-th-src="${tab.svgUrl}" data-th-class="cli-installer__logo" data-th-alt="${tab.name} + ' icon'"/>
                                 <!--svg>
                                      <image data-th-attr="xlink:href=${tab.svgUrl}"/>
                                 </svg-->

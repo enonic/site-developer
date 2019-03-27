@@ -14,6 +14,7 @@ var libs = {
 exports.get = handleGet;
 
 function handleGet(req) {
+    //log.info(JSON.stringify(req, null, 4));
 
     var view = resolve('cli-installer.html');
     var model = createModel(req);
@@ -38,6 +39,12 @@ function handleGet(req) {
                 tab.text = tabSource.text ? libs.portal.processHtml({
                     value: tabSource.text
                 }) : '';
+
+                //
+                if (req.headers['User-Agent'] && tabSource.operatingSystem) {
+                    tab.isActive = RegExp(tabSource.operatingSystem).test(req.headers['User-Agent']);
+                }
+
                 model.tabs.push(tab);
             }
         });
@@ -46,6 +53,9 @@ function handleGet(req) {
         model.postUrl = libs.portal.componentUrl({
             component: model.component.path
         });
+
+        model.isEditMode = req.mode === 'edit'
+        model.isEditOrPreview = req.mode === 'edit' || req.mode === 'preview';
 
         /*try {
             model.latestInstallerStableVersion = getLatestInstallerStableVersion();
@@ -70,7 +80,15 @@ function handleGet(req) {
             libs.util.log(model.errors);
         }
 
-        //libs.util.log(model);
+        // Show something in edit mode when part config is empty
+        if (model.isEditOrPreview && !model.tabs.length) {
+            model.tabs.push({
+                title: '[Error: tab title missing]',
+                name: 'title',
+                svgUrl: null,
+                text: '[No valid tab entry in part config]'
+            })
+        }
 
         return model;
     }

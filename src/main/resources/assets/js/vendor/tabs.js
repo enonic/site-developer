@@ -21,9 +21,9 @@
             that.tabList = that.tabs.find('.js-tabs__list');
             that.tabItems = that.tabList.children('.js-tabs__item');
             that.tabLinks = that.tabItems.children('.js-tabs__link');
-            //that.tabPrimary = that.tabList.children('.js-tabs__primary'); // For showing a specified tab first (not used)
+            that.tabPrimary = that.tabList.children('.js-tabs__primary'); // For showing a specified tab first
             that.panels = that.tabs.find('.js-tabs__panel');
-            //that.panelPrimary = that.tabs.find('.js-tabs__panel-primary'); // For showing a specified tab first (not used)
+            that.panelPrimary = that.tabs.find('.js-tabs__panel-primary'); // For showing a specified tab first
             that.prefixClass = typeof options.prefixClass !== 'undefined' ? options.prefixClass + '-' : '';
 
             that.panelContainer = that.panels.wrapAll($('<div class="js-tabs__panels"/>')).parent();
@@ -55,7 +55,7 @@
         var resizePanelContainer = function(target) {
             that.panelContainer.animate({
                 height: target.outerHeight()
-            }, 200);
+            }, 20);
         };
 
         this.bindEvents = function() {
