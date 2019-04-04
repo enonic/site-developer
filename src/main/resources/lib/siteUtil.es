@@ -1,7 +1,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
-//import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/util';
 import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
 import {getSite, pageUrl} from '/lib/xp/portal';
 import {and, pathMatch, propEq} from '/lib/query';

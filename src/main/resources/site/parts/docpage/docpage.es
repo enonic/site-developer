@@ -2,7 +2,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-//import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/util';
 import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
 import {
     getContent as getCurrentContent,
@@ -11,13 +11,13 @@ import {
     processHtml,
     serviceUrl as getServiceUrl
 } from '/lib/xp/portal';
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {CT_DOCVERSION, isDoc, isGuide, RT_HTML} from '/content-types';
 import {and, decendantOf, propEq} from '/lib/query';
-import {getNearestContentByType, getSiteUrl} from '/lib/util';
+import {getNearestContentByType, getSiteUrl} from '/lib/siteUtil';
 
 
 //──────────────────────────────────────────────────────────────────────────────

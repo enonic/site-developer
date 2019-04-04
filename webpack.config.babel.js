@@ -67,7 +67,7 @@ const SERVER_JS_CONFIG = {
 		`.${k.replace(`${SRC_DIR}`, '')}` // source relative to context
 	])),
 	externals: [
-		/\/lib\/(enonic|xp)/
+		/\/lib\/(enonic|xp|menu|util|thymeleaf|http-client)/
 	],
 	devtool: false, // Don't waste time generating sourceMaps
 	mode,

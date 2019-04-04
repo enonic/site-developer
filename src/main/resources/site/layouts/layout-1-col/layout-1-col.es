@@ -1,9 +1,9 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 import {getComponent} from '/lib/xp/portal';
-import {region} from '/lib/enonic/util';
+import {region} from '/lib/util';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Constants

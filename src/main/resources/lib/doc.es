@@ -3,13 +3,13 @@
 //──────────────────────────────────────────────────────────────────────────────
 import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
 import {get as getContent, modify as modifyContent, publish as publishContent, query as queryContent} from '/lib/xp/content';
-import {isSet} from '/lib/enonic/util/value';
-import {toStr} from '/lib/enonic/util';
+import {isSet} from '/lib/util/value';
+import {toStr} from '/lib/util';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
-import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
+import {getContentParent, getNearestContentByType, getSitePath} from '/lib/siteUtil'
 import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 import {propEq} from './query.es';
 
