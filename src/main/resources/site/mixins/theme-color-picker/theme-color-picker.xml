@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mixin>
     <display-name>Theme color picker</display-name>
-    <items>
+    <form>
         <input name="themeColor" type="RadioButton">
             <label>Theme color</label>
             <occurrences minimum="0" maximum="1"/>
@@ -12,6 +12,5 @@
               <option value="darkgrey">Dark grey</option>
             </config>
         </input>
-    </items>
+    </form>
 </mixin>
-
