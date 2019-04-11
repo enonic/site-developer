@@ -2,6 +2,7 @@
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
 import {query as queryContent} from '/lib/xp/content';
+import {run} from '/lib/xp/context';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -22,11 +23,14 @@ exports.isRepoReferencedByAnyContent = function (repoUrl) {
         propEq('data.repository', repoUrl)
     );
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 0,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 0
+        });
     });
 
     log.info('Docs and guides referencing repo "' + repoUrl + '" - ' + result.total);
@@ -40,11 +44,14 @@ exports.findContentsLinkedToRepo = function (repoUrl, contentType) {
         propEq('data.repository', repoUrl)
     );
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 10000,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 10000
+        });
     });
 
     const keys = [];
