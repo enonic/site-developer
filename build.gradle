@@ -34,16 +34,16 @@ dependencies {
 	include "com.enonic.xp:lib-common:${xpVersion}"
 	include "com.enonic.xp:lib-task:${xpVersion}"
 	include "com.enonic.xp:lib-portal:${xpVersion}"
-	include 'com.enonic.lib:lib-thymeleaf:2.0.0-B2'
+	include 'com.enonic.lib:lib-thymeleaf:2.0.0-RC1'
 	include 'org.jsoup:jsoup:1.10.2'
 	include 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201706111038-r'
 	include 'com.enonic.lib:lib-urlredirect:3.0.0-B1'
-	testCompile 'junit:junit:4.10'
-	testCompile 'org.mockito:mockito-core:1.+'
 	include 'com.enonic.lib:lib-util:2.0.0-B2'
 	include 'com.enonic.lib:lib-menu:3.0.0-B1'
 	//include "com.enonic.lib:lib-markdown:1.0.0-B1"
 	include "com.enonic.lib:lib-http-client:2.0.0-B1"
+	testCompile 'junit:junit:4.10'
+	testCompile "org.mockito:mockito-core:+"
 }
 
 

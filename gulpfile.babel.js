@@ -32,10 +32,6 @@ const sassOptions = {
     outputStyle: 'compressed'
 };
 
-
-// Default task, runs all other tasks
-gulp.task('build', ['sass', 'minifyImages', 'svgstore', 'minifyHTML']);
-
 // Compile Sass files
 // Create CSS sourcemaps
 // Add vendor specific CSS
@@ -106,3 +102,7 @@ gulp.task('svgstore', function () {
         .pipe(inject(svgs, { transform: fileContents }))
         .pipe(gulp.dest(buildAssets + '/img/icons/inline'));
 });*/
+
+
+// Default task, runs all other tasks
+gulp.task('build', gulp.series('sass', 'minifyImages', 'svgstore', 'minifyHTML'));
