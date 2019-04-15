@@ -9,7 +9,6 @@ import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +59,7 @@ public final class BuildAsciiDocCommand
         final RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader( this.getClass().getClassLoader() );
 
-        JavaEmbedUtils.initialize( Arrays.asList( "META-INF/jruby.home/lib/ruby/2.0", "gems/asciidoctor-1.5.6.1/lib" ), config );
-
-        final Asciidoctor asciidoctor = create( this.getClass().getClassLoader() );
+		final Asciidoctor asciidoctor = create( Arrays.asList( "uri:classloader:/gems/asciidoctor-1.5.8/lib" ) );
 
         return asciidoctor;
     }
