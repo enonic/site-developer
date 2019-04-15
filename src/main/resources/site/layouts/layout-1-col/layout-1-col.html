@@ -1,7 +1,7 @@
 <div data-th-class="${layoutClass}">
     <div class="container">
         <div data-th-each="region, iterStat : ${regions}" data-th-remove="tag">
-            <div data-th-attr="data-portal-region=${region.name}">
+            <div data-portal-region="main">
                 <div data-th-each="component : ${region.components}" data-th-remove="tag">
                     <div data-portal-component="${component.path}" data-th-remove="tag"/>
                 </div>
