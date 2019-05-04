@@ -22,6 +22,7 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.site.developer.tools.asciidoc.ExtractAsciiDocHtmlCommand;
 import com.enonic.site.developer.tools.asciidoc.ExtractedDoc;
+import com.enonic.site.developer.tools.env.EnvironmentResolver;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -356,7 +357,7 @@ public abstract class ImportCommand
 
     public void setSourceDir( final String sourceDir )
     {
-        this.sourceDir = new File( sourceDir ).toPath().normalize().toAbsolutePath();
+		this.sourceDir = new File( EnvironmentResolver.getXPHomeDir(), sourceDir ).toPath().normalize().toAbsolutePath();
     }
 
     public void setImportPath( final String importPath )

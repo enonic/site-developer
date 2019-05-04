@@ -12,6 +12,8 @@ import org.jruby.RubyInstanceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.site.developer.tools.env.EnvironmentResolver;
+
 import static org.asciidoctor.Asciidoctor.Factory.create;
 import static org.asciidoctor.AttributesBuilder.attributes;
 import static org.asciidoctor.OptionsBuilder.options;
@@ -75,7 +77,7 @@ public final class BuildAsciiDocCommand
 
     public void setSourceDir( String sourceDir )
     {
-        this.sourceDir = sourceDir;
+		this.sourceDir = EnvironmentResolver.getXPHomeDir() + sourceDir;
     }
 
     public void setRepoName( String repoName )

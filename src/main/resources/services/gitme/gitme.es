@@ -13,7 +13,7 @@ import {findContentsLinkedToRepo, isRepoReferencedByAnyContent} from '/lib/repo'
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
 //──────────────────────────────────────────────────────────────────────────────
-const REPO_DEST = './docs-repos/';
+const REPO_DEST = '/tmp/docs-repos/';
 const DOCS_PATH = '/docs';
 const MASTER_BRANCH = 'master';
 const DRAFT_BRANCH = 'draft';
