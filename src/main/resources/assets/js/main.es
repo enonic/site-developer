@@ -19,6 +19,7 @@ import './pages/search-result.es';
 // Parts
 import './parts/docpage.es';
 import './parts/cli-installer.es';
+import './parts/download-xp.es';
 
 
 // Gives Uncaught TypeError: n is not a function

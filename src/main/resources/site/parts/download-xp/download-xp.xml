@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<part>
+    <display-name>Download XP</display-name>
+    <config>
+        <input name="devText" type="HtmlArea">
+            <label>Developer Text</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="macText" type="HtmlArea">
+            <label>Mac OS Text</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="winText" type="HtmlArea">
+            <label>Windows Text</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <input name="dockerText" type="HtmlArea">
+            <label>Docker Text</label>
+            <occurrences minimum="0" maximum="1"/>
+        </input>
+        <!--item-set name="tabs">
+            <label>Tab</label>
+            <items>
+                <input name="title" type="TextLine">
+                    <label>Title</label>
+                    <occurrences minimum="1" maximum="1"/>
+                </input>
+
+                <input name="operatingSystem" type="ComboBox">
+                    <label>Operating System</label>
+                    <config>
+                        <option value="Android">Android</option>
+                        <option value="Linux">Linux</option>
+                        <option value="Mac">Mac OS X + iOS</option>
+                        <option value="Mac OS X">Mac OS X (not iOS)</option>
+                        <option value="like Mac">iOS</option>
+                        <option value="Win">Windows</option>
+                    </config>
+                    <occurrences minimum="0" maximum="1"/>
+                </input>
+
+            </items>
+            <occurrences minimum="0" maximum="5"/>
+        </item-set-->
+    </config>
+</part>
