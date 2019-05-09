@@ -1,56 +1,25 @@
 .promo {
-  display: flex; // aligning promo boxes
+  text-align: center;
+  margin: 90px 0;
 
-  &__box {
-    flex: 1 1;
-    margin: 0;
-    padding: 10px 15px;
-    position: relative;
-    font-weight: 300;
-    min-height: 275px;
-    background-size: cover;
-    border-radius: 2px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.15);
-    transition: all .25s cubic-bezier(.33,1.6,.66,1);
+  .cta-button {
+    display: inline-block;
+    padding: 12px 60px;
+    color: $color-white;
     text-decoration: none;
+    font-size: 24px;
+    font-family: monospace;
 
-    display: flex; // centering text inside
-    justify-content: center;
-    align-items: center;
-
-    &:nth-child(2) {
-      margin: 0 10px;
-    }
-
-    &--red {
+    &-red {
       background-color: $color-promo-red;
     }
 
-    &--green {
+    &-green {
       background-color: $color-limeade;
     }
 
-    &--blue {
+    &-blue {
       background-color: $color-pelorous;
     }
-
-    &-text {
-      color: $color-white;
-      font-size: 3rem;
-    }
   }
-
-  @include media('<medium') {
-    flex-direction: column;
-
-    &__box {
-      margin: 10px 0;
-
-      &:nth-child(2)  {
-        margin: 10px 0;
-      }
-    }
-
-  }
-
 }

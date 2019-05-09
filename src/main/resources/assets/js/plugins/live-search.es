@@ -28,7 +28,7 @@
             this.inputEl.on('blur', function(e) {
                 this.form.classList.remove('active');
 
-                if (e.relatedTarget && e.relatedTarget.href) { // in case clicked on result list link but blur
+                if (e.relatedTarget && e.relatedTarget.href && a.relatedTarget.className === 'live-search__hit-link') { // in case clicked on result list link but blur
                     window.location.href = e.relatedTarget.href;
                 }
             });
