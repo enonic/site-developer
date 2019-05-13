@@ -2,7 +2,7 @@
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
 import {getContent as getCurrentContent, getSite as getCurrentSite, serviceUrl as getServiceUrl} from '/lib/xp/portal';
-//import {getMenuTree} from '/lib/menu';
+import {getMenuTree} from '/lib/menu';
 import {render} from '/lib/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
@@ -46,7 +46,7 @@ export function get() {
         sitePath: getCurrentSite()._path,
         currentPath: content._path,
         pageTitle: content.displayName,
-        menuItems: null,
+        menuItems: getMenuTree(3),
         searchResultPageUrl: `${getSiteUrl()}search`,
         serviceUrl: getServiceUrl({ service: 'search' }),
 
