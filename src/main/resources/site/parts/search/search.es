@@ -1,12 +1,12 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 import {serviceUrl as getServiceUrl} from '/lib/xp/portal';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
-import {getSiteUrl} from '/lib/util';
+import {getSiteUrl} from '/lib/siteUtil';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Constants

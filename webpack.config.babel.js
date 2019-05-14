@@ -2,8 +2,8 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
-import ExtractTextPlugin, {extract as extractText} from 'extract-text-webpack-plugin';
-//import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+//import ExtractTextPlugin, {extract as extractText} from 'extract-text-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import glob from 'glob';
 import globImporter from 'node-sass-glob-importer';
 //import MinifyPlugin from 'babel-minify-webpack-plugin';
@@ -67,7 +67,7 @@ const SERVER_JS_CONFIG = {
 		`.${k.replace(`${SRC_DIR}`, '')}` // source relative to context
 	])),
 	externals: [
-		/\/lib\/(enonic|xp)/
+		/\/lib\/(enonic|xp|menu|util|thymeleaf|http-client)/
 	],
 	devtool: false, // Don't waste time generating sourceMaps
 	mode,
@@ -190,12 +190,10 @@ const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 	module: {
 		rules: [{
 			test: /\.s?css$/,
-			use: extractText([
-				/*{
-					loader: 'style-loader' // creates style nodes from JS strings
-				},*/ {
-					loader: 'css-loader' // translates CSS into CommonJS
-				}, {
+			use: [
+				{loader: MiniCssExtractPlugin.loader, options: {publicPath: '../', hmr: false}},
+				{loader: 'css-loader'},
+				{
 					loader: 'sass-loader', // compiles Sass to CSS
 					options: {
 						//errLogToConsole: true,
@@ -203,7 +201,7 @@ const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 						//outputStyle: 'compressed'
 					}
 				}
-			])
+			]
 		}, {
 			test: /\.svg$/,
 			use: {
@@ -233,7 +231,7 @@ const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 		filename: '[name].css'
 	},
 	plugins: [
-		new ExtractTextPlugin({
+		new MiniCssExtractPlugin({
 			filename: 'assets/css/styles.min.css'
 		})
 	],

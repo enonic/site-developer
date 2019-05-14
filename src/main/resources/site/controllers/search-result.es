@@ -1,15 +1,15 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 import {getSite as getCurrentSite, serviceUrl} from '/lib/xp/portal';
 import {get as getContent} from '/lib/xp/content'
-import {getMenuTree} from '/lib/enonic/menu'
-import {toStr} from '/lib/enonic/util'
+import {getMenuTree} from '/lib/menu'
+import {toStr} from '/lib/util'
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
-import {getContentParent, getSiteUrl} from '/lib/util'
+import {getContentParent, getSiteUrl} from '/lib/siteUtil'
 import {search as searchDocs} from '/lib/doc'
 
 //──────────────────────────────────────────────────────────────────────────────

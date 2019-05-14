@@ -1,5 +1,6 @@
 package com.enonic.site.developer.tools.imports;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -40,7 +41,7 @@ public class ImportDocCommandTest
         contentService = Mockito.mock( ContentService.class );
         importDocCommand = new ImportDocCommand();
         importDocCommand.setImportPath( importPath );
-        importDocCommand.setSourceDir( getPath( "docs" ) );
+		importDocCommand.sourceDir = new File( getPath( "docs" ) ).toPath().normalize().toAbsolutePath();
         importDocCommand.setLabel( "beta" );
 
         final BeanContext beanContext = Mockito.mock( BeanContext.class );

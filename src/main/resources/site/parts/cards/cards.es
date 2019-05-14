@@ -1,13 +1,13 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 import {getComponent, getContent as getCurrentContent} from '/lib/xp/portal';
 import {get as getContent, query} from '/lib/xp/content'
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
-import {getSitePath, getSiteUrl} from '/lib/util'
+import {getSitePath, getSiteUrl} from '/lib/siteUtil'
 import {and, like, propIn} from '/lib/query'
 import {CT_ARTICLE, CT_DOC, CT_GUIDE} from '/content-types';
 

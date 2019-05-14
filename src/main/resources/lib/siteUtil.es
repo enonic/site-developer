@@ -1,8 +1,9 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
-//import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/util';
 import {get as getContentByKey, query as queryContent} from '/lib/xp/content';
+import {run} from '/lib/xp/context';
 import {getSite, pageUrl} from '/lib/xp/portal';
 import {and, pathMatch, propEq} from '/lib/query';
 
@@ -37,11 +38,14 @@ export function getNearestContentByType(content, type) {
         propEq('type', `${app.name}:${type}`),
         pathMatch('_path', `/content${content._path}`)
     ); //log.info(`getNearestContentByType query:${toStr(query)}`);
-    const result = queryContent({
-        query,
-        start: 0,
-        count: 1,
+    const result = run({
         branch: DRAFT_BRANCH
-    }); //log.info(`getNearestContentByType result:${toStr(result)}`);
+    }, () => {
+        return queryContent({
+            query,
+            start: 0,
+            count: 1
+        }); //log.info(`getNearestContentByType result:${toStr(result)}`);
+    });
     return result.total > 0 ? result.hits[0] : null;
 } // export getNearestContentByType

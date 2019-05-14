@@ -1,7 +1,7 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 import {getComponent} from '/lib/xp/portal'
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs

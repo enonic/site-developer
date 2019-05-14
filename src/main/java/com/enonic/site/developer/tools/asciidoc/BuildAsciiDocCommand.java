@@ -9,9 +9,10 @@ import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
 import org.asciidoctor.SafeMode;
 import org.jruby.RubyInstanceConfig;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.enonic.site.developer.tools.env.EnvironmentResolver;
 
 import static org.asciidoctor.Asciidoctor.Factory.create;
 import static org.asciidoctor.AttributesBuilder.attributes;
@@ -60,9 +61,7 @@ public final class BuildAsciiDocCommand
         final RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader( this.getClass().getClassLoader() );
 
-        JavaEmbedUtils.initialize( Arrays.asList( "META-INF/jruby.home/lib/ruby/2.0", "gems/asciidoctor-1.5.6.1/lib" ), config );
-
-        final Asciidoctor asciidoctor = create( this.getClass().getClassLoader() );
+		final Asciidoctor asciidoctor = create( Arrays.asList( "uri:classloader:/gems/asciidoctor-1.5.8/lib" ) );
 
         return asciidoctor;
     }
@@ -78,7 +77,7 @@ public final class BuildAsciiDocCommand
 
     public void setSourceDir( String sourceDir )
     {
-        this.sourceDir = sourceDir;
+		this.sourceDir = EnvironmentResolver.getXPHomeDir() + sourceDir;
     }
 
     public void setRepoName( String repoName )

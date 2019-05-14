@@ -1,8 +1,8 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports
 //──────────────────────────────────────────────────────────────────────────────
-import {render} from '/lib/xp/thymeleaf';
-import {getSitePath, getSiteUrl} from '/lib/util';
+import {render} from '/lib/thymeleaf';
+import {getSitePath, getSiteUrl} from '/lib/siteUtil';
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions

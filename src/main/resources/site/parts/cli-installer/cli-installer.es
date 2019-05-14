@@ -1,8 +1,8 @@
 var libs = {
     portal: require('/lib/xp/portal'),
-    thymeleaf: require('/lib/xp/thymeleaf'),
-    httpClient: require('/lib/xp/http-client'),
-    util: require('/lib/enonic/util'),
+    thymeleaf: require('/lib/thymeleaf'),
+    httpClient: require('/lib/http-client'),
+    util: require('/lib/util'),
     moment: require('/lib/moment'),
     content: require('/lib/xp/content'),
     common: require('/lib/xp/common'),

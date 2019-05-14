@@ -3,13 +3,14 @@
 //──────────────────────────────────────────────────────────────────────────────
 import {getSite as getCurrentSite, pageUrl} from '/lib/xp/portal';
 import {get as getContent, modify as modifyContent, publish as publishContent, query as queryContent} from '/lib/xp/content';
-import {isSet} from '/lib/enonic/util/value';
-import {toStr} from '/lib/enonic/util';
+import {run} from '/lib/xp/context';
+import {isSet} from '/lib/util/value';
+import {toStr} from '/lib/util';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
-import {getContentParent, getNearestContentByType, getSitePath} from '/lib/util'
+import {getContentParent, getNearestContentByType, getSitePath} from '/lib/siteUtil'
 import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
 import {propEq} from './query.es';
 
@@ -69,11 +70,14 @@ function findDocPagesAndDocVersions(doc) {
         propIn('type', [CT_DOCPAGE, CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 1000,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 1000
+        });
     });
 
     return result.hits;
@@ -84,11 +88,14 @@ function findDocVersions(doc) {
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 1000,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 1000
+        });
     });
 
     return result.hits;
@@ -100,11 +107,14 @@ function findDocVersionByCheckout(doc, checkout) {
         like('_path', '/content' + doc._path + '/*'),
         propEq('data.commit', checkout));
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 1000,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 1000
+        });
     });
 
     if (result.total > 0) {
@@ -117,14 +127,17 @@ function findDocVersionByCheckout(doc, checkout) {
 function setLatestOnContent(content, latest) {
     log.info('Setting latest "' + latest + '" on ' + content._path);
 
-    modifyContent({
-        key: content._id,
-        editor: function (c) {
-            c.data.latest = latest;
-            return c;
-        },
-        requireValid: false,
+    run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return modifyContent({
+            key: content._id,
+            editor: function (c) {
+                c.data.latest = latest;
+                return c;
+            },
+            requireValid: false
+        });
     });
 }
 
@@ -173,10 +186,13 @@ function doUnMarkLatest(docVersion, publish) {
 }
 
 function isPublished(content) {
-    return !!getContent({
-        key: content._id,
+    return !!run({
         branch: MASTER_BRANCH
-    })
+    }, () => {
+        return getContent({
+            key: content._id
+        });
+    });
 }
 
 function publishTree(content) {
@@ -237,11 +253,14 @@ exports.search = function (query, path, start, count) {
 
     DEBUG && log.info('expr: ' + toStr(expr));
 
-    const result = queryContent({
-        query: expr,
-        start: start || 0,
-        count: count || 100,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: start || 0,
+            count: count || 100
+        });
     });
 
     const currentSite = getCurrentSite();
@@ -277,11 +296,14 @@ exports.findDocVersions = function (doc) {
         propIn('type', [CT_DOCVERSION]),
         like('_path', '/content' + doc._path + '/*'));
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 100,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 100
+        });
     });
 
     return result.hits;
@@ -293,11 +315,14 @@ exports.findLatestDocVersion = function (doc) {
         like('_path', '/content' + doc._path + '/*'),
         like('data.latest', 'true'));
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 100,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 100
+        });
     });
 
     if (result.total > 0) {
@@ -314,11 +339,14 @@ exports.findDocVersionByCheckout = function (doc, checkout) {
 exports.findChildren = function (content) {
     const expr = like('_path', '/content' + content._path + '/*');
 
-    const result = queryContent({
-        query: expr,
-        start: 0,
-        count: 1000,
+    const result = run({
         branch: DRAFT_BRANCH
+    }, () => {
+        return queryContent({
+            query: expr,
+            start: 0,
+            count: 1000
+        });
     });
 
     return result.hits;

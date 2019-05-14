@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <part>
     <display-name>Cards</display-name>
-    <config>
+    <form>
         <input type="ContentSelector" name="cards">
             <label>Docs to show </label>
             <occurrences minimum="0" maximum="0"/>
@@ -13,5 +13,5 @@
                 <allowPath>${site}/*</allowPath>
             </config>
         </input>
-    </config>
+    </form>
 </part>

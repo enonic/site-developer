@@ -2,7 +2,7 @@
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
 import {getContent as getCurrentContent, pageUrl, serviceUrl} from '/lib/xp/portal';
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -17,8 +17,8 @@ const RT_HTML = 'text/html; charset=UTF-8';
 //──────────────────────────────────────────────────────────────────────────────
 // Private functions
 //──────────────────────────────────────────────────────────────────────────────
-function isPreviewMode(req) {
-    return req.mode === 'preview';
+function isInlineMode(req) {
+    return req.mode === 'inline';
 }
 
 function getAvailableVersions(doc) {
@@ -42,9 +42,9 @@ function getAvailableVersions(doc) {
 exports.get = function (req) {
     const doc = getCurrentContent();
 
-    const isPreview = isPreviewMode(req);
+    const isInline = isInlineMode(req);
 
-    if (isPreview) {
+    if (isInline) {
         const view = resolve('/site/pages/available-versions/available-versions.html');
 
         const model = {

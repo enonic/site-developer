@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.site.developer.tools.env.EnvironmentResolver;
+
 public final class CloneRepoCommand
     extends GitCommand
 {
@@ -60,7 +62,7 @@ public final class CloneRepoCommand
         LOGGER.info( "Retrieving Git repository from [ " + makeUriWithCommit() + " ] ..." );
 
         // Creates the destination directory if it does not exist and cleans it
-        final File destinationDirectory = new File( destination );
+		final File destinationDirectory = new File( EnvironmentResolver.getXPHomeDir(), destination );
         FileUtils.deleteDirectory( destinationDirectory );
         final File temporaryDirectory = new File( destinationDirectory, ".CloneRepoTemporaryDirectory" );
         temporaryDirectory.mkdirs();

@@ -13,7 +13,7 @@ import {findContentsLinkedToRepo, isRepoReferencedByAnyContent} from '/lib/repo'
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
 //──────────────────────────────────────────────────────────────────────────────
-const REPO_DEST = './docs-repos/';
+const REPO_DEST = '/tmp/docs-repos/';
 const DOCS_PATH = '/docs';
 const MASTER_BRANCH = 'master';
 const DRAFT_BRANCH = 'draft';
@@ -43,6 +43,10 @@ function sudo(callback) {
 
 function isPreviewMode(req) {
     return req.mode === 'preview';
+}
+
+function isInlineMode(req) {
+    return req.mode === 'inline';
 }
 
 function execute(repo) {
@@ -290,7 +294,7 @@ function getDocVersions(repo) {
 //──────────────────────────────────────────────────────────────────────────────
 exports.post = function (req) {
     // in preview mode if triggered manually from page, thus repo url is in params and not in body
-    const repo = isPreviewMode(req) ? makeRepoObjFromUrl(req.params.repository) : JSON.parse(req.body).repository;
+    const repo = isInlineMode(req) ? makeRepoObjFromUrl(req.params.repository) : JSON.parse(req.body).repository;
     const isTaskAlreadyRunning = listTasks().some(task => task.description === repo.html_url && task.state === "RUNNING");
 
     if (isTaskAlreadyRunning) {
@@ -300,7 +304,7 @@ exports.post = function (req) {
         runTask(repo);
     }
 
-    if (isPreviewMode(req)) { // for manually triggered webhook redirecting back to page where it was triggered
+    if (isInlineMode(req)) { // for manually triggered webhook redirecting back to page where it was triggered
         return {
             redirect: req.params.docUrl
         };

@@ -2,9 +2,9 @@
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Enonic XP libs (build.gradle)
 //──────────────────────────────────────────────────────────────────────────────
-//import {toStr} from '/lib/enonic/util';
+//import {toStr} from '/lib/util';
 import {getContent as getCurrentContent, pageUrl, processHtml} from '/lib/xp/portal';
-import {render} from '/lib/xp/thymeleaf';
+import {render} from '/lib/thymeleaf';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────

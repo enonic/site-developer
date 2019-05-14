@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <part>
     <display-name>CLI installer</display-name>
-    <config>
+    <form>
         <item-set name="tabs">
             <label>Tab</label>
             <items>
@@ -35,5 +35,5 @@
             </items>
             <occurrences minimum="1" maximum="5"/>
         </item-set>
-    </config>
+    </form>
 </part>
