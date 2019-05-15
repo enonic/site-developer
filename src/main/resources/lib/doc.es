@@ -17,7 +17,7 @@ import {propEq} from './query.es';
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
 //──────────────────────────────────────────────────────────────────────────────
-const DEBUG = true;
+const DEBUG = false;
 const TRACE = false;
 const DRAFT_BRANCH = 'draft';
 const MASTER_BRANCH = 'master';
@@ -44,13 +44,14 @@ function toSearchResultEntry(content, currentSite, hideVersion) {
 
 function getSearchResultName(content, hideVersion) {
     if (isDocPage(content)) {
-        const parentDocVersion = getNearestContentByType(content, 'docversion');
+        //const parentDocVersion = getNearestContentByType(content, 'docversion');
+        const parentDoc = getNearestContentByType(content, 'doc');
 
-        if (!parentDocVersion || hideVersion) {
+        if (!parentDoc || hideVersion) {
             return content.displayName;
         }
 
-        return content.displayName + ' (' + parentDocVersion.displayName + ')';
+        return content.displayName + ' - ' + parentDoc.displayName + ' - Docs';
     }
 
     if (isDocVersion(content)) {
@@ -59,7 +60,32 @@ function getSearchResultName(content, hideVersion) {
             return doc.displayName;
         }
 
-        return doc.displayName + ' (' + content.displayName + ')';
+        return doc.displayName + ' - ' + content.displayName + ' - Docs';
+    }
+
+    return content.displayName;
+}
+
+// TODO: return the stuff after the "-"
+function getSearchResultContext(content, hideVersion) {
+    if (isDocPage(content)) {
+        //const parentDocVersion = getNearestContentByType(content, 'docversion');
+        const parentDoc = getNearestContentByType(content, 'doc');
+
+        if (!parentDoc || hideVersion) {
+            return content.displayName;
+        }
+
+        return content.displayName + ' - ' + parentDoc.displayName + ' - Docs';
+    }
+
+    if (isDocVersion(content)) {
+        const doc = getContentParent(content);
+        if (hideVersion) {
+            return doc.displayName;
+        }
+
+        return doc.displayName + ' - ' + content.displayName + ' - Docs';
     }
 
     return content.displayName;
@@ -273,6 +299,9 @@ exports.search = function (query, path, start, count) {
             entries.push(entry);
         }
     }
+
+    //log.info('doc.es exports.search() entries');
+    //log.info(JSON.stringify(entries, null, 4));
 
     return {
         total: result.total,
