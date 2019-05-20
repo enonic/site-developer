@@ -14,5 +14,5 @@
       <match>type:'com.enonic.site.developer:url'</match>
     </mapping>
   </mappings>
-  <x-data mixin="menu-item"/>
+  <x-data name="menu-item"/>
 </site>

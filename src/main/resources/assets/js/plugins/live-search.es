@@ -5,6 +5,8 @@
         this.inputEl = element;
         this.searchResultsIsVisible = false;
 
+        keyUpTimeout = null;
+
         this.init = function () {
             this.form = this.inputEl.closest('form');
             this.serviceUrl = this.form.data('live-search-url');
@@ -80,7 +82,10 @@
         this.processInput = function () {
             var searchTerm = that.inputEl.val().toLowerCase();
             if (searchTerm.length > 0) {
-                that.getHits(searchTerm);
+                clearTimeout(keyUpTimeout);
+                keyUpTimeout = setTimeout(function () {
+                    that.getHits(searchTerm);
+                }, 500);
             }
             else {
                 that.hideMenu();

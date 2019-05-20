@@ -17,7 +17,7 @@ import {propEq} from './query.es';
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
 //──────────────────────────────────────────────────────────────────────────────
-const DEBUG = true;
+const DEBUG = false;
 const TRACE = false;
 const DRAFT_BRANCH = 'draft';
 const MASTER_BRANCH = 'master';
