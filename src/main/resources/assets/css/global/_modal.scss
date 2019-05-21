@@ -1,0 +1,52 @@
+.modal {
+
+  //display: none;
+  visibility: hidden;
+  background: rgba(0,0,0,0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+
+
+  &--active {
+    display: block;
+
+  }
+
+
+
+  &__content {
+    background: $color-white;
+    color: $color-black;
+    outline: none;
+    width: 90%;
+    max-width: 1000px;
+    padding: 20px;
+    max-height: calc(100% - 100px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__btn {
+   // @include button($color-white, $color-black);
+    box-shadow: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+
+    &:after {
+      content: 'X';
+      font-weight: 900;
+    }
+
+    &-text {
+      @extend %visually-hidden;
+    }
+  }
+}

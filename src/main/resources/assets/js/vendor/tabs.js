@@ -37,7 +37,7 @@
 
             this.bindEvents();
 
-            //this.setInitialTab(); // For showing the specified tab first.
+            this.setInitialTab(); // For showing the specified tab first.
 
 
             /*setInterval(function() {
@@ -181,10 +181,10 @@
             that.positionIndicator();
         };
 
-       /* this.setInitialTab = function() {
+        this.setInitialTab = function() {
             //that.tabPrimary.eq(0).click(); // Doesn't work. Use regular jquery click instead.
             $('.js-tabs__primary').click();
-        };*/
+        };
 
         this.bindTabLinkClick = function () {
             $(that.tabList).on('click', '.js-tabs__link', function(event) {

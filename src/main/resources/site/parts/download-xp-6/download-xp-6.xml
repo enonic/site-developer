@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<part>
+    <display-name>Download XP 6</display-name>
+    <config>
+        <item-set name="tabs">
+            <label>Tab</label>
+            <items>
+                <input name="title" type="TextLine">
+                    <label>Title</label>
+                    <occurrences minimum="1" maximum="1"/>
+                </input>
+                <input name="svg" type="ContentSelector">
+                    <label>SVG icon</label>
+                    <config>
+                        <allowContentType>media:vector</allowContentType>
+                    </config>
+                    <occurrences minimum="0" maximum="1"/>
+                </input>
+                <input name="operatingSystem" type="ComboBox">
+                    <label>Operating System</label>
+                    <config>
+                        <option value="Android">Android</option>
+                        <option value="Linux">Linux</option>
+                        <option value="Mac">Mac OS X + iOS</option>
+                        <option value="Mac OS X">Mac OS X (not iOS)</option>
+                        <option value="like Mac">iOS</option>
+                        <option value="Win">Windows</option>
+                    </config>
+                    <occurrences minimum="0" maximum="1"/>
+                </input>
+                <input name="text" type="HtmlArea">
+                    <label>HTML Area</label>
+                    <occurrences minimum="0" maximum="1"/>
+                </input>
+            </items>
+            <occurrences minimum="0" maximum="5"/>
+        </item-set>
+    </config>
+</part>
