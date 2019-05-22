@@ -80,6 +80,9 @@ gulp.task('svgstore', () => gulp
                     prefix: `${prefix}-`,
                     minify: true
                 }
+            }, {
+                // viewBox attrs are (intentionally?) removed in gulp-svgmin 2.0.0 and above. Solution found here: https://github.com/ben-eb/gulp-svgmin/issues/87
+                removeViewBox: false
             }]
         };
     }))
