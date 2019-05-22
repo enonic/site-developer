@@ -11,7 +11,7 @@ import {toStr} from '/lib/util';
 //──────────────────────────────────────────────────────────────────────────────
 import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
 import {getContentParent, getNearestContentByType, getSitePath} from '/lib/siteUtil'
-import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion} from '/content-types';
+import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion, isLandingPage} from '/content-types';
 import {propEq} from './query.es';
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -32,6 +32,7 @@ function toSearchResultEntry(content, currentSite, hideVersion) {
 
     const result = {
         name: getSearchResultName(content, hideVersion),
+        breadcrumbs: getSearchResultBreadcrumbs(content, hideVersion),
         title: content.data.title || content.displayName,
         url: pageUrl({path: content._path}),
         path: content._path.replace(currentSite._path + '/', ''),
@@ -51,7 +52,7 @@ function getSearchResultName(content, hideVersion) {
             return content.displayName;
         }
 
-        return content.displayName + ' - ' + parentDoc.displayName + ' - Docs';
+        return content.displayName;
     }
 
     if (isDocVersion(content)) {
@@ -60,35 +61,28 @@ function getSearchResultName(content, hideVersion) {
             return doc.displayName;
         }
 
-        return doc.displayName + ' - ' + content.displayName + ' - Docs';
+        return doc.displayName;
     }
 
     return content.displayName;
 }
 
-// TODO: return the stuff after the "-"
-function getSearchResultContext(content, hideVersion) {
-    if (isDocPage(content)) {
-        //const parentDocVersion = getNearestContentByType(content, 'docversion');
+function getSearchResultBreadcrumbs(content, hideVersion) {
+    const landingPage = getNearestContentByType(content, 'landing-page');
+
+    if (isDocPage(content) || isDocVersion(content)) {
         const parentDoc = getNearestContentByType(content, 'doc');
 
-        if (!parentDoc || hideVersion) {
-            return content.displayName;
-        }
-
-        return content.displayName + ' - ' + parentDoc.displayName + ' - Docs';
-    }
-
-    if (isDocVersion(content)) {
-        const doc = getContentParent(content);
         if (hideVersion) {
-            return doc.displayName;
+            return ' - ' + landingPage.displayName;
         }
 
-        return doc.displayName + ' - ' + content.displayName + ' - Docs';
+        return ' - ' + parentDoc.displayName + ' - ' + landingPage.displayName;
+    } else if (isLandingPage(content)) {
+        return '';
     }
 
-    return content.displayName;
+    return ' - ' + landingPage.displayName;
 }
 
 function findDocPagesAndDocVersions(doc) {

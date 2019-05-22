@@ -85,7 +85,7 @@
                 clearTimeout(keyUpTimeout);
                 keyUpTimeout = setTimeout(function () {
                     that.getHits(searchTerm);
-                }, 500);
+                }, 700);
             }
             else {
                 that.hideMenu();
@@ -207,7 +207,7 @@
                     var reg = new RegExp(searchTerm, 'gi');
                     var hitName = hit.name.replace(reg, function(str) {return '<b>'+str+'</b>';});
 
-                    var titleEl = $('<h4 class="live-search__hit-heading">' + hitName + '</h4>');
+                    var titleEl = $('<h4 class="live-search__hit-heading">' + hitName + '<span>' + hit.breadcrumbs + '</span></h4>');
                     //var descEl = hit.desc ? $('<p>' + hit.desc + '</p>') : null;
                     var listEl = $('<li class="live-search__hit" data-value="' + hit.name + '"/>');
                     linkEl.append(titleEl);
