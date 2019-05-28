@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <layout>
   <display-name>2 column layout</display-name>
-  <config>
+  <form>
     <item-set name="bgColor">
       <label>Background color</label>
       <items>
-        <inline mixin="theme-color-picker"/>
+        <mixin name="theme-color-picker"/>
       </items>
       <immutable>false</immutable>
       <occurrences minimum="0" maximum="1"/>
@@ -18,7 +18,7 @@
       <label>1-column on mobile</label>
       <occurrences minimum="0" maximum="1"/>
     </input>
-  </config>
+  </form>
   <regions>
     <region name="left"/>
     <region name="right"/>
