@@ -48,12 +48,28 @@
                     case 38: // up arrow
                         that.prev();
                         break;
+                    case 37: // left arrow
+                        break;
+                    case 39: // right arrow
+                        break;
                     case 27: // esc
                         that.hideMenu();
                         that.hideNoResults();
                         break;
                     case 18: // alt
                         that.hideNoResults();
+                        break;
+                    case 91: // Mac command key
+                        break;
+                    case 17: // ctrl
+                        break;
+                    case 16: // shift
+                        break;
+                    case 20: // caps lock
+                        break;
+                    case 32: // space
+                        break;
+                    case 8: // backspace
                         break;
                     default:
                         that.processInput();
@@ -81,11 +97,12 @@
          */
         this.processInput = function () {
             var searchTerm = that.inputEl.val().toLowerCase();
-            if (searchTerm.length > 0) {
+            // Get hits after 250ms since last typed key
+            if (searchTerm.length > 2) {
                 clearTimeout(keyUpTimeout);
                 keyUpTimeout = setTimeout(function () {
                     that.getHits(searchTerm);
-                }, 700);
+                }, 250);
             }
             else {
                 that.hideMenu();

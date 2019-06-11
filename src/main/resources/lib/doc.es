@@ -6,6 +6,7 @@ import {get as getContent, modify as modifyContent, publish as publishContent, q
 import {run} from '/lib/xp/context';
 import {isSet} from '/lib/util/value';
 import {toStr} from '/lib/util';
+import {newCache} from '/lib/cache';
 //──────────────────────────────────────────────────────────────────────────────
 // Imports: Application libs
 //──────────────────────────────────────────────────────────────────────────────
@@ -13,6 +14,15 @@ import {and, fulltext, group, like, ngram, or, propIn} from '/lib/query'
 import {getContentParent, getNearestContentByType, getSitePath} from '/lib/siteUtil'
 import {CT_ARTICLE, CT_DOCPAGE, CT_DOCVERSION, CT_GUIDE, isDocPage, isDocVersion, isLandingPage} from '/content-types';
 import {propEq} from './query.es';
+
+const nameCache = newCache({
+    size: 10000,
+    expire: 604800 // 1 week
+});
+const breadcrumbCache = newCache({
+    size: 10000,
+    expire: 604800 // 1 week
+});
 
 //──────────────────────────────────────────────────────────────────────────────
 // Private Constants
@@ -30,13 +40,20 @@ function toSearchResultEntry(content, currentSite, hideVersion) {
         return;
     }
 
+    const name = nameCache.get(content._id + hideVersion, function () {
+        return getSearchResultName(content, hideVersion);
+    });
+    const breadcrumbs = breadcrumbCache.get(content._id + hideVersion, function () {
+        return getSearchResultBreadcrumbs(content, hideVersion);
+    });
+
     const result = {
-        name: getSearchResultName(content, hideVersion),
-        breadcrumbs: getSearchResultBreadcrumbs(content, hideVersion),
+        name,
+        breadcrumbs,
         title: content.data.title || content.displayName,
         url: pageUrl({path: content._path}),
         path: content._path.replace(currentSite._path + '/', ''),
-        extract: content.data.raw ? content.data.raw.substr(0, 64) + '...' : null
+        extract: content.data.raw ? content.data.raw.substr(0, 64) + '…' : null
     };
 
     return result;
