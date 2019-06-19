@@ -185,7 +185,7 @@
 
         &:focus {
           outline: none;
-          
+
         }
       }
 
@@ -236,7 +236,7 @@
 
       a {
         color: $color-anchor;
-      } 
+      }
 
       code[class*="language-"] {
         text-shadow: none;
@@ -317,6 +317,16 @@
           left: 0;
           width: 100%;
           height: 100%;
+        }
+      }
+
+      .content {
+        background: url('../img/icons/yt_icon_mono_light.svg') 50% 50% no-repeat;
+        cursor: pointer;
+        opacity: 0.7;
+
+        &:hover {
+            opacity: 1;
         }
       }
     }
