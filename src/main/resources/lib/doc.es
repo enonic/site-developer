@@ -291,7 +291,7 @@ exports.search = function (query, path, start, count) {
     DEBUG && log.info('expr: ' + toStr(expr));
 
     const result = run({
-        branch: DRAFT_BRANCH
+        branch: MASTER_BRANCH
     }, () => {
         return queryContent({
             query: expr,

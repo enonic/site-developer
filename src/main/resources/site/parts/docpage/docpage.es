@@ -103,8 +103,11 @@ function getMenu(versionContent) {
 } // function getMenu
 
 
-function getNavigation(menu, versionContent) {
+function getNavigation(menu, versionContent, rootName) {
     let activeMenuItem = null;
+
+    //log.info(JSON.stringify(menu, null, 2));
+    //log.info(JSON.stringify(versionContent, null, 2));
 
     function traverseMenuItems(menuItems, navPaths) {
         if (!menuItems) {
@@ -123,7 +126,7 @@ function getNavigation(menu, versionContent) {
     }
 
 
-    const rootVersionNavItem = {title: 'Doc', url: pageUrl({path: versionContent._path})};
+    const rootVersionNavItem = {title: rootName || 'Doc', url: pageUrl({path: versionContent._path})};
 
     traverseMenuItems(menu.menuItems, [rootVersionNavItem]);
 
@@ -137,7 +140,7 @@ function getNavigation(menu, versionContent) {
 
 function createDocModel(doc) {
     //log.info(`createDocModel()`);
-    const rootDoc = getNearestContentByType(doc, 'doc'); //log.info(`rootDoc:${toStr(rootDoc)}`);
+    const rootDoc = getNearestContentByType(doc, 'doc');
     const versionContent = getNearestContentByType(doc, 'docversion'); //log.info(`versionContent:${toStr(versionContent)}`);
     const model = {
         rootDocTitle: rootDoc.displayName,
@@ -158,7 +161,7 @@ function createDocModel(doc) {
     };
 
     if (model.menu) {
-        model.navigation = getNavigation(model.menu, versionContent);
+        model.navigation = getNavigation(model.menu, versionContent, rootDoc.displayName);
         model.hasNavigation = model.navigation.length > 1;
     }
 

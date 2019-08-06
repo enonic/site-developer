@@ -69,7 +69,9 @@
                         break;
                     case 32: // space
                         break;
-                    case 8: // backspace
+                    case 8:  // backspace
+                    case 46: // delete
+                        that.processInput();
                         break;
                     default:
                         that.processInput();
