@@ -10,7 +10,7 @@
     <mapping controller="/site/parts/software-show/shield.js" order="10">
       <pattern>.*\/vendors?\/.*shield.svg</pattern>
     </mapping>
-    <mapping controller="/lib/enonic/url-redirect/index.js">
+    <mapping controller="/lib/urlredirect.js">
       <match>type:'com.enonic.site.developer:url'</match>
     </mapping>
   </mappings>
