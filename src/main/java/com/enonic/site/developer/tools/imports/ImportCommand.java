@@ -40,11 +40,13 @@ import com.enonic.xp.script.bean.ScriptBean;
 public abstract class ImportCommand
     implements ScriptBean
 {
-    protected static final String DEFAULT_ASCIIDOC_NAME = "index.html";
+    protected static final String DEFAULT_ASCIIDOC_NAME = "index.ahtml";
 
     protected static final String JSON_EXT = ".json";
 
     protected static final String ASCIIDOC_EXT = ".adoc";
+
+    protected static final String COMPILED_DOC_EXT = ".ahtml";
 
     private final static Logger LOGGER = LoggerFactory.getLogger( ImportCommand.class );
 
@@ -141,7 +143,7 @@ public abstract class ImportCommand
     protected final ContentPath makeRepoPath( final Path path )
     {
         return ContentPath.from( importPath + ( importPath.endsWith( "/" ) ? "" : "/" ) +
-                                     sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( ".html", "" ) );
+                                     sourceDir.relativize( path ).toString().replace( "\\", "/" ).replace( COMPILED_DOC_EXT, "" ) );
     }
 
     private void doImportContent( final Path filePath, final ContentPath repoPath )
@@ -186,7 +188,7 @@ public abstract class ImportCommand
 
     private boolean isAsciiDocNameSakePresent( final Path path )
     {
-        return new File( path.toString() + ".html" ).exists();
+        return new File( path.toString() + COMPILED_DOC_EXT ).exists();
     }
 
     private void createDocpage( final ContentPath repoPath )
@@ -226,7 +228,7 @@ public abstract class ImportCommand
 
     private boolean isCompiledAsciiDoc( final Path path )
     {
-        return path.getFileName().toString().endsWith( ".html" );
+        return path.getFileName().toString().endsWith( COMPILED_DOC_EXT );
     }
 
     private void createMedia( final Path filePath, final ContentPath repoPath )

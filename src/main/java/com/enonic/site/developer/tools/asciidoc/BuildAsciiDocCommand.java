@@ -70,7 +70,7 @@ public final class BuildAsciiDocCommand
     {
         Attributes attributes = attributes().backend( "html5" ).icons( "font" ).setAnchors( true ).attribute( "sectlinks", true ).
             attribute( "encoding", "utf-8" ).linkAttrs( true ).attribute( "idprefix", "" ).
-            tableOfContents( Placement.RIGHT ).get();
+            tableOfContents( Placement.RIGHT ).attribute( "outfilesuffix", ".ahtml" ).get();
 
         return options().backend( "html5" ).safe( SafeMode.UNSAFE ).attributes( attributes ).get();
     }

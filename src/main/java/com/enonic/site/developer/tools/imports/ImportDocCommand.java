@@ -173,7 +173,7 @@ public final class ImportDocCommand
 
         private String generateMenuItemUrl( final String documentPath )
         {
-            final Path menuItemLocalPath = sourceDir.resolve( documentPath + ".html" );
+            final Path menuItemLocalPath = sourceDir.resolve( documentPath + COMPILED_DOC_EXT );
 
             if ( isRootAsciiDoc( menuItemLocalPath ) )
             {
