@@ -2460,7 +2460,7 @@
     <div class="sidebarblock">
         <div class="content">
             <div class="paragraph">
-                <p>More test data</p>
+                <p>More test data at <a href="../index.ahtml">Compatibility</a></p>
             </div>
         </div>
     </div>
