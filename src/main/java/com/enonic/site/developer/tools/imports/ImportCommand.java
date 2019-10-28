@@ -395,14 +395,14 @@ public abstract class ImportCommand
             this.attr = attr;
         }
 
-        protected void rewrite( final Element root )
+        protected final void rewrite( final Element root )
         {
             for ( final Element e : root.select( this.tag ) )
             {
                 final String href = e.attr( this.attr );
                 if ( shouldRewriteUrl( href ) )
                 {
-                    e.attr( this.attr, rewriteUrl( href ) );
+                    e.attr( this.attr, processUrl( href ) );
                 }
             }
         }
@@ -417,13 +417,11 @@ public abstract class ImportCommand
             return ( value == null ) || value.equals( "" );
         }
 
-        protected String rewriteUrl( final String href )
+        private String processUrl( final String href )
         {
             try
             {
-                final Path resolvedPath = resolveLink( href );
-                final Content content = getContentByPath( resolvedPath );
-                return makeUrl( content );
+                return doProcessUrl( href );
             }
             catch ( final ContentNotFoundException e )
             {
@@ -432,6 +430,13 @@ public abstract class ImportCommand
 
             return href;
         }
+
+		protected String doProcessUrl( final String href )
+		{
+			final Path resolvedContentPath = resolveLink( href );
+			final Content content = getContentByPath( resolvedContentPath );
+			return makeUrl( content );
+		}
 
         protected Path resolveLink( final String href )
         {
@@ -467,6 +472,8 @@ public abstract class ImportCommand
     {
         private static final String CONTENT_LINK = "content://";
 
+        private static final String HASH_SIGN = "#";
+
         private DocpageUrlRewriter( final Path path, final String tag, final String attr )
         {
             super( path, tag, attr );
@@ -474,7 +481,7 @@ public abstract class ImportCommand
 
         protected boolean shouldRewriteUrl( final String url )
         {
-            return super.shouldRewriteUrl( url ) && url.endsWith( ".html" );
+            return super.shouldRewriteUrl( url ) && url.contains( COMPILED_DOC_EXT );
         }
 
         protected Content getContentByPath( final Path path )
@@ -491,6 +498,16 @@ public abstract class ImportCommand
         {
             return CONTENT_LINK + content.getId();
         }
+
+		protected String doProcessUrl( final String href )
+		{
+			if ( href.contains( HASH_SIGN ) && !href.endsWith( HASH_SIGN ) )
+			{
+				return href.replace( COMPILED_DOC_EXT, "" );
+			}
+
+			return super.doProcessUrl( href );
+		}
     }
 
     private final class YoutubeWrapper
@@ -498,6 +515,10 @@ public abstract class ImportCommand
         private static final String IFRAME_TAG = "iframe";
 
         private static final String SRC_ATTR = "src";
+
+        private static final String YOUTUBE_URL_PREFIX = "www.youtube.";
+
+        private static final String YOUTUBE_WRAPPER_CLASS = "youtube-wrapper";
 
         public void wrap( final Element root )
         {
@@ -519,7 +540,7 @@ public abstract class ImportCommand
                 return false;
             }
 
-            return link.contains( "www.youtube." );
+            return link.contains( YOUTUBE_URL_PREFIX );
         }
 
         private void updateParent( final Element e )
@@ -531,7 +552,7 @@ public abstract class ImportCommand
                 return;
             }
 
-            parent.addClass( "youtube-wrapper" );
+            parent.addClass( YOUTUBE_WRAPPER_CLASS );
         }
 
     }
