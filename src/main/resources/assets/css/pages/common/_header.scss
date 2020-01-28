@@ -88,6 +88,8 @@
 
   @at-root #{&}__header-wrapper {
 
+    z-index: 1;
+
     .main-nav-toggled & {
       position: static;
     }

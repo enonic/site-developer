@@ -5,6 +5,14 @@
   margin-bottom: 0px;
   color: $color-black;
 
+  z-index: 0;
+  margin-top: -90px;
+  padding-top: 90px;
+  backface-visibility: hidden;
+  will-change: overflow;
+  overflow: hidden;
+  position: relative;
+
   a {
     text-decoration: none;
   }
@@ -16,13 +24,25 @@
   h2, h3 {
     text-transform: none;
   }
+  &-menu, &-content, &-sticky-toc {
+    overflow: auto;
+    height: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
 
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  &-menu, &-sticky-toc {
+    min-width: 230px;
+    position: relative;
+    height: 100vh;
+  }
   &-menu {
     background-color: $color-pelorous;
     padding: 0 20px;
-    min-width: 230px;
-    position: relative;
-    top: 15px;
+    margin-top: 15px;
 
     &-wrapper {
       position: sticky;
@@ -208,10 +228,6 @@
 
   &-content {
     padding: 30px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: baseline;
     background-color: white;
     width: 100%;
     word-wrap: break-word;
@@ -374,6 +390,7 @@
           ul li {
             list-style-type: none;
             font-size: 0.9em;
+			white-space: nowrap;
 
             &:before {
               content: "\2013\00a0";
@@ -420,8 +437,6 @@
 
   &-sticky-toc {
     background-color: $color-mine-shaft;
-    position: relative;
-    top: 15px;
   }
 
   &-sticky-toc .docpage-toc {
@@ -451,6 +466,10 @@
         display: block;
         margin-left: 0px;
       }
+    }
+
+    .docpage-sticky-toc {
+      display: none;
     }
   }
 
