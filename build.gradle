@@ -35,14 +35,14 @@ dependencies {
 	include "com.enonic.xp:lib-portal:${xpVersion}"
 	include 'org.jsoup:jsoup:1.10.2'
 	include 'org.eclipse.jgit:org.eclipse.jgit:5.3.0.201903130848-r'
-	include "com.enonic.lib:lib-http-client:2.0.0"
+	include "com.enonic.lib:lib-http-client:2.1.0"
 	include 'com.enonic.lib:lib-menu:3.0.0'
 	include 'com.enonic.lib:lib-thymeleaf:2.0.0'
 	include 'com.enonic.lib:lib-util:2.2.1'
 	include 'com.enonic.lib:lib-urlredirect:3.0.0'
-	include 'com.enonic.lib:lib-cache:2.0.0'
+	include 'com.enonic.lib:lib-cache:2.1.1'
 	testCompile 'junit:junit:4.10'
-	testCompile "org.mockito:mockito-core:2.+"
+	testCompile "org.mockito:mockito-core:2.27.0"
 }
 
 
@@ -66,9 +66,6 @@ gulp_build.dependsOn 'installGulp'
 // processes your package.json before running gulp build
 gulp_build.dependsOn 'npmInstall'
 
-// runs "gulp build" as part of your gradle build
-jar.dependsOn gulp_build
-
 
 //──────────────────────────────────────────────────────────────────────────────
 // Webpack
@@ -90,7 +87,5 @@ task webpack(type:NodeTask) {
 		'--color',
 	]
 }
-webpack.dependsOn npmInstall
-webpack.mustRunAfter npmInstall
+webpack.dependsOn gulp_build
 assemble.dependsOn webpack
-assemble.mustRunAfter webpack
