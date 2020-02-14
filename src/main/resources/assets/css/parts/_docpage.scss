@@ -37,16 +37,14 @@
   &-menu, &-sticky-toc {
     min-width: 230px;
     position: relative;
-    height: 100vh;
+    background-color: $color-pelorous;
+    //max-height: calc(100vh - 89px);
   }
   &-menu {
-    background-color: $color-pelorous;
-    padding: 0 20px;
-    margin-top: 15px;
 
     &-wrapper {
-      top: 18px;
-      margin-top: 18px;
+      background-color: $color-pelorous;
+      padding: 18px 20px 0 20px;
 
       ol {
         padding: 0 20px;

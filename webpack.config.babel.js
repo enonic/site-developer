@@ -34,7 +34,7 @@ const DST_DIR = 'build/resources/main';
 //──────────────────────────────────────────────────────────────────────────────
 const context = path.resolve(__dirname, SRC_DIR);
 const extensions = ['.es', '.js', '.json']; // used in resolve
-const mode = 'production';
+const mode = 'development';
 const outputPath = path.join(__dirname, DST_DIR);
 const stats = {
 	colors: true,
@@ -146,13 +146,13 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 			}] // use
 		}] // rules
 	}, // module
-	optimization: {
+	optimization: {/*
 		minimizer: [
 			new UglifyJsPlugin({ // TODO this seems to remove the source map file
 				parallel: true, // highly recommended
 				sourceMap: true // default is false and overrides devtool? So both is needed.
 			})
-		]
+		]*/
 	},
 	output: {
 		path: outputPath,
