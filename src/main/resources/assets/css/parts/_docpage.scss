@@ -29,6 +29,7 @@
     height: auto;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
+    scrollbar-width: none;
 
     &::-webkit-scrollbar {
       display: none;
@@ -38,12 +39,12 @@
     min-width: 230px;
     position: relative;
     background-color: $color-pelorous;
-    //max-height: calc(100vh - 89px);
+    max-height: calc(100vh - 87px);
   }
   &-menu {
 
     &-wrapper {
-      background-color: $color-pelorous;
+      //background-color: $color-pelorous;
       padding: 18px 20px 0 20px;
 
       ol {
@@ -498,14 +499,11 @@
       }
 
       .docpage-menu {
-        top: 0px;
-        z-index: 1;
-        margin-right: 0px;
-        padding: 0;
-        background-color: $color-pelorous;
+        max-height: unset;
 
         &-wrapper {
           margin-top: 0px;
+          padding: 0;
 
           > * {
             padding-left: 20px;
@@ -519,7 +517,7 @@
         }
 
         &__versions {
-          padding: 0;
+          padding: 20px 20px 0;
 
           select {
             color: $color-white;
@@ -557,32 +555,43 @@
           height: 16px;
           width: 16px;
 
-          &:checked + label {
-            background-color: transparent;
+          &:checked {
 
-            &:before, &:after {
-              background-color: #fff;
-              -webkit-transform-origin: 50% 50%;
-              transform-origin: 50% 50%;
-              top: 0;
-              width: 20px;
-            }
+            & + label {
+              background-color: transparent;
 
-            &:before {
-              -webkit-transform: rotate3d(0, 0, 1, 45deg);
-              transform: rotate3d(0, 0, 1, 45deg);
-            }
-            &:after {
-              -webkit-transform: rotate3d(0, 0, 1, -45deg);
-              transform: rotate3d(0, 0, 1, -45deg);
-            }
+              &:before, &:after {
+                background-color: #fff;
+                -webkit-transform-origin: 50% 50%;
+                transform-origin: 50% 50%;
+                top: 0;
+                width: 20px;
+              }
 
-            + .docpage-menu-wrapper {
-              .docpage-menu__versions, .docpage-menu-search, ol {
-                display: block;
+              &:before {
+                -webkit-transform: rotate3d(0, 0, 1, 45deg);
+                transform: rotate3d(0, 0, 1, 45deg);
+              }
+
+              &:after {
+                -webkit-transform: rotate3d(0, 0, 1, -45deg);
+                transform: rotate3d(0, 0, 1, -45deg);
+              }
+
+              + .docpage-menu-wrapper {
+                .docpage-menu__versions, .docpage-menu-search, ol {
+                  display: block;
+                }
               }
             }
+
+            & ~ .docpage-menu-wrapper {
+              min-height: calc(100vh - 71px);
+            }
+
           }
+
+
         }
 
         > label {
