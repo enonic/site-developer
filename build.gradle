@@ -52,7 +52,7 @@ dependencies {
 // Gradle node plugin
 //──────────────────────────────────────────────────────────────────────────────
 node {
-	version '10.15.3'
+	version '13.3.0'
 	download true
 }
 

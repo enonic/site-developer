@@ -5,7 +5,7 @@
         this.inputEl = element;
         this.searchResultsIsVisible = false;
 
-        keyUpTimeout = null;
+        var keyUpTimeout = null;
 
         this.init = function () {
             this.form = this.inputEl.closest('form');

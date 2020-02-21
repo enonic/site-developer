@@ -6,10 +6,9 @@
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import glob from 'glob';
 import globImporter from 'node-sass-glob-importer';
-//import MinifyPlugin from 'babel-minify-webpack-plugin';
 import path from 'path';
 import {ProvidePlugin} from 'webpack';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin'; // Supports ECMAScript2015
+const TerserPlugin = require('terser-webpack-plugin');
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -34,7 +33,7 @@ const DST_DIR = 'build/resources/main';
 //──────────────────────────────────────────────────────────────────────────────
 const context = path.resolve(__dirname, SRC_DIR);
 const extensions = ['.es', '.js', '.json']; // used in resolve
-const mode = 'development';
+const mode = 'production';
 const outputPath = path.join(__dirname, DST_DIR);
 const stats = {
 	colors: true,
@@ -77,17 +76,19 @@ const SERVER_JS_CONFIG = {
 			use: [{
 				loader: 'babel-loader',
 				options: {
-					babelrc: false, // The .babelrc file should only be used to transpile config files.
+					//babelrc: false, // The .babelrc file should only be used to transpile config files.
 					comments: false,
 					compact: false,
 					minified: false,
-					plugins: [
-						'array-includes',
-						'optimize-starts-with',
-						'transform-object-assign',
-						'transform-object-rest-spread'
-					],
-					presets: ['es2015']
+					presets: [
+						[
+							'@babel/preset-env',
+							{
+								// false means polyfill not required runtime
+								useBuiltIns: false
+							},
+						],
+					]
 				} // options
 			}] // use
 		}] // rules
@@ -125,34 +126,37 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 			use: [{
 				loader: 'babel-loader',
 				options: {
-					babelrc: false, // The .babelrc file should only be used to transpile *.babel.js files.
+					//babelrc: false, // The .babelrc file should only be used to transpile *.babel.js files.
 					comments: false,
 					compact: true,
 					minified: true,
-					plugins: [
-						'array-includes',
-						'optimize-starts-with',
-						'transform-object-assign',
-						'transform-object-rest-spread'
-					],
 					presets: [
 						[
-							'env', {
-								modules: false // NOTE svg4everybody fails runtime without this!
-							}
-						]
+							'@babel/preset-env',
+							{
+								// false means polyfill not required runtime
+								useBuiltIns: false
+							},
+						],
 					]
 				} // options
 			}] // use
 		}] // rules
 	}, // module
-	optimization: {/*
+	optimization: {
 		minimizer: [
-			new UglifyJsPlugin({ // TODO this seems to remove the source map file
-				parallel: true, // highly recommended
-				sourceMap: true // default is false and overrides devtool? So both is needed.
+			new TerserPlugin({
+				sourceMap: true,
+				terserOptions: {
+					compress: {
+						drop_console: false
+					},
+					mangle: false,
+					keep_classnames: true,
+					keep_fnames: true
+				}
 			})
-		]*/
+		]
 	},
 	output: {
 		path: outputPath,

@@ -7,7 +7,7 @@ import './plugins/enonic-menu.es';
 import './plugins/responsive.es';
 import './vendor/prism.js';
 
-import svg4everybody from './vendor/svg4everybody.js';
+import {svg4everybody} from './vendor/svg4everybody.js';
 
 import './vendor/jquery.validate.min.js';
 import './vendor/jquery.form.min.js';
