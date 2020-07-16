@@ -9,6 +9,7 @@ import globImporter from 'node-sass-glob-importer';
 import path from 'path';
 import {ProvidePlugin} from 'webpack';
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -167,6 +168,15 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 			$: 'jquery',
 			jQuery: 'jquery',
 			'window.jQuery': 'jquery'
+		}),
+		new CopyPlugin({
+			//Get highlight.js into the build
+			patterns: [
+				{
+					from: path.resolve(__dirname, './node_modules/highlight.js/styles/foundation.css'),
+					to: path.resolve(outputPath,  'assets/highlight/')
+				}
+			]
 		})
 	], // plugins
 	resolve: {
@@ -186,7 +196,7 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 	context,
 	entry: {
-		'assets/css/coderay': './assets/css/coderay.css',
+		//'assets/css/coderay': './assets/css/coderay.css',
 		'assets/css/critical': './assets/css/critical.scss',
 		'assets/css/non-critical': './assets/css/non-critical.scss'
 	},
@@ -249,7 +259,6 @@ const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 	stats
 };
 //console.log(`STYLE_ASSETS_CONFIG:${JSON.stringify(STYLE_ASSETS_CONFIG, null, 4)}`);
-
 
 //──────────────────────────────────────────────────────────────────────────────
 // Exports

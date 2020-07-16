@@ -61,7 +61,7 @@ public final class BuildAsciiDocCommand
         final RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader( this.getClass().getClassLoader() );
 
-		final Asciidoctor asciidoctor = create( Arrays.asList( "uri:classloader:/gems/asciidoctor-1.5.8/lib" ) );
+		final Asciidoctor asciidoctor = create( Arrays.asList( "uri:classloader:/gems/asciidoctor-1.5.8/lib") ); 
 
         return asciidoctor;
     }
@@ -70,7 +70,7 @@ public final class BuildAsciiDocCommand
     {
         Attributes attributes = attributes().backend( "html5" ).icons( "font" ).setAnchors( true ).attribute( "sectlinks", true ).
             attribute( "encoding", "utf-8" ).linkAttrs( true ).attribute( "idprefix", "" ).
-            tableOfContents( Placement.RIGHT ).attribute( "outfilesuffix", ".ahtml" ).get();
+            tableOfContents( Placement.RIGHT ).attribute( "outfilesuffix", ".ahtml" ).sourceHighlighter("highlightjs").get();
 
         return options().backend( "html5" ).safe( SafeMode.UNSAFE ).attributes( attributes ).get();
     }

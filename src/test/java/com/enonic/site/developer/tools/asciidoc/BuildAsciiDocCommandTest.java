@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.enonic.site.developer.tools.CommonTest;
@@ -16,7 +17,7 @@ public class BuildAsciiDocCommandTest
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    //    @Test
+    //@Test
     public void testDocIsBuilt()
         throws Exception
     {
@@ -29,7 +30,7 @@ public class BuildAsciiDocCommandTest
         assertTrue( Arrays.asList( new File( buildPath ).list() ).stream().anyMatch( s -> s.equals( "testbuild.html" ) ) );
     }
 
-    //    @Test
+    //@Test
     public void testExceptionThrownWhenSourceDirIsNull()
         throws Exception
     {
