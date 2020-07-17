@@ -28,66 +28,66 @@ const buildAssets = `${buildSite}/assets`;
 
 // Sass compile
 const sassOptions = {
-    errLogToConsole: true,
-    outputStyle: 'compressed'
+	errLogToConsole: true,
+	outputStyle: 'compressed'
 };
 
 // Compile Sass files
 // Create CSS sourcemaps
 // Add vendor specific CSS
 gulp.task('sass', () => gulp
-    .src(`${srcAssets}/css/*.scss`)
-    .pipe(sourcemaps.init())
-    .pipe(sassGlob())
-    .pipe(sass(sassOptions).on('error', sass.logError))
-    .pipe(sourcemaps.write())
-    .pipe(autoprefixer())
-    .pipe(gulp.dest(`${buildAssets}/css/`))
-    .resume());
+	.src(`${srcAssets}/css/*.scss`)
+	.pipe(sourcemaps.init())
+	.pipe(sassGlob())
+	.pipe(sass(sassOptions).on('error', sass.logError))
+	.pipe(sourcemaps.write())
+	.pipe(autoprefixer())
+	.pipe(gulp.dest(`${buildAssets}/css/`))
+	.resume());
 
 // Minify PNG, JPEG, GIF and SVG images in assets folder
 gulp.task('minifyImages', () => gulp
-    .src(`${srcAssets}/img/*`)
-    .pipe(imagemin({
-        progressive: true,
-        svgoPlugins: [{removeViewBox: false}],
-        use: [pngquant()]
-    }))
-    .pipe(gulp.dest(`${buildAssets}/img`)));
+	.src(`${srcAssets}/img/*`)
+	.pipe(imagemin({
+		progressive: true,
+		svgoPlugins: [{removeViewBox: false}],
+		use: [pngquant()]
+	}))
+	.pipe(gulp.dest(`${buildAssets}/img`)));
 
 // JSHint, Helps to detect errors and potential problems in code
 gulp.task('jsHint', () => gulp
-    .src([`${srcAssets}/js/*.js${srcAssets}/js/plugins/!*.js`])
-    .pipe(jshint())
-    .pipe(jshint.reporter('default')));
+	.src([`${srcAssets}/js/*.js${srcAssets}/js/plugins/!*.js`])
+	.pipe(jshint())
+	.pipe(jshint.reporter('default')));
 
 // Minify the HTML of all components
 gulp.task('minifyHTML', () => gulp.src(`${srcSite}/**/*.html`)
-    .pipe(htmlmin({
-        collapseWhitespace: true,
-        removeComments: true,
-        keepClosingSlash: true
-    }))
-    .pipe(gulp.dest(buildSite)));
+	.pipe(htmlmin({
+		collapseWhitespace: true,
+		removeComments: true,
+		keepClosingSlash: true
+	}))
+	.pipe(gulp.dest(buildSite)));
 
 gulp.task('svgstore', () => gulp
-    .src(`${srcAssets}/img/icons/*.svg`)
-    .pipe(svgmin((file) => {
-        const prefix = path.basename(file.relative, path.extname(file.relative));
-        return {
-            plugins: [{
-                cleanupIDs: {
-                    prefix: `${prefix}-`,
-                    minify: true
-                }
-            }, {
-                // viewBox attrs are (intentionally?) removed in gulp-svgmin 2.0.0 and above. Solution found here: https://github.com/ben-eb/gulp-svgmin/issues/87
-                removeViewBox: false
-            }]
-        };
-    }))
-    .pipe(svgstore({inlineSvg: true}))
-    .pipe(gulp.dest(`${buildAssets}/img/icons`)));
+	.src(`${srcAssets}/img/icons/*.svg`)
+	.pipe(svgmin((file) => {
+		const prefix = path.basename(file.relative, path.extname(file.relative));
+		return {
+			plugins: [{
+				cleanupIDs: {
+					prefix: `${prefix}-`,
+					minify: true
+				}
+			}, {
+				// viewBox attrs are (intentionally?) removed in gulp-svgmin 2.0.0 and above. Solution found here: https://github.com/ben-eb/gulp-svgmin/issues/87
+				removeViewBox: false
+			}]
+		};
+	}))
+	.pipe(svgstore({inlineSvg: true}))
+	.pipe(gulp.dest(`${buildAssets}/img/icons`)));
 
 
 /*
