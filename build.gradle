@@ -88,4 +88,4 @@ task webpack(type:NodeTask) {
 	]
 }
 webpack.dependsOn gulp_build
-assemble.dependsOn webpack
+jar.dependsOn webpack
