@@ -33,6 +33,11 @@ import './parts/download-xp.es';
 // Ascii doc syntax highlihgting
 hljs.initHighlighting();
 
+/* document.querySelectorAll('pre code').forEach((block) => {
+	hljs.highlightBlock(block);
+	console.log(block);
+}); */
+
 $('.live-search__input').liveSearch();
 $('.pagination').pagination();
 $('.main-menu').enonicMenu({
