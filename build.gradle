@@ -1,10 +1,9 @@
 plugins {
 	id 'java'
 	id 'maven-publish'
+	id 'com.github.node-gradle.node' version '2.2.3'
 	id 'com.enonic.xp.app' version '2.0.0'
 	id 'com.enonic.xp.run' version '2.0.0'
-	id 'com.moowork.gulp' version '1.3.0'
-	id 'com.moowork.node' version '1.3.1'
 	id 'com.enonic.defaults' version '2.0.1'
 }
 
@@ -60,11 +59,13 @@ node {
 //──────────────────────────────────────────────────────────────────────────────
 // Gulp TODO This could/should be replaced with webpack
 //──────────────────────────────────────────────────────────────────────────────
-// makes sure on each build that gulp is installed
-gulp_build.dependsOn 'installGulp'
 
-// processes your package.json before running gulp build
-gulp_build.dependsOn 'npmInstall'
+task buildGulp(type: NpmTask, dependsOn: npmInstall) {
+	args = ["run", "gulp"]
+	inputs.file("gulpfile.babel.js")
+	inputs.dir("src")
+	outputs.dir("build")
+}
 
 
 //──────────────────────────────────────────────────────────────────────────────
@@ -87,5 +88,5 @@ task webpack(type:NodeTask) {
 		'--color',
 	]
 }
-webpack.dependsOn gulp_build
+webpack.dependsOn buildGulp
 jar.dependsOn webpack
