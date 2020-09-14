@@ -32,7 +32,7 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-svgmin": "^3.0.0",
     "gulp-svgstore": "^7.0.1",
-    "imagemin-pngquant": "^9.0.0",
+    "imagemin-pngquant": "^9.0.1",
     "jquery": "^3.5.1",
     "jshint": "^2.12.0",
     "mini-css-extract-plugin": "^0.11.0",
