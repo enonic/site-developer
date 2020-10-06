@@ -16,7 +16,7 @@
     "babel-loader": "^8.1.0",
     "babel-plugin-array-includes": "^2.0.3",
     "css-loader": "^4.3.0",
-    "copy-webpack-plugin": "^6.1.0",
+    "copy-webpack-plugin": "^6.2.0",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
