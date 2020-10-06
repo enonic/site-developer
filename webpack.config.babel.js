@@ -32,9 +32,9 @@ const DST_DIR = 'build/resources/main';
 //──────────────────────────────────────────────────────────────────────────────
 // Common
 //──────────────────────────────────────────────────────────────────────────────
+const isProd = process.env.NODE_ENV === 'production';
 const context = path.resolve(__dirname, SRC_DIR);
 const extensions = ['.es', '.js', '.json']; // used in resolve
-const mode = 'production';
 const outputPath = path.join(__dirname, DST_DIR);
 const stats = {
 	colors: true,
@@ -69,8 +69,8 @@ const SERVER_JS_CONFIG = {
 	externals: [
 		/\/lib\/(enonic|xp|menu|util|thymeleaf|http-client|cache)/
 	],
-	devtool: false, // Don't waste time generating sourceMaps
-	mode,
+	devtool: isProd ? false : 'source-map',
+	mode: process.env.NODE_ENV,
 	module: {
 		rules: [{
 			test: /\.(es6?|js)$/, // Will need js for node module depenencies
@@ -80,7 +80,7 @@ const SERVER_JS_CONFIG = {
 					//babelrc: false, // The .babelrc file should only be used to transpile config files.
 					comments: false,
 					compact: false,
-					minified: false,
+					minified: isProd,
 					presets: [
 						[
 							'@babel/preset-env',
@@ -119,8 +119,8 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 	entry: {
 		'assets/js/main.min': './assets/js/main.es'
 	},
-	devtool: 'source-map', // https://webpack.js.org/configuration/devtool/
-	mode,
+	devtool: isProd ? false : 'source-map',
+	mode: process.env.NODE_ENV,
 	module: {
 		rules: [{
 			test: /\.(es6?|js)$/,
@@ -130,7 +130,7 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 					//babelrc: false, // The .babelrc file should only be used to transpile *.babel.js files.
 					comments: false,
 					compact: true,
-					minified: true,
+					minified: isProd,
 					presets: [
 						[
 							'@babel/preset-env',
@@ -147,7 +147,7 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 	optimization: {
 		minimizer: [
 			new TerserPlugin({
-				sourceMap: true,
+				sourceMap: !isProd,
 				terserOptions: {
 					compress: {
 						drop_console: false
@@ -200,7 +200,7 @@ const STYLE_ASSETS_CONFIG = { // eslint-disable-line no-unused-vars
 		'assets/css/critical': './assets/css/critical.scss',
 		'assets/css/non-critical': './assets/css/non-critical.scss'
 	},
-	mode,
+	mode: process.env.NODE_ENV,
 	module: {
 		rules: [{
 			test: /\.s?css$/,

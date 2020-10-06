@@ -1,5 +1,6 @@
 //'use strict';
 import gulp from 'gulp';
+import gulpif from 'gulp-if';
 import sass from 'gulp-sass';
 import sassGlob from 'gulp-sass-glob';
 
@@ -32,15 +33,17 @@ const sassOptions = {
 	outputStyle: 'compressed'
 };
 
+const isProd = process.env.NODE_ENV == 'production';
+
 // Compile Sass files
 // Create CSS sourcemaps
 // Add vendor specific CSS
 gulp.task('sass', () => gulp
 	.src(`${srcAssets}/css/*.scss`)
-	.pipe(sourcemaps.init())
+	.pipe(gulpif(!isProd, sourcemaps.init()))
 	.pipe(sassGlob())
 	.pipe(sass(sassOptions).on('error', sass.logError))
-	.pipe(sourcemaps.write())
+	.pipe(gulpif(!isProd, sourcemaps.write()))
 	.pipe(autoprefixer())
 	.pipe(gulp.dest(`${buildAssets}/css/`))
 	.resume());

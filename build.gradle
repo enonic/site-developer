@@ -56,11 +56,23 @@ node {
 }
 
 
+def nodeEnvironment() {
+	def envName = 'production';
+	if (hasProperty( 'env' ) && getAt('env') == 'dev') {
+		envName = 'development';
+	}
+
+	println "Environment is set to $envName"
+
+	return envName
+}
+
 //──────────────────────────────────────────────────────────────────────────────
 // Gulp TODO This could/should be replaced with webpack
 //──────────────────────────────────────────────────────────────────────────────
 
 task buildGulp(type: NpmTask, dependsOn: npmInstall) {
+	environment = [ 'NODE_ENV': nodeEnvironment() ]
 	args = ["run", "gulp"]
 	inputs.file("gulpfile.babel.js")
 	inputs.dir("src")
@@ -83,6 +95,7 @@ sourceSets {
 }
 
 task webpack(type:NodeTask) {
+	environment = [ 'NODE_ENV': nodeEnvironment() ]
 	script = file('node_modules/webpack-cli/bin/cli.js')
 	args = [
 		'--color',
