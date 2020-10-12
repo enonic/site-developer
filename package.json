@@ -42,7 +42,7 @@
     "path": "^0.12.7",
     "sass-loader": "^10.0.2",
     "svg-url-loader": "^6.0.0",
-    "terser-webpack-plugin": "^4.2.2",
+    "terser-webpack-plugin": "^4.2.3",
     "uglify-es": "^3.3.9",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.2",
