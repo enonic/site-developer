@@ -2,9 +2,9 @@
   "name": "enonic-site-developer",
   "description": "",
   "scripts": {
-    "gulp": "node_modules/gulp/bin/gulp.js build",
-    "watch": "node_modules/webpack-cli/bin/cli.js -w --stdin",
-    "webpack": "node_modules/webpack-cli/bin/cli.js"
+    "gulp": "node ./node_modules/gulp/bin/gulp.js build",
+    "watch": "node ./node_modules/webpack-cli/bin/cli.js -w --stdin",
+    "webpack": "node ./node_modules/webpack-cli/bin/cli.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
