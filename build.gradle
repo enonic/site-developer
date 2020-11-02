@@ -51,8 +51,8 @@ dependencies {
 // Gradle node plugin
 //──────────────────────────────────────────────────────────────────────────────
 node {
-	version '12.13.0'
-	download true
+	version = '14.15.0'
+	download = true
 }
 
 
