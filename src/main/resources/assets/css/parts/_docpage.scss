@@ -9,8 +9,8 @@
   margin-top: -90px;
   padding-top: 90px;
   backface-visibility: hidden;
-  will-change: overflow;
-  overflow: hidden;
+  //will-change: overflow;
+  //overflow: auto;
   position: relative;
 
   a {
@@ -25,11 +25,12 @@
     text-transform: none;
   }
   &-menu, &-content, &-sticky-toc {
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     height: auto;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    //scrollbar-width: none;
 
     &::-webkit-scrollbar {
       display: none;
@@ -37,9 +38,10 @@
   }
   &-menu, &-sticky-toc {
     min-width: 230px;
-    position: relative;
+    position: sticky;
+    top: 0;
     background-color: $color-pelorous;
-    max-height: calc(100vh - 87px);
+    max-height: 100vh;
   }
   &-menu {
 
