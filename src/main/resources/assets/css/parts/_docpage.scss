@@ -38,12 +38,19 @@
   }
   &-menu, &-sticky-toc {
     min-width: 230px;
+    position: relative;
     position: sticky;
-    top: 0;
+    top: -1px;
     background-color: $color-pelorous;
     max-height: 100vh;
   }
   &-menu {
+    z-index: 10;
+    
+    &.open-menu {
+      height: calc(100vh - 71px);
+      max-height: none;
+    }
 
     &-wrapper {
       //background-color: $color-pelorous;
@@ -440,9 +447,10 @@
   }
 
   &-sticky-toc .docpage-toc {
+    position: relative;
     position: sticky;
     margin-top: 20px;
-    top: 20px; // top is required for sticky position to work
+    top: 1px; // top is required for sticky position to work
   }
 
   &.type-doc .docpage-menu {
