@@ -1,6 +1,6 @@
 $(function () {
-    $(".docpage-menu__versions-select").on("change", function () {
-        var url = $(this).find(":selected").attr("v-url");
+    $('.docpage-menu__versions-select').change(function () {
+        var url = $(this).find(":selected").attr('v-url');
         window.location.href = url;
     });
 
@@ -15,10 +15,10 @@ $(function () {
             if (menu.hasClass("open-menu") == false) {
                 menu.addClass("open-menu");
             }
-            $(document.body).css("overflow", "hidden");
+            $('.docpage-content').css("overflow", "hidden");
         } else {
             menu.removeClass("open-menu");
-            $(document.body).css("overflow", "");
+            $('.docpage-content').css("overflow", "");
         }
     }
 });
