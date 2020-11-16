@@ -24,7 +24,7 @@ import './parts/download-xp.es';
 
 // Gives Uncaught TypeError: n is not a function
 // Might have something to do with minification
-//import './vendor/tocbot.min.js';
+// import './vendor/tocbot.min.js';
 
 /**
  * Init the js modules and parts
