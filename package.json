@@ -47,7 +47,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^4.44.2",
     "webpack-cli": "^4.1.0",
-    "webpack-stream": "^6.1.0"
+    "webpack-stream": "^6.1.1"
   },
   "license": "TODO",
   "private": "true",
