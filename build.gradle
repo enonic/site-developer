@@ -32,7 +32,7 @@ dependencies {
 	include "com.enonic.xp:lib-common:${xpVersion}"
 	include "com.enonic.xp:lib-task:${xpVersion}"
 	include "com.enonic.xp:lib-portal:${xpVersion}"
-	include 'org.jsoup:jsoup:1.10.2'
+	include 'org.jsoup:jsoup:1.13.1'
 	include 'org.eclipse.jgit:org.eclipse.jgit:5.3.0.201903130848-r'
 	include "com.enonic.lib:lib-http-client:2.1.0"
 	include 'com.enonic.lib:lib-menu:3.0.0'
