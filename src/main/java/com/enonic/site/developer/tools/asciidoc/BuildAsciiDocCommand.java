@@ -2,7 +2,7 @@ package com.enonic.site.developer.tools.asciidoc;
 
 import java.util.Arrays;
 
-import org.asciidoctor.AsciiDocDirectoryWalker;
+import org.asciidoctor.jruby.AsciiDocDirectoryWalker;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.Options;
@@ -61,7 +61,7 @@ public final class BuildAsciiDocCommand
         final RubyInstanceConfig config = new RubyInstanceConfig();
         config.setLoader( this.getClass().getClassLoader() );
 
-		final Asciidoctor asciidoctor = create( Arrays.asList( "uri:classloader:/gems/asciidoctor-1.5.8/lib") ); 
+		final Asciidoctor asciidoctor = create();
 
         return asciidoctor;
     }

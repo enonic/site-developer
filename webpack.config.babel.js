@@ -39,7 +39,6 @@ const outputPath = path.join(__dirname, DST_DIR);
 const stats = {
 	colors: true,
 	hash: false,
-	maxModules: 0,
 	modules: false,
 	moduleTrace: false,
 	timings: false,
@@ -145,9 +144,9 @@ const ASSETS_JS_CONFIG = { // Javascript assets
 		}] // rules
 	}, // module
 	optimization: {
+		minimize: true,
 		minimizer: [
 			new TerserPlugin({
-				sourceMap: !isProd,
 				terserOptions: {
 					compress: {
 						drop_console: false
