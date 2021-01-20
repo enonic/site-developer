@@ -240,6 +240,10 @@
     word-wrap: break-word;
     min-width: 50%; // to make long words break under flex
 
+    pre {
+      background-color: #eee;
+    }
+
     &__doc {
 
       @import '_asciidoctor';
