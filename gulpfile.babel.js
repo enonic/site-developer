@@ -30,10 +30,10 @@ const buildAssets = `${buildSite}/assets`;
 // Sass compile
 const sassOptions = {
 	errLogToConsole: true,
-	outputStyle: 'compressed'
+	outputStyle: 'compressed',
 };
 
-const isProd = process.env.NODE_ENV == 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 // Compile Sass files
 // Create CSS sourcemaps
@@ -54,7 +54,7 @@ gulp.task('minifyImages', () => gulp
 	.pipe(imagemin({
 		progressive: true,
 		svgoPlugins: [{removeViewBox: false}],
-		use: [pngquant()]
+		use: [pngquant()],
 	}))
 	.pipe(gulp.dest(`${buildAssets}/img`)));
 
@@ -69,7 +69,7 @@ gulp.task('minifyHTML', () => gulp.src(`${srcSite}/**/*.html`)
 	.pipe(htmlmin({
 		collapseWhitespace: true,
 		removeComments: true,
-		keepClosingSlash: true
+		keepClosingSlash: true,
 	}))
 	.pipe(gulp.dest(buildSite)));
 
@@ -81,17 +81,16 @@ gulp.task('svgstore', () => gulp
 			plugins: [{
 				cleanupIDs: {
 					prefix: `${prefix}-`,
-					minify: true
-				}
+					minify: true,
+				},
 			}, {
 				// viewBox attrs are (intentionally?) removed in gulp-svgmin 2.0.0 and above. Solution found here: https://github.com/ben-eb/gulp-svgmin/issues/87
-				removeViewBox: false
-			}]
+				removeViewBox: false,
+			}],
 		};
 	}))
 	.pipe(svgstore({inlineSvg: true}))
 	.pipe(gulp.dest(`${buildAssets}/img/icons`)));
-
 
 /*
 gulp.task('svgstore', function () {
@@ -109,6 +108,5 @@ gulp.task('svgstore', function () {
         .pipe(gulp.dest(buildAssets + '/img/icons/inline'));
 });*/
 
-
 // Default task, runs all other tasks
-gulp.task('build', gulp.series('sass', 'minifyImages', 'svgstore', 'minifyHTML'));
+gulp.task('build', gulp.series('minifyImages', 'svgstore', 'minifyHTML'));

@@ -10,57 +10,56 @@ import {render} from '/lib/thymeleaf';
 import {RT_HTML} from '/content-types';
 import {getSiteUrl} from '/lib/siteUtil';
 
-
 //──────────────────────────────────────────────────────────────────────────────
 // Constants
 //──────────────────────────────────────────────────────────────────────────────
 const VIEW = resolve('default.html'); // The view to render
 
-
 //──────────────────────────────────────────────────────────────────────────────
 // Exports
 //──────────────────────────────────────────────────────────────────────────────
 export function get() {
-    function isHeaderColorInverted() {
-        if (headerInverted) {
-            return pageColor === 'white';
-        }
+	const content = getCurrentContent();
+	const {
+		headerType,
+		pageColor,
+		headerInverted,
+	} = content.page.config;
 
-        return pageColor === 'black';
-    }
+	function isHeaderColorInverted() {
+		if (headerInverted) {
+			return pageColor === 'white';
+		}
 
-    function getBodyClass() {
-        if (!headerType) { return ''; }
-        if (headerType === 'hidden') { return 'no-header'; }
-        return headerType === 'layered' ? 'layered' : '';
-    }
+		return pageColor === 'black';
+	}
 
-    const content = getCurrentContent();
-    const {
-        headerType,
-        pageColor,
-        headerInverted
-    } = content.page.config;
-    const model =  {
-        mainRegion: content.page.regions.main,
-        sitePath: getCurrentSite()._path,
-        currentPath: content._path,
-        pageTitle: content.displayName,
-        menuItems: getMenuTree(3),
-        searchResultPageUrl: `${getSiteUrl()}search`,
-        serviceUrl: getServiceUrl({ service: 'search' }),
+	function getBodyClass() {
+		if (!headerType) { return ''; }
+		if (headerType === 'hidden') { return 'no-header'; }
+		return headerType === 'layered' ? 'layered' : '';
+	}
 
-        headerClass: headerType ? `header-${headerType}` : 'header-default', // Defines whether page header is layered or not
-        isHeaderColorInverted: isHeaderColorInverted(), // Header logo and menu button color
-        bodyClass: getBodyClass(),
-        pageColor,
+	const model =  {
+		mainRegion: content.page.regions.main,
+		sitePath: getCurrentSite()._path,
+		currentPath: content._path,
+		pageTitle: content.displayName,
+		menuItems: getMenuTree(3),
+		searchResultPageUrl: `${getSiteUrl()}search`,
+		serviceUrl: getServiceUrl({ service: 'search' }),
 
-        showHeaderSearch: true
-    }; // model
+		headerClass: headerType ? `header-${headerType}` : 'header-default', // Defines whether page header is layered or not
+		isHeaderColorInverted: isHeaderColorInverted(), // Header logo and menu button color
+		bodyClass: getBodyClass(),
+		pageColor,
 
-    return {
-        body: render(VIEW, model),
-        contentType: RT_HTML
-    };
+		showHeaderSearch: true,
+	}; // model
+
+	return {
+		body: render(VIEW, model),
+		contentType: RT_HTML,
+	};
 } // export get
 export const post = get;

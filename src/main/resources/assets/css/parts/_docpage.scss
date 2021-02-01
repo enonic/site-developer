@@ -246,8 +246,8 @@
 
     &__doc {
 
-      @import '_asciidoctor';
-      @import '_font-awesome';
+      @import '../_asciidoctor';
+      @import '../_font-awesome';
 
       h1, h2, h3, h4 {
         > a.link {

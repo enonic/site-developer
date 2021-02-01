@@ -45,9 +45,6 @@ dependencies {
 	testCompile "org.mockito:mockito-core:3.7.7"
 }
 
-
-
-
 //──────────────────────────────────────────────────────────────────────────────
 // Gradle node plugin
 //──────────────────────────────────────────────────────────────────────────────
@@ -72,29 +69,18 @@ def nodeEnvironment() {
 // Gulp TODO This could/should be replaced with webpack
 //──────────────────────────────────────────────────────────────────────────────
 
-task buildGulp(type: NpmTask, dependsOn: npmInstall) {
-	environment = [ 'NODE_ENV': nodeEnvironment() ]
-	args = ["run", "gulp"]
-	inputs.file("gulpfile.babel.js")
-	inputs.dir("src")
-	outputs.dir("build")
-}
+// task buildGulp(type: NpmTask, dependsOn: npmInstall) {
+// 	environment = [ 'NODE_ENV': nodeEnvironment() ]
+// 	args = ["run", "gulp"]
+// 	inputs.file("gulpfile.babel.js")
+// 	inputs.dir("src")
+// 	outputs.dir("build")
+// }
 
 
 //──────────────────────────────────────────────────────────────────────────────
 // Webpack
 //──────────────────────────────────────────────────────────────────────────────
-sourceSets {
-	main {
-		java {
-			srcDir 'src/main/java'
-		}
-		resources { // Paths relative to src/main/resources
-			exclude '**/*.es' // Avoid having your es files copied into ./build
-		}
-	}
-}
-
 task webpack(type:NodeTask) {
 	environment = [ 'NODE_ENV': nodeEnvironment() ]
 	script = file('node_modules/webpack-cli/bin/cli.js')
@@ -102,5 +88,23 @@ task webpack(type:NodeTask) {
 		'--color',
 	]
 }
-webpack.dependsOn buildGulp
+
+sourceSets {
+	main {
+		resources {
+			exclude (
+				// Webpack handles these files
+				'**/*.es',
+				'**/*.es6',
+				'**/*.scss',
+				'**/*.sass',
+				'**/*.jpg',
+				'**/*.svg',
+				//'**/*.html',
+			)
+		}
+	}
+}
+
+// webpack.dependsOn buildGulp
 jar.dependsOn webpack
