@@ -7,7 +7,7 @@
     "webpack": "node ./node_modules/webpack-cli/bin/cli.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.13.8",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "@babel/plugin-transform-object-assign": "^7.12.1",
