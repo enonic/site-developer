@@ -11,7 +11,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-transform-modules-commonjs": "^7.12.1",
     "@babel/plugin-transform-object-assign": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-env": "^7.13.8",
     "@babel/register": "^7.12.10",
     "babel-loader": "^8.2.2",
     "babel-plugin-array-includes": "^2.0.3",
